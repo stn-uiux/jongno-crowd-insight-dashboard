@@ -46,6 +46,7 @@
     white: () => cssHex("--p-white", "#ffffff"),
     textPrimary: () => cssHex("--text-color-primary", "#ffffff"),
     axisTrendY: () => cssHex("--chart-axis-trend-y", "#ffffff"),
+    tooltipBg: () => cssHex("--surface-card-dark", "#1a2030"),
     stay: () => cssHex("--chart-stay", "#55adff"),
     crowd: () => cssHex("--chart-crowd", "#25d08e"),
     grid: () => cssHex("--chart-grid", "#b4cde6"),
@@ -144,7 +145,7 @@
       strokeWidth: 0,
     });
     if (!fromSprite) {
-      bg.set("fill", am5.color(color ?? 0x1a2030));
+      bg.set("fill", am5.color(color ?? C.tooltipBg()));
     }
     bg.adapters.add("strokeOpacity", () => 0);
     bg.adapters.add("fillOpacity", () => 0.72);
@@ -166,7 +167,7 @@
     );
     cursor.lineY.set("visible", false);
     cursor.lineX.setAll({
-      stroke: am5.color(0xffffff),
+      stroke: am5.color(C.white()),
       strokeOpacity: 0.22,
       strokeDasharray: [4, 4],
     });
@@ -201,7 +202,7 @@
       fontSize: T.md(),
       fontWeight: "700",
       fontFamily: "Pretendard, sans-serif",
-      fill: am5.color(0xffffff),
+      fill: am5.color(C.textPrimary()),
       radius: 16,
       paddingTop: 0,
       paddingBottom: 0,
@@ -222,7 +223,7 @@
       length: 10,
     });
     series.ticks.template.adapters.add("stroke", (stroke, target) =>
-      am5.color(target.dataItem?.dataContext?.color || 0xffffff)
+      am5.color(target.dataItem?.dataContext?.color || C.white())
     );
     series.set(
       "tooltip",
@@ -364,7 +365,7 @@
       am5.Bullet.new(root, {
         sprite: am5.Circle.new(root, {
           radius: 4.2,
-          fill: am5.color(0xffffff),
+          fill: am5.color(C.white()),
           stroke: am5.color(C.stay()),
           strokeWidth: 2,
         }),
@@ -392,7 +393,7 @@
       am5.Bullet.new(root, {
         sprite: am5.Circle.new(root, {
           radius: 4.2,
-          fill: am5.color(0xffffff),
+          fill: am5.color(C.white()),
           stroke: am5.color(C.crowd()),
           strokeWidth: 2,
         }),
@@ -559,7 +560,7 @@
       fontWeight: "500",
     });
     xAxis.get("renderer").grid.template.setAll({
-      stroke: am5.color(0x96b9dc),
+      stroke: am5.color(C.grid()),
       strokeOpacity: 0.22,
     });
 
@@ -577,7 +578,7 @@
       fontWeight: "700",
     });
     yAxis.get("renderer").grid.template.setAll({
-      stroke: am5.color(0x96b9dc),
+      stroke: am5.color(C.grid()),
       strokeOpacity: 0.28,
     });
 

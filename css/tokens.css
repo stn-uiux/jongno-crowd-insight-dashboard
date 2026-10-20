@@ -58,8 +58,8 @@
   --p-green-500: #25d08e;
   --p-green-550: #2ad44c;
   --p-green-600: #00aea0;
-  --p-green-700: rgba(37, 180, 70, 0.92);
-  --p-green-800: rgba(30, 150, 60, 0.95);
+  --p-green-700: #25b446;
+  --p-green-800: #1e963c;
   --p-green-900: #065f46;
   --p-green-a22: rgba(42, 212, 76, 0.22);
   --p-green-a35: rgba(42, 212, 76, 0.35);
@@ -212,7 +212,7 @@
 
   /* 13) Primitive Gradients (기본 그라데이션) */
   --p-gradient-brand: linear-gradient(135deg, var(--p-indigo-500) 0%, var(--p-red-500) 100%);
-  --p-gradient-brand-text: linear-gradient(90deg, var(--p-indigo-600), #ff2832);
+  --p-gradient-brand-text: linear-gradient(90deg, var(--p-indigo-600), var(--p-red-500));
   --p-gradient-brand-border: linear-gradient(
     135deg,
     var(--p-indigo-500) 0%,
@@ -231,8 +231,8 @@
     rgba(80, 92, 255, 0.1) 0%,
     rgba(227, 55, 63, 0.1) 100%
   );
-  --p-gradient-blue-violet: linear-gradient(90deg, #3b82f6, var(--p-purple-400));
-  --p-gradient-avatar: linear-gradient(135deg, #3b82f6, var(--p-purple-400));
+  --p-gradient-blue-violet: linear-gradient(90deg, var(--p-blue-500), var(--p-purple-400));
+  --p-gradient-avatar: linear-gradient(135deg, var(--p-blue-500), var(--p-purple-400));
   --p-gradient-tooltip-light: linear-gradient(130deg, var(--p-white) 52%, var(--p-neutral-120) 100%);
   --p-gradient-live-dot: linear-gradient(137deg, var(--p-green-550) 4%, var(--p-green-300) 100%);
   --p-gradient-visit-today: linear-gradient(180deg, var(--p-blue-900), var(--p-blue-700));
@@ -356,6 +356,8 @@
   --border-default: var(--p-white-a24);
   --border-strong: var(--p-white-a30);
   --border-accent: var(--p-indigo-400);
+  --border-tab-active: rgba(255, 70, 110, 0.45);
+  --border-map-back: rgba(218, 231, 246, 0.5);
   --border-selected-bar: var(--p-indigo-300);
   --divider-color: var(--p-white-a35);
 
@@ -370,15 +372,6 @@
   --sidebar-muted: var(--p-neutral-500);
   --sidebar-accent: var(--color-primary);
   --sidebar-accent-soft: var(--color-primary-soft);
-
-  /* Legacy aliases (기존 클래스/JS 하위 호환) */
-  --blue: var(--chart-stay);
-  --green: var(--chart-crowd);
-  --ink: var(--text-color-secondary);
-  --down: var(--kpi-down);
-  --up: var(--kpi-up);
-  --muted: var(--text-color-muted);
-  --glass: var(--surface-widget);
 
   /* ------------------------------------------------------------------------
      03. FOUNDATION SCALES (Layout, Radius, Blur, Shadow, Z-Index, Typography)
@@ -416,6 +409,9 @@
   --shadow-tooltip: 20px 10px 25px var(--p-black-a15);
   --shadow-floating-modal: 0 4px 16px var(--p-black-a50);
   --shadow-dialog-modal: 0 24px 64px var(--p-black-a55);
+  --shadow-text-contrast: var(--p-neutral-750);
+  --shadow-point-size: 0 2px 8px var(--p-black-a40);
+  --shadow-point-size-active: 0 0 14px var(--region-glow-caution), 0 2px 6px var(--p-black-a40);
 
   /* Z-Index Scale */
   --z-base: 1;
@@ -492,12 +488,6 @@
   --font-region-c-code: clamp(18px, 1.6vw, 24px);
   --font-region-a-title: clamp(14px, 1.2vw, 18px);
   --font-region-a-code: clamp(18px, 1.6vw, 24px);
-
-  /* Legacy Typography Aliases */
-  --title: var(--font-title);
-  --h2: var(--font-widget-title);
-  --h3: var(--font-widget-title);
-  --kpi: var(--font-kpi);
 
   /* Map Point Size Scale (lg: 현재 기본 크기 100% / md: 80% / sm: 65%) */
   --mp-scale-lg: 1;

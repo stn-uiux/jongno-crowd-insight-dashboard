@@ -10,10 +10,10 @@
 
   /** 구역별 상세 지도 이미지 매핑 */
   const REGION_DETAIL_MAP = {
-    A: { name: "익선동", src: "assets/map_detail_1.png" },
-    B: { name: "헌법 재판소 일대", src: "assets/map_detail_2.png" },
-    C: { name: "낙원동", src: "assets/map_detail_3.png" },
-    D: { name: "광화문 광장 접점", src: "assets/map_detail_4.png" },
+    A: { name: "익선동", src: "assets/maps/map-detail-1.png" },
+    B: { name: "헌법 재판소 일대", src: "assets/maps/map-detail-2.png" },
+    C: { name: "낙원동", src: "assets/maps/map-detail-3.png" },
+    D: { name: "광화문 광장 접점", src: "assets/maps/map-detail-4.png" },
   };
 
   /**
@@ -185,6 +185,10 @@
 
   const VALID_TIP_POS = new Set(["top", "bottom", "left", "right"]);
   const VALID_SIZE = new Set(["sm", "md", "lg"]);
+  const DEFAULT_POINT_METRICS = {
+    people: 45600,
+    density: 0.98,
+  };
 
   function pointHtml(p) {
     const stateKey = STATE_META[p.state] ? p.state : "attention";
@@ -193,8 +197,10 @@
     const tipPos = VALID_TIP_POS.has(p.tipPos) ? p.tipPos : "top";
     const cctvPos = p.cctvPos === "left" ? "left" : "right";
     const displayText = p.displayText || p.id;
-    const peopleStr = p.people != null ? Number(p.people).toLocaleString("ko-KR") : "45,600";
-    const densityStr = p.density != null ? Number(p.density).toFixed(2) : "0.98";
+    const peopleVal = p.people != null ? p.people : DEFAULT_POINT_METRICS.people;
+    const densityVal = p.density != null ? p.density : DEFAULT_POINT_METRICS.density;
+    const peopleStr = Number(peopleVal).toLocaleString("ko-KR");
+    const densityStr = Number(densityVal).toFixed(2);
     return `
       <div class="map-point map-point--${size} is-${stateKey}" style="left:${p.left}%;top:${p.top}%;" data-id="${p.id}">
         <div class="mp-tip mp-tip--${tipPos} mp-tip--cctv-${cctvPos}">

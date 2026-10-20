@@ -274,7 +274,6 @@
     widgets().forEach((el) => {
       if (removed.has(el.dataset.widgetId)) {
         el.hidden = true;
-        el.style.display = "none";
         el.classList.add("is-removed");
       }
     });
@@ -455,7 +454,7 @@
   }
 
   function isWidgetVisible(el) {
-    return el && !el.hidden && el.style.display !== "none" && !el.classList.contains("is-removed");
+    return el && !el.hidden && !el.classList.contains("is-removed");
   }
 
   /** 다른 위젯 화면 영역 (리사이즈/드래그 충돌용) */
@@ -882,7 +881,6 @@
     pendingRemove.add(id);
     widget.hidden = true;
     widget.classList.add("is-pending-remove", "is-removed");
-    widget.style.display = "none";
     refreshEmptyRows();
     window.dispatchEvent(new Event("resize"));
   }
@@ -943,7 +941,6 @@
     widgets().forEach((el) => {
       clearWidgetSize(el);
       el.hidden = false;
-      el.style.display = "";
       el.classList.remove("is-removed", "is-pending-remove", "is-resizing", "is-dragging");
 
       const meta = defaultMeta.get(el.dataset.widgetId);
@@ -973,7 +970,6 @@
       if (!el) return;
       if (visibilitySnapshot.get(id)) {
         el.hidden = false;
-        el.style.display = "";
         el.classList.remove("is-pending-remove", "is-removed");
       }
     });
@@ -992,7 +988,6 @@
       const id = el.dataset.widgetId;
       if (pendingRemove.has(id) || el.classList.contains("is-pending-remove")) {
         el.hidden = true;
-        el.style.display = "none";
         el.classList.add("is-removed");
         el.classList.remove("is-pending-remove");
         removed.add(id);
@@ -1000,7 +995,6 @@
         dirtySizeIds.delete(id);
       } else if (!el.hidden) {
         el.classList.remove("is-removed");
-        el.style.display = "";
         removed.delete(id);
         if (dirtySizeIds.has(id) || el.classList.contains("has-custom-size")) {
           sizes[id] = captureWidgetSize(el);
@@ -1109,7 +1103,6 @@
       const el = document.querySelector(`.widget[data-widget-id="${id}"]`);
       if (el) {
         el.hidden = false;
-        el.style.display = "";
         el.classList.remove("is-removed", "is-pending-remove");
         pendingRemove.delete(id);
         el.querySelector(".widget-chrome")?.remove();
