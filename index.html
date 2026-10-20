@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>종로구 스마트인파 관리</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/edit-mode.css">
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <img class="page-bg" src="assets/page-bg-figma.png" alt="">
+    <aside class="app-sidebar" id="app-sidebar">
+      <button type="button" class="sidebar-toggle" title="메뉴 접기" aria-label="메뉴 접기">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <div class="sidebar-logo">
+        <a href="./index.html">
+          <img alt="종로" class="logo-single logo-animated" src="assets/logo.png">
+          <span class="logo-text-label">종로구 스마트인파</span>
+        </a>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li class="menu-item c-blue has-children child-active is-open">
+            <div class="menu-link active" title="대시보드">
+              <div class="icon-box"><i class="bi bi-speedometer2"></i></div>
+              <span>대시보드</span>
+              <i class="bi bi-chevron-down submenu-arrow"></i>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a href="./index.html" class="submenu-link active">
+                  <i class="bi bi-grid-1x2"></i><span>종합현황</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="submenu-link">
+                  <i class="bi bi-bar-chart"></i><span>통계</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="menu-item c-emerald">
+            <a href="#" class="menu-link" title="인파관리">
+              <div class="icon-box"><i class="bi bi-people"></i></div>
+              <span>인파관리</span>
+            </a>
+          </li>
+          <li class="menu-item c-amber">
+            <a href="#" class="menu-link" title="장비관리">
+              <div class="icon-box"><i class="bi bi-hdd-rack"></i></div>
+              <span>장비관리</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-toolbar">
+        <div class="font-selector inline">
+          <button type="button" class="font-selector-btn" title="폰트 / 크기" aria-label="폰트 변경">
+            <i class="bi bi-type"></i>
+          </button>
+        </div>
+        <button type="button" class="theme-toggle-btn inline" title="테마 전환" aria-label="테마 전환">
+          <i class="bi bi-sun-fill"></i>
+        </button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+  <div id="stage">
+    <header class="header">
+      <div class="brand">
+        <img src="assets/logo.png" alt="서울의 정 종로" width="149" height="36">
+        <h1>종로구 <em>스마트인파</em> 관리</h1>
+      </div>
+
+      <nav class="tabs" aria-label="주요 메뉴">
+        <button type="button" class="tab is-active" data-tab="overview">
+          <img src="assets/icon-dash.svg" alt="" width="20" height="20">
+          종합현황
+        </button>
+        <button type="button" class="tab" data-tab="stats">
+          <img src="assets/icon-chart.svg" alt="" width="20" height="20">
+          통계
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="edit-btn" id="btn-edit" aria-label="편집">
+          <img src="assets/icon-edit.svg" alt="" width="20" height="20">
+          편집
+        </button>
+        <div class="edit-toolbar" id="edit-toolbar" hidden>
+          <button type="button" class="edit-action add" id="btn-add-widget">
+            <i class="bi bi-plus-lg"></i>
+            위젯추가
+          </button>
+          <button type="button" class="edit-action reset" id="btn-reset-layout" title="처음 배치로 되돌리기">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            초기화
+          </button>
+          <button type="button" class="edit-action cancel" id="btn-cancel-edit">
+            <i class="bi bi-x-lg"></i>
+            취소
+          </button>
+          <button type="button" class="edit-action save" id="btn-save-edit">
+            <i class="bi bi-check-lg"></i>
+            저장
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 섹션(col) 없음 — 보드 위 위젯만. 배치는 CSS grid -->
+    <main class="board">
+      <article class="widget kpi accent" data-widget-id="kpi-current-stay" data-widget-name="현재 체류 인원" data-widget-category="모니터링">
+        <div class="kpi-head">
+          <h2>현재 체류 인원</h2>
+          <img src="assets/icon-people.svg" alt="" width="16" height="16">
+        </div>
+        <p class="kpi-value">80,007명</p>
+        <p class="badge up">
+          <img src="assets/icon-arrow-up.svg" alt="" width="16" height="16">
+          <strong>21명</strong>
+          <i></i>
+          <span>그제 대비</span>
+        </p>
+      </article>
+      <article class="widget kpi" data-widget-id="kpi-today-visit" data-widget-name="오늘 누적 방문 인원" data-widget-category="모니터링">
+        <div class="kpi-head">
+          <h2>오늘 누적 방문 인원</h2>
+          <img src="assets/icon-people-2.svg" alt="" width="16" height="16">
+        </div>
+        <p class="kpi-value">145,006명</p>
+        <p class="badge down">
+          <img src="assets/icon-arrow-down.svg" alt="" width="16" height="16">
+          <strong>76명</strong>
+          <i></i>
+          <span>어제 대비</span>
+        </p>
+      </article>
+
+      <article class="widget kpi wide" data-widget-id="kpi-month-visit" data-widget-name="이번달 누적 방문 인원" data-widget-category="모니터링">
+        <div class="kpi-head">
+          <h2>이번달 누적 방문 인원</h2>
+          <img src="assets/icon-people-3.svg" alt="" width="16" height="16">
+        </div>
+        <p class="kpi-value">3,222,187명</p>
+        <p class="badge up">
+          <img src="assets/icon-arrow-up.svg" alt="" width="16" height="16">
+          <strong>21명</strong>
+          <i></i>
+          <span>지난 달 대비</span>
+        </p>
+      </article>
+
+      <article class="widget chart-widget pie-widget" data-widget-id="chart-pie" data-widget-name="실시간 구역별 체류인원 분포" data-widget-category="차트">
+        <div class="chart-head">
+          <h2>실시간 구역별 체류인원 분포</h2>
+          <div class="select" data-select>
+            <button type="button" class="select-btn" aria-haspopup="listbox" aria-expanded="false">
+              <span data-select-label>Today</span>
+              <img src="assets/icon-chevron.svg" alt="" width="12" height="12">
+            </button>
+            <ul class="select-menu" role="listbox" hidden>
+              <li role="option" data-value="Today">Today</li>
+              <li role="option" data-value="Yesterday">Yesterday</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pie-body">
+          <div id="chart-pie" class="am-host pie-host"></div>
+          <ul class="legend">
+            <li><i class="dot red"></i>익선동 한옥 거리</li>
+            <li><i class="dot orange"></i>인사동</li>
+            <li><i class="dot yellow"></i>광화문 광장</li>
+            <li><i class="dot green"></i>청계천</li>
+            <li><i class="dot blue"></i>종로3가역</li>
+            <li><i class="dot purple"></i>탑골공원</li>
+            <li><i class="dot pink"></i>창덕궁</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="widget chart-widget stay-widget" data-widget-id="chart-stay" data-widget-name="실시간 체류 인원 & 혼잡도" data-widget-category="차트">
+        <h2>실시간 체류 인원 &amp; 혼잡도</h2>
+        <div class="stay-legend">
+          <span><i class="swatch line blue"></i>체류인원 <em>(단위: 명)</em></span>
+          <span><i class="swatch line green"></i>혼잡도 <em>(단위: 명/㎡)</em></span>
+        </div>
+        <div id="chart-stay" class="am-host stay-host"></div>
+      </article>
+
+      <article class="widget kpi" data-widget-id="kpi-revisit" data-widget-name="90일 이내 재방문률" data-widget-category="모니터링">
+        <div class="kpi-head">
+          <h2 class="with-tag">90일 이내 재방문률 <em>어제</em></h2>
+          <img src="assets/icon-people-mid.svg" alt="" width="16" height="16">
+        </div>
+        <p class="kpi-value">23%</p>
+        <p class="badge flat">
+          <strong>- 변동없음</strong>
+          <i></i>
+          <span>그제 대비</span>
+        </p>
+      </article>
+      <article class="widget kpi" data-widget-id="kpi-avg-stay" data-widget-name="평균 체류 시간" data-widget-category="모니터링">
+        <div class="kpi-head">
+          <h2 class="with-tag">평균 체류 시간 <em>어제</em></h2>
+          <img src="assets/icon-clock.svg" alt="" width="16" height="16">
+        </div>
+        <p class="kpi-value">109분</p>
+        <p class="badge down">
+          <img src="assets/icon-arrow-down.svg" alt="" width="16" height="16">
+          <strong>30분</strong>
+          <i></i>
+          <span>그제 대비</span>
+        </p>
+      </article>
+
+      <article class="widget chart-widget accent compare-widget" data-widget-id="chart-compare" data-widget-name="지난주 같은 요일 비교" data-widget-category="차트">
+        <div class="chart-head">
+          <h3>지난주 같은 요일 비교</h3>
+        </div>
+        <div class="compare-legend">
+          <div>
+            <span>체류인원 <em>(단위: 명)</em></span>
+            <span class="keys"><i class="sq pale-blue"></i>지난주 <i class="sq deep-blue"></i>오늘</span>
+          </div>
+          <div>
+            <span>혼잡도 <em>(단위: 명/㎡)</em></span>
+            <span class="keys"><i class="sq pale-green"></i>지난주 <i class="sq deep-green"></i>오늘</span>
+          </div>
+        </div>
+        <div id="chart-compare" class="am-host compare-host"></div>
+      </article>
+
+      <article class="widget chart-widget trend-widget" data-widget-id="chart-trend" data-widget-name="실시간 구역별 방문인원 추이" data-widget-category="차트">
+        <div class="chart-head">
+          <h2>실시간 구역별 방문인원 추이</h2>
+          <span class="unit">(단위: 명)</span>
+        </div>
+        <ul class="trend-legend">
+          <li><i class="swatch line red"></i>익선동 한옥 거리</li>
+          <li><i class="swatch line orange"></i>인사동</li>
+          <li><i class="swatch line yellow"></i>광화문 광장</li>
+          <li><i class="swatch line green"></i>청계천</li>
+          <li><i class="swatch line blue"></i>종로3가역</li>
+          <li><i class="swatch line pink"></i>창덕궁</li>
+        </ul>
+        <div id="chart-trend" class="am-host trend-host"></div>
+      </article>
+
+      <article class="widget map-widget" data-widget-id="map-jongno" data-widget-name="종로 구역 지도" data-widget-category="모니터링" aria-label="종로 구역 지도">
+        <div class="map-canvas map-overview" id="map-overview">
+          <img class="map-photo" src="assets/map-raw-1.png" alt="">
+
+          <button type="button" class="update" id="refresh">
+            <img src="assets/icon-refresh.svg" alt="" width="16" height="16">
+            <span>마지막 업데이트 <b id="updated-at">16:42:03</b></span>
+          </button>
+
+          <div class="status-pill map-status">
+            <div class="weather">
+              <img src="assets/icon-weather.svg" alt="" width="26" height="26">
+              <p><strong>27°</strong><span>맑음</span></p>
+            </div>
+            <span class="vdiv"></span>
+            <p class="clock"><span>2026.10.03(토)</span><span>16:54</span></p>
+          </div>
+
+          <div class="region region-b">
+            <img src="assets/region-b.svg" alt="">
+            <div class="rlabel">
+              <strong>헌법 재판소 일대</strong>
+              <em>B</em>
+            </div>
+          </div>
+          <div class="region region-d">
+            <img src="assets/region-d.svg" alt="">
+            <div class="rlabel">
+              <strong>광화문 광장 접점</strong>
+              <em>D</em>
+            </div>
+          </div>
+          <div class="region region-c">
+            <img src="assets/region-c.svg" alt="">
+            <div class="rlabel">
+              <strong>낙원동</strong>
+              <em>C</em>
+            </div>
+          </div>
+          <button type="button" class="region region-a" id="region-ikseon" title="익선동 상세" aria-label="익선동 구역 상세 보기">
+            <img src="assets/region-a.svg" alt="">
+            <div class="rlabel warn">
+              <img src="assets/icon-warning.svg" alt="" width="24" height="22">
+              <strong>익선동</strong>
+              <em>A</em>
+            </div>
+          </button>
+
+          <aside class="crowd-legend" aria-label="혼잡 단계">
+            <div class="lv watch"><span>관심</span><b>~2<small>명/ms</small></b></div>
+            <div class="lv caution"><span>주의</span><b>2~4<small>명/ms</small></b></div>
+            <div class="lv warning"><span>경계</span><b>4~5<small>명/ms</small></b></div>
+            <div class="lv critical"><span>심각</span><b>5~<small>명/ms</small></b></div>
+          </aside>
+        </div>
+
+        <div class="map-canvas map-detail" id="map-detail" hidden>
+          <img class="map-photo map-photo-detail" src="assets/map-raw-1.png" alt="익선동 상세">
+          <div class="map-points" id="map-points" aria-label="익선동 지점"></div>
+
+          <button type="button" class="update map-detail-update">
+            <img src="assets/icon-refresh.svg" alt="" width="16" height="16">
+            <span>마지막 업데이트 <b>16:42:03</b></span>
+          </button>
+
+          <aside class="crowd-legend" aria-label="혼잡 단계">
+            <div class="lv watch"><span>관심</span><b>~2<small>명/ms</small></b></div>
+            <div class="lv caution"><span>주의</span><b>2~4<small>명/ms</small></b></div>
+            <div class="lv warning"><span>경계</span><b>4~5<small>명/ms</small></b></div>
+            <div class="lv critical"><span>심각</span><b>5~<small>명/ms</small></b></div>
+          </aside>
+
+          <button type="button" class="map-back" id="map-back" aria-label="전체 지도로 돌아가기">
+            <img src="assets/map-detail/icon-reply.svg" alt="" width="20" height="20">
+            <span>돌아가기</span>
+          </button>
+        </div>
+      </article>
+    </main>
+
+  </div>
+    </div>
+  </div>
+  <div class="widget-modal" id="widget-modal" hidden aria-hidden="true">
+    <div class="widget-modal-backdrop" data-close-modal></div>
+    <div class="widget-modal-panel" role="dialog" aria-modal="true" aria-labelledby="widget-modal-title">
+      <header class="widget-modal-head">
+        <h2 id="widget-modal-title">위젯 추가</h2>
+        <button type="button" class="widget-modal-close" data-close-modal aria-label="닫기">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <div class="widget-modal-search">
+        <i class="bi bi-search"></i>
+        <input type="search" id="widget-search" placeholder="위젯 검색..." autocomplete="off">
+      </div>
+
+      <div class="widget-modal-filters" role="tablist" aria-label="위젯 분류">
+        <button type="button" class="wfilter is-active" data-filter="all" role="tab" aria-selected="true">
+          <i class="bi bi-grid-3x3-gap"></i>전체
+        </button>
+        <button type="button" class="wfilter" data-filter="모니터링" role="tab" aria-selected="false">
+          <i class="bi bi-display"></i>모니터링
+        </button>
+        <button type="button" class="wfilter" data-filter="차트" role="tab" aria-selected="false">
+          <i class="bi bi-bar-chart"></i>차트
+        </button>
+        <button type="button" class="wfilter" data-filter="사용자 정의" role="tab" aria-selected="false">
+          <i class="bi bi-sliders"></i>사용자 정의
+        </button>
+        <button type="button" class="wfilter" data-filter="정보" role="tab" aria-selected="false">
+          <i class="bi bi-info-circle"></i>정보
+        </button>
+      </div>
+
+      <div class="widget-modal-list" id="widget-catalog-list"></div>
+    </div>
+  </div>
+
+  <div class="widget-modal settings-modal" id="widget-settings-modal" hidden aria-hidden="true">
+    <div class="widget-modal-backdrop" data-close-settings></div>
+    <div class="widget-modal-panel settings-panel" role="dialog" aria-modal="true" aria-labelledby="widget-settings-title">
+      <header class="widget-modal-head">
+        <h2 id="widget-settings-title">위젯 설정</h2>
+        <button type="button" class="widget-modal-close" data-close-settings aria-label="닫기">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <div class="settings-body">
+        <label class="settings-field">
+          <span class="settings-label">위젯 제목</span>
+          <input type="text" id="settings-title-input" class="settings-input" autocomplete="off">
+        </label>
+        <div class="settings-field">
+          <span class="settings-label">위젯 타입</span>
+          <div class="settings-type" id="settings-type-display">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+            <span id="settings-type-label">-</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="settings-foot">
+        <button type="button" class="settings-btn cancel" data-close-settings>취소</button>
+        <button type="button" class="settings-btn save" id="settings-save-btn">저장</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- CCTV 모달 (Figma 25:2859) -->
+  <div class="cctv-modal" id="cctv-modal" hidden aria-hidden="true">
+    <div class="cctv-panel" id="cctv-panel" role="dialog" aria-modal="true" aria-labelledby="cctv-title">
+      <header class="cctv-head" id="cctv-drag-handle">
+        <div class="cctv-head-left">
+          <span class="cctv-zone" id="cctv-zone">
+            <img src="assets/cctv/warn.svg" alt="" width="17" height="15">
+            <em id="cctv-zone-id">A-11</em>
+          </span>
+          <h2 id="cctv-title">종로 3가 앞 CCTV</h2>
+        </div>
+        <div class="cctv-head-right">
+          <span class="cctv-live"><i></i>실시간</span>
+          <button type="button" class="cctv-close" id="cctv-close" aria-label="닫기">
+            <img src="assets/cctv/close.svg" alt="" width="24" height="24">
+          </button>
+        </div>
+      </header>
+
+      <div class="cctv-feed">
+        <img class="cctv-feed-img" id="cctv-feed-img" src="assets/cctv/feed.png" alt="CCTV 영상">
+        <div class="cctv-stamp" id="cctv-stamp">2026-10-03 16:54:12</div>
+        <button type="button" class="cctv-play" id="cctv-play" aria-label="재생" aria-pressed="false">
+          <span class="cctv-play-rings" aria-hidden="true">
+            <i></i><i></i><i></i>
+          </span>
+          <span class="cctv-play-icon" aria-hidden="true">
+            <svg class="icon-play" viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="28" height="28" hidden><path fill="#fff" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+          </span>
+        </button>
+      </div>
+
+      <footer class="cctv-foot">
+        <img src="assets/cctv/pin.svg" alt="" width="24" height="24">
+        <span id="cctv-address">서울 종로구 종로3가 123</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+  <script src="js/map-detail.js"></script>
+  <script src="js/cctv-modal.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/edit-mode.js"></script>
+</body>
+</html>
