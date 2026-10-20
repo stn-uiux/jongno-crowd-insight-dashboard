@@ -5,8 +5,8 @@
 
   const LEVELS = {
     danger: { label: "위험", cls: "is-danger" },
-    emergency: { label: "심각", cls: "is-emergency" },
-    critical: { label: "심각", cls: "is-critical" },
+    emergency: { label: "위험", cls: "is-emergency" },
+    critical: { label: "위험", cls: "is-critical" },
     warning: { label: "경계", cls: "is-warning" },
     caution: { label: "주의", cls: "is-caution" },
     attention: { label: "관심", cls: "is-attention" },

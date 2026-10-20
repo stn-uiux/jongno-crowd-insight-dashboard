@@ -153,8 +153,8 @@ img {
   flex: 0 0 auto;
 }
 .edit-btn img {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   flex: 0 0 auto;
 }
 .edit-btn:hover {
@@ -237,6 +237,9 @@ img {
    05. WIDGET BASE & COMMON SLOTS (.widget, .widget--*, .widget-head, .widget-title)
    ========================================================================== */
 .widget {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -330,7 +333,7 @@ img {
 }
 .kpi-value {
   width: 100%;
-  margin: clamp(2px, 0.6vh, 6px) 0 0;
+  margin: 0;
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -352,7 +355,7 @@ img {
   flex: none;
 }
 .kpi .badge {
-  margin-top: clamp(4px, 1.2vh, 12px);
+  margin: 0;
 }
 .badge {
   margin: 0;
@@ -389,6 +392,7 @@ img {
 .widget--chart {
   display: flex;
   flex-direction: column;
+  gap: 8px;
   width: 100%;
   min-height: 0;
   flex: 1 1 auto;
@@ -420,9 +424,7 @@ img {
   min-height: 0;
   display: flex;
   flex-direction: column;
-}
-.stay-widget {
-  gap: clamp(4px, 0.8vh, 6px);
+  gap: 8px;
 }
 
 /* 커스텀 드롭다운 셀렉트 */
@@ -492,11 +494,33 @@ img {
   flex: none;
   overflow: visible;
 }
+/* 파이 차트 중앙 체류인원 레이블 (인라인 스타일 배제, 시멘틱 토큰 연동) */
+.pie-center-label {
+  text-align: center;
+  color: var(--text-color-primary);
+  line-height: var(--leading-tight);
+  font-family: var(--font-sans);
+  pointer-events: none;
+  user-select: none;
+}
+.pie-center-label strong {
+  display: block;
+  font-size: var(--font-pie-center-value);
+  font-weight: var(--font-weight-pie-center);
+  letter-spacing: -0.02em;
+}
+.pie-center-label span {
+  display: block;
+  font-size: var(--font-pie-center-label);
+  font-weight: var(--font-weight-label);
+  color: var(--text-color-muted);
+  opacity: 0.75;
+}
 .stay-host,
 .compare-host,
 .trend-host {
   flex: 1 1 auto;
-  margin-top: 16px;
+  margin: 0;
   min-height: 0;
 }
 /* 차트 툴팁이 밖으로 나오게 */
@@ -550,11 +574,9 @@ img {
 .compare-legend {
   display: flex;
   gap: 16px;
+  margin: 0;
   font-size: var(--text-md);
   font-weight: var(--font-weight-legend);
-}
-.stay-legend {
-  margin-top: 8px;
 }
 .stay-legend span,
 .compare-legend span {
@@ -599,7 +621,7 @@ img {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px 16px;
-  margin-top: 10px;
+  margin: 0;
   font-size: var(--text-lg);
   font-weight: var(--font-weight-legend);
   white-space: nowrap;
@@ -636,7 +658,7 @@ img {
   justify-content: center;
   column-gap: 16px;
   row-gap: 6px;
-  margin: 8px 0;
+  margin: 0;
   flex: 0 0 auto;
 }
 .trend-legend li { font-size: var(--text-lg); }
@@ -688,6 +710,11 @@ img {
 }
 .map-detail .map-stage {
   --region-shift-x: -5%;
+  --region-shift-y: 0%;
+  --region-scale: 1;
+}
+.map-detail:is([data-active-region="B"], [data-active-region="C"], [data-active-region="D"]) .map-stage {
+  --region-shift-x: 0%;
   --region-shift-y: 0%;
   --region-scale: 1;
 }
@@ -743,6 +770,9 @@ img {
   margin: auto;
 }
 .region {
+  /* 기본 상태 (기본/정상: 흰색) */
+  --region-color: var(--region-color-default);
+  --region-glow: var(--region-glow-default);
   position: absolute;
   padding: 0;
   border: 0;
@@ -751,61 +781,72 @@ img {
   pointer-events: auto;
   cursor: pointer;
 }
+/* 구역 상태별 시멘틱 색상 연동 (관심 · 주의 · 경계 · 위험) */
+.region:is(.is-normal, .region--normal) {
+  --region-color: var(--region-color-default);
+  --region-glow: var(--region-glow-default);
+}
+.region:is(.is-watch, .is-attention, .region--watch, .region--attention) {
+  --region-color: var(--region-color-watch);
+  --region-glow: var(--region-glow-watch);
+}
+.region:is(.is-caution, .region--caution) {
+  --region-color: var(--region-color-caution);
+  --region-glow: var(--region-glow-caution);
+}
+.region:is(.is-warning, .region--warning) {
+  --region-color: var(--region-color-warning);
+  --region-glow: var(--region-glow-warning);
+}
+.region:is(.is-critical, .is-emergency, .is-danger, .region--critical) {
+  --region-color: var(--region-color-critical);
+  --region-glow: var(--region-glow-critical);
+}
+
 .region:focus-visible {
   outline: 2px solid var(--chart-stay);
   outline-offset: 2px;
 }
-.region::before {
-  content: "";
+/* 구역 폴리곤 (인라인 SVG: 상태별 시멘틱 색상 + 투명도 채우기 + 외곽선 + 글로우 일원화) */
+.region-poly {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  backdrop-filter: var(--blur-xs);
-  -webkit-backdrop-filter: var(--blur-xs);
-  background: var(--surface-glass-xs);
-  mask-size: 100% 100%;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-}
-.region > img {
-  position: relative;
-  z-index: 1;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  z-index: 1;
   pointer-events: none;
+  overflow: visible;
+  filter: drop-shadow(0 0 10px var(--region-glow));
+  transition: filter 0.25s ease;
+}
+.region-poly path {
+  fill: var(--region-color);
+  fill-opacity: 0.2;
+  stroke: var(--region-color);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  transition: fill 0.25s ease, stroke 0.25s ease, fill-opacity 0.25s ease;
+}
+.region:hover .region-poly {
+  filter: brightness(1.25) drop-shadow(0 0 18px var(--region-glow));
+}
+.region:hover .region-poly path {
+  fill-opacity: 0.35;
+  stroke-width: 2.2;
 }
 .region .rlabel {
   z-index: 2;
 }
-.region-b { left: 40.6%; top: 8.6%; width: 37.6%; height: 47.2%; }
-.region-b::before {
-  mask-image: url("../assets/region-b.svg");
-  -webkit-mask-image: url("../assets/region-b.svg");
-}
-.region-d { left: 7.9%; top: 69.6%; width: 35.7%; height: 34.1%; }
-.region-d::before {
-  mask-image: url("../assets/region-d.svg");
-  -webkit-mask-image: url("../assets/region-d.svg");
-}
-.region-c { left: 44.7%; top: 53.4%; width: 29.4%; height: 32.4%; }
-.region-c::before {
-  mask-image: url("../assets/region-c.svg");
-  -webkit-mask-image: url("../assets/region-c.svg");
-}
+.region-b { left: 52%; top: 18%; width: 31.8%; height: 40.0%; }
+.region-d { left: 18.1%; top: 82.5%; width: 15.5%; height: 14.8%; }
+.region-c { left: 78.4%; top: 67.1%; width: 10.4%; height: 12.0%; }
 .region-a {
-  left: 74.1%;
-  top: 48.3%;
-  width: 25.5%;
-  height: 29.4%;
+  left: 88.0%;
+  top: 66.9%;
+  width: 11.6%;
+  height: 12.7%;
   z-index: 2;
   cursor: pointer;
-}
-.region-a::before {
-  mask-image: url("../assets/region-a.svg");
-  -webkit-mask-image: url("../assets/region-a.svg");
 }
 .region-a:focus-visible {
   outline: 2px solid var(--chart-stay);
@@ -834,20 +875,45 @@ img {
   line-height: var(--leading-none);
   text-shadow: 0 4px 16px var(--p-black), 0 4px 16px #303030;
 }
-.region-b .rlabel { left: 18%; top: 42%; width: 56%; }
-.region-d .rlabel { left: 20%; top: 39%; width: 61%; }
-.region-c .rlabel { left: 35%; top: 45%; width: 30%; }
-.region-a .rlabel { left: 33%; top: 37%; width: 34%; }
-.rlabel.warn img {
-  width: clamp(18px, 1.3vw, 24px);
-  height: auto;
-  margin-bottom: clamp(8px, 1.2vh, 16px);
+.region-b .rlabel {
+  left: 50%;
+  top: 38%;
+  transform: translateX(-50%);
+  width: max-content;
+  white-space: nowrap;
 }
-.region:hover > img {
-  filter: brightness(1.35);
+.region-b .rlabel strong {
+  white-space: nowrap;
+}
+.region-b .rlabel em {
+  font-size: var(--font-region-b-code);
+  margin-top: 6px;
 }
 
-/* 지도 우측 하단 혼잡단계 범례 (관심·주의·경계·심각 시멘틱 컬러 연동) */
+.region-d .rlabel { left: 8%; top: 26%; width: 84%; }
+.region-d .rlabel strong { font-size: var(--font-region-d-title); white-space: nowrap; }
+.region-d .rlabel em { font-size: var(--font-region-d-code); margin-top: 6px; }
+
+.region-c .rlabel { left: 12%; top: 26%; width: 76%; }
+.region-c .rlabel strong { font-size: var(--font-region-c-title); }
+.region-c .rlabel em { font-size: var(--font-region-c-code); margin-top: 6px; }
+
+.region-a .rlabel { left: 10%; top: 18%; width: 80%; }
+.region-a .rlabel strong { font-size: var(--font-region-a-title); }
+.region-a .rlabel em { font-size: var(--font-region-a-code); margin-top: 6px; }
+
+/* 구역 경고 아이콘: 위험(is-critical / is-emergency / is-danger)일 때만 표시 */
+.region .region-warn {
+  display: none;
+  width: clamp(16px, 1.3vw, 22px);
+  height: auto;
+  margin-bottom: 6px;
+}
+.region:is(.is-critical, .is-emergency, .is-danger, .region--critical) .region-warn {
+  display: block;
+}
+
+/* 지도 우측 하단 혼잡단계 범례 (관심·주의·경계·위험 시멘틱 컬러 연동) */
 .crowd-legend {
   position: absolute;
   right: clamp(12px, 1.5vw, 24px);
@@ -933,6 +999,7 @@ img {
   z-index: var(--z-base);
   transform: scale(var(--mp-scale));
   transform-origin: 0 0;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 /* 상세 맵 지점(map-point) 사이즈 3단계 (lg: 현재 크기 기본 / md: 중간 / sm: 소형)
    - .map-point 또는 내부 .mp-tip 어디에 붙여도 mp-core + 툴팁 + 이모지 + 배지 + CCTV 카메라 버튼이 정비율로 함께 조절됨 */
@@ -948,7 +1015,18 @@ img {
 .map-point:has(.mp-tip--sm, .mp-tip.is-sm) {
   --mp-scale: var(--mp-scale-sm, 0.65);
 }
-/* 5단계 상태 클래스 (정상 · 관심 · 주의 · 경계 · 심각)
+
+/* 컨트롤러 일괄 사이즈 전환 */
+#map-points[data-point-size="sm"] .map-point {
+  --mp-scale: var(--mp-scale-sm, 0.65) !important;
+}
+#map-points[data-point-size="md"] .map-point {
+  --mp-scale: var(--mp-scale-md, 0.8) !important;
+}
+#map-points[data-point-size="lg"] .map-point {
+  --mp-scale: var(--mp-scale-lg, 1) !important;
+}
+/* 5단계 상태 클래스 (정상 · 관심 · 주의 · 경계 · 위험)
    - .map-point 또는 .mp-tip, .mp-emo 어디에 클래스를 붙여도 이모지/배지색/배지문구/광원이 자동 변경됨 */
 :is(.map-point, .mp-tip, .mp-emo):is(.is-normal, .mp-state--normal) {
   --mp-level-color: var(--level-normal);
@@ -976,7 +1054,7 @@ img {
 }
 :is(.map-point, .mp-tip, .mp-emo):is(.is-emergency, .is-critical, .is-danger, .mp-state--emergency, .mp-state--critical) {
   --mp-level-color: var(--level-emergency);
-  --mp-badge-label: "심각";
+  --mp-badge-label: "위험";
   --mp-emoji-bg: url("../assets/map-detail/emoji-emergency.png");
   --mp-glow-bg: url("../assets/map-detail/glow-emergency.svg");
 }
@@ -1188,7 +1266,7 @@ img {
   background: var(--mp-emoji-bg) center / contain no-repeat;
   object-fit: contain;
 }
-/* 상세 맵 지점 이모지 5단계 (정상 · 관심 · 주의 · 경계 · 심각) */
+/* 상세 맵 지점 이모지 5단계 (정상 · 관심 · 주의 · 경계 · 위험) */
 .map-point.is-normal .mp-emo-icon,
 .mp-tip.is-normal .mp-emo-icon,
 .mp-emo-icon.is-normal {
@@ -1244,7 +1322,7 @@ img {
 .mp-badge::before {
   content: var(--mp-badge-label);
 }
-/* 상세 맵 지점 배지 5단계 (정상 · 관심 · 주의 · 경계 · 심각 시멘틱 컬러 연동) */
+/* 상세 맵 지점 배지 5단계 (정상 · 관심 · 주의 · 경계 · 위험 시멘틱 컬러 연동) */
 .map-point.is-normal .mp-badge,
 .mp-tip.is-normal .mp-badge,
 .mp-badge.is-normal,
@@ -1282,7 +1360,7 @@ img {
 .mp-badge.is-critical,
 .mp-badge--emergency {
   background: var(--level-emergency);
-  --mp-badge-label: "심각";
+  --mp-badge-label: "위험";
 }
 
 .mp-stats {
@@ -1395,6 +1473,93 @@ img {
   filter: brightness(0) invert(1);
 }
 
+/* 상세 맵 지점 크기 조절 슬라이더 컨트롤러 (Figma 스마일 바) */
+.map-point-size-bar {
+  position: absolute;
+  top: clamp(12px, 1.8vh, 20px);
+  right: clamp(12px, 1.8vw, 24px);
+  z-index: var(--z-map-ui, 6);
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(16px, 1.6vw, 24px);
+  height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  background: var(--p-black-a40);
+  backdrop-filter: var(--blur-xl);
+  -webkit-backdrop-filter: var(--blur-xl);
+  border: 1px solid var(--p-white-a15);
+  box-shadow: var(--shadow-legend);
+}
+.map-point-size-bar .point-size-track {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: var(--p-white-a35);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 0;
+}
+.point-size-btn {
+  position: relative;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  /* 비활성 상태: 회색 처리 */
+  filter: grayscale(1);
+  transition: filter 0.2s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.point-size-btn:focus-visible {
+  outline: 2px solid var(--chart-stay);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+/* 호버 시: 컬러 복원 & 확대 */
+.point-size-btn:hover {
+  filter: grayscale(0);
+  transform: scale(1.15);
+}
+/* 활성(선택) 상태: 컬러 유지 */
+.point-size-btn.is-active {
+  filter: grayscale(0);
+  transform: scale(1.06);
+}
+.point-size-face {
+  display: block;
+  border-radius: 50%;
+  background-image: url("../assets/map-detail/emoji-normal.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.2s ease;
+}
+.point-size-btn.is-active .point-size-face,
+.point-size-btn:hover .point-size-face {
+  box-shadow: 0 0 14px rgba(255, 180, 40, 0.65), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.point-size-face--sm {
+  width: 20px;
+  height: 20px;
+}
+.point-size-face--md {
+  width: 28px;
+  height: 28px;
+}
+.point-size-face--lg {
+  width: 36px;
+  height: 36px;
+}
+
 /* ==========================================================================
    09. WIDGET: ZONE LIST TABLE (.widget--table / .zone-list-widget)
    ========================================================================== */
@@ -1403,7 +1568,7 @@ img {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  gap: 10px;
+  gap: 8px;
 }
 .zone-list-head {
   gap: 12px;
@@ -1546,7 +1711,7 @@ img {
   letter-spacing: 0.02em;
 }
 
-/* 혼잡 레벨 배지 (위험·심각·경계·주의·관심 시멘틱 컬러 연동) */
+/* 혼잡 레벨 배지 (위험·경계·주의·관심 시멘틱 컬러 연동) */
 .zone-level {
   display: inline-flex;
   align-items: center;
@@ -1567,18 +1732,8 @@ img {
   flex: none;
 }
 .zone-level.is-danger,
-.zone-level.is-emergency { color: var(--level-danger); }
-.zone-level.is-danger i,
-.zone-level.is-emergency i {
-  width: 0;
-  height: 0;
-  border-radius: 0;
-  background: none;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 9px solid currentColor;
-}
-.zone-level.is-critical  { color: var(--level-critical); }
+.zone-level.is-emergency,
+.zone-level.is-critical  { color: var(--level-danger); }
 .zone-level.is-warning   { color: var(--level-warning); }
 .zone-level.is-caution   { color: var(--level-caution); }
 .zone-level.is-watch,
