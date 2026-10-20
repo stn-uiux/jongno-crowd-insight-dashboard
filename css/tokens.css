@@ -1,0 +1,564 @@
+/* ==========================================================================
+   DESIGN SYSTEM TOKENS (css/tokens.css)
+   - 01. Primitive Tokens (--p-*) : 빨·주·노·초·파·남·보·핑크·시안·무채색 (각 100~900 9단계 통일),
+                                    투명도(White/Black Opacity), 기본 그라데이션
+   - 02. Semantic Tokens          : 브랜드(Primary/Secondary), 혼잡단계(심각·경계·주의·관심),
+                                    KPI, 차트 시리즈, 텍스트, 배경(Surface), 보더, 사이드바
+   - 03. Foundation Scales        : 타이포그래피, 간격, 라운드, 블러, 그림자, Z-Index
+   - 04. Typography Role Classes  : .typo-display, .typo-title-*, .typo-kpi, .typo-body*, .typo-caption, .typo-badge
+   ========================================================================== */
+:root {
+  /* ------------------------------------------------------------------------
+     01. PRIMITIVE TOKENS (--p-*) — 전 색상군 100 ~ 900 (9단계 스케일 통일)
+     ------------------------------------------------------------------------ */
+
+  /* 1) Red (빨강: 100 ~ 900) */
+  --p-red-100: #ffe0e1;
+  --p-red-200: #ff9fa1;
+  --p-red-300: #ff6a6c;
+  --p-red-400: #f56767;
+  --p-red-500: #e3373f;
+  --p-red-550: #df4749;
+  --p-red-600: #dc2626;
+  --p-red-650: #d42a2a;
+  --p-red-700: #e11d48;
+  --p-red-800: #be123c;
+  --p-red-900: #881337;
+  --p-red-a10: rgba(220, 38, 38, 0.12);
+  --p-red-a18: rgba(220, 38, 38, 0.18);
+  --p-red-tint-a10: rgba(255, 201, 201, 0.10);
+
+  /* 2) Orange (주황: 100 ~ 900) */
+  --p-orange-100: #ffedd5;
+  --p-orange-200: #fed7aa;
+  --p-orange-300: #ffae71;
+  --p-orange-400: #ff7f30;
+  --p-orange-500: #ee7c26;
+  --p-orange-600: #f59e0b;
+  --p-orange-700: #c2410c;
+  --p-orange-800: #9a3412;
+  --p-orange-900: #7c2d12;
+
+  /* 3) Yellow (노랑: 100 ~ 900) */
+  --p-yellow-100: #fef9c3;
+  --p-yellow-200: #fef08a;
+  --p-yellow-300: #ffe888;
+  --p-yellow-400: #ffce00;
+  --p-yellow-500: #ffbb00;
+  --p-yellow-600: #eab308;
+  --p-yellow-700: #ca8a04;
+  --p-yellow-800: #a16207;
+  --p-yellow-900: #713f12;
+
+  /* 4) Green / Emerald (초록: 100 ~ 900) */
+  --p-green-100: #d7f4e2;
+  --p-green-200: #b2f2cb;
+  --p-green-300: #89f09d;
+  --p-green-400: #54e070;
+  --p-green-500: #25d08e;
+  --p-green-550: #2ad44c;
+  --p-green-600: #00aea0;
+  --p-green-700: rgba(37, 180, 70, 0.92);
+  --p-green-800: rgba(30, 150, 60, 0.95);
+  --p-green-900: #065f46;
+  --p-green-a22: rgba(42, 212, 76, 0.22);
+  --p-green-a35: rgba(42, 212, 76, 0.35);
+  --p-green-a40: rgba(42, 212, 76, 0.40);
+  --p-green-a55: rgba(42, 212, 76, 0.55);
+  --p-green-a70: rgba(42, 212, 76, 0.70);
+
+  /* 5) Blue (파랑: 100 ~ 900) */
+  --p-blue-100: #cee5ff;
+  --p-blue-200: #93c5fd;
+  --p-blue-250: #5cc5ff;
+  --p-blue-300: #6abcff;
+  --p-blue-350: #6fb9ff;
+  --p-blue-400: #55adff;
+  --p-blue-450: #60a5fa;
+  --p-blue-500: #4992ff;
+  --p-blue-550: #3d91e0;
+  --p-blue-600: #3083ff;
+  --p-blue-650: #207dd4;
+  --p-blue-700: #227ed7;
+  --p-blue-750: #2563eb;
+  --p-blue-800: #1d4ed8;
+  --p-blue-900: #065bac;
+  --p-blue-a15: rgba(59, 130, 246, 0.15);
+  --p-blue-a20: rgba(1, 110, 255, 0.20);
+  --p-blue-a35: rgba(59, 130, 246, 0.35);
+  --p-blue-a50: rgba(0, 94, 255, 0.50);
+  --p-blue-a55: rgba(59, 130, 246, 0.55);
+
+  /* 6) Indigo (남색: 100 ~ 900) */
+  --p-indigo-100: #dee1ff;
+  --p-indigo-200: #b8c0ff;
+  --p-indigo-300: #8e7aff;
+  --p-indigo-400: #6d78ff;
+  --p-indigo-450: #6b7dff;
+  --p-indigo-500: #505cff;
+  --p-indigo-600: #6b54ff;
+  --p-indigo-700: #4338ca;
+  --p-indigo-800: #312e81;
+  --p-indigo-900: #1d324e;
+  --p-indigo-a18: rgba(80, 92, 255, 0.18);
+  --p-indigo-a28: rgba(80, 92, 255, 0.28);
+  --p-indigo-a35: rgba(80, 92, 255, 0.35);
+  --p-indigo-row-a42: rgb(58 69 111 / 42%);
+  --p-indigo-row-a50: rgb(58 69 111 / 50%);
+
+  /* 7) Purple (보라: 100 ~ 900) */
+  --p-purple-100: #f3e8ff;
+  --p-purple-200: #dec0ff;
+  --p-purple-300: #c082ff;
+  --p-purple-400: #8b5cf6;
+  --p-purple-500: #883dd4;
+  --p-purple-600: #9a499f;
+  --p-purple-700: #6d28d9;
+  --p-purple-800: #5b21b6;
+  --p-purple-900: #3b0764;
+
+  /* 8) Pink (핑크/마젠타: 100 ~ 900) */
+  --p-pink-100: #fce7f3;
+  --p-pink-200: #fbcfe8;
+  --p-pink-300: #ff71e3;
+  --p-pink-400: #f472b6;
+  --p-pink-500: #f42ccd;
+  --p-pink-550: #f346d4;
+  --p-pink-600: #db2777;
+  --p-pink-700: #be185d;
+  --p-pink-800: #9d174d;
+  --p-pink-900: #831843;
+
+  /* 9) Cyan (시안/청록: 100 ~ 900) */
+  --p-cyan-100: #cffafe;
+  --p-cyan-200: #a5f3fc;
+  --p-cyan-300: #67e8f9;
+  --p-cyan-400: #00e5ff;
+  --p-cyan-500: #06b6d4;
+  --p-cyan-600: #0891b2;
+  --p-cyan-700: #0e7490;
+  --p-cyan-800: #155e75;
+  --p-cyan-900: #164e63;
+
+  /* 10) Neutral / Slate (무채색 & 다크 배경: 100 ~ 980) */
+  --p-neutral-100: #f2f2f2;
+  --p-neutral-120: #eeeeee;
+  --p-neutral-150: #e8eaef;
+  --p-neutral-180: #dbe3f3;
+  --p-neutral-200: #d5deea;
+  --p-neutral-250: #d1d5d2;
+  --p-neutral-300: #bcbcbc;
+  --p-neutral-350: #b4cde6;
+  --p-neutral-400: #9eaed0;
+  --p-neutral-450: #94a3b8;
+  --p-neutral-500: #8b93a7;
+  --p-neutral-550: #8392a8;
+  --p-neutral-600: #64748b;
+  --p-neutral-650: #5c5857;
+  --p-neutral-700: #505050;
+  --p-neutral-750: #252525;
+  --p-neutral-780: #222a3c;
+  --p-neutral-800: #1a2030;
+  --p-neutral-820: #141820;
+  --p-neutral-850: #121722;
+  --p-neutral-900: #0d1118;
+  --p-neutral-920: #0a0a12;
+  --p-neutral-950: #070b14;
+  --p-neutral-980: #07080b;
+
+  /* 11) White Opacity Scale (투명도별 화이트) */
+  --p-white: #ffffff;
+  --p-white-a03: rgba(255, 255, 255, 0.03);
+  --p-white-a04: rgba(255, 255, 255, 0.045);
+  --p-white-a05: rgba(255, 255, 255, 0.05);
+  --p-white-a06: rgba(255, 255, 255, 0.06);
+  --p-white-a07: #ffffff12;
+  --p-white-a08: rgba(255, 255, 255, 0.08);
+  --p-white-a10: rgba(255, 255, 255, 0.10);
+  --p-white-a12: rgba(255, 255, 255, 0.12);
+  --p-white-a15: rgba(255, 255, 255, 0.15);
+  --p-white-a18: rgba(255, 255, 255, 0.18);
+  --p-white-a20: rgba(255, 255, 255, 0.20);
+  --p-white-a24: rgba(255, 255, 255, 0.24);
+  --p-white-a25: rgba(255, 255, 255, 0.25);
+  --p-white-a28: rgba(255, 255, 255, 0.28);
+  --p-white-a30: rgba(255, 255, 255, 0.30);
+  --p-white-a35: rgba(255, 255, 255, 0.35);
+  --p-white-a40: rgba(255, 255, 255, 0.40);
+  --p-white-a45: rgba(255, 255, 255, 0.45);
+  --p-white-a50: rgba(255, 255, 255, 0.50);
+  --p-white-a65: rgba(255, 255, 255, 0.65);
+  --p-white-a70: rgba(255, 255, 255, 0.70);
+  --p-white-a75: rgba(255, 255, 255, 0.75);
+  --p-white-a78: rgba(255, 255, 255, 0.78);
+  --p-white-a80: rgba(255, 255, 255, 0.80);
+  --p-white-a85: rgba(255, 255, 255, 0.85);
+  --p-white-a90: rgba(255, 255, 255, 0.90);
+  --p-white-a95: rgba(255, 255, 255, 0.95);
+
+  /* 12) Black Opacity Scale (투명도별 블랙) */
+  --p-black: #000000;
+  --p-black-a10: rgba(0, 0, 0, 0.10);
+  --p-black-a12: rgba(0, 0, 0, 0.12);
+  --p-black-a15: rgba(0, 0, 0, 0.15);
+  --p-black-a18: rgba(0, 0, 0, 0.18);
+  --p-black-a25: rgba(0, 0, 0, 0.25);
+  --p-black-a42: rgba(0, 0, 0, 0.42);
+  --p-black-a45: rgba(0, 0, 0, 0.45);
+  --p-black-a50: rgba(0, 0, 0, 0.50);
+  --p-black-a55: rgba(0, 0, 0, 0.55);
+  --p-black-a65: rgba(0, 0, 0, 0.65);
+  --p-black-a70: rgba(0, 0, 0, 0.70);
+
+  /* 13) Primitive Gradients (기본 그라데이션) */
+  --p-gradient-brand: linear-gradient(135deg, var(--p-indigo-500) 0%, var(--p-red-500) 100%);
+  --p-gradient-brand-text: linear-gradient(90deg, var(--p-indigo-600), #ff2832);
+  --p-gradient-brand-border: linear-gradient(
+    135deg,
+    var(--p-indigo-500) 0%,
+    rgba(154, 73, 159, 0.8) 11%,
+    rgba(154, 73, 159, 0.6) 22%,
+    rgba(154, 73, 159, 0.4) 33%,
+    rgba(154, 73, 159, 0.2) 44%,
+    rgba(154, 73, 159, 0.2) 55%,
+    rgba(154, 73, 159, 0.2) 66%,
+    rgba(154, 73, 159, 0.4) 77%,
+    rgba(154, 73, 159, 0.6) 88%,
+    var(--p-red-500) 100%
+  );
+  --p-gradient-brand-fill: linear-gradient(
+    180deg,
+    rgba(80, 92, 255, 0.1) 0%,
+    rgba(227, 55, 63, 0.1) 100%
+  );
+  --p-gradient-blue-violet: linear-gradient(90deg, #3b82f6, var(--p-purple-400));
+  --p-gradient-avatar: linear-gradient(135deg, #3b82f6, var(--p-purple-400));
+  --p-gradient-tooltip-light: linear-gradient(130deg, var(--p-white) 52%, var(--p-neutral-120) 100%);
+  --p-gradient-live-dot: linear-gradient(137deg, var(--p-green-550) 4%, var(--p-green-300) 100%);
+  --p-gradient-visit-today: linear-gradient(180deg, var(--p-blue-900), var(--p-blue-700));
+  --p-gradient-cong-today: linear-gradient(180deg, var(--p-green-600), var(--p-green-500));
+
+  /* ------------------------------------------------------------------------
+     02. SEMANTIC TOKENS (역할별 시멘틱 컬러)
+     ------------------------------------------------------------------------ */
+  /* Brand Primary & Secondary */
+  --color-primary: var(--p-indigo-500);
+  --color-primary-hover: var(--p-blue-750);
+  --color-primary-soft: var(--p-indigo-a18);
+  --color-secondary: var(--p-red-500);
+  --color-primary-mid: var(--p-purple-600);
+  --color-accent: var(--p-blue-450);
+
+  --gradient-brand: var(--p-gradient-brand);
+  --gradient-brand-text: var(--p-gradient-brand-text);
+  --gradient-brand-border: var(--p-gradient-brand-border);
+  --gradient-brand-fill: var(--p-gradient-brand-fill);
+
+  /* Crowd Status Levels (혼잡도 5단계: 정상 · 관심 · 주의 · 경계 · 심각/위험) */
+  --level-normal: var(--p-blue-250);
+  --level-watch: var(--p-blue-500);
+  --level-attention: var(--p-blue-600);
+  --level-caution: var(--p-yellow-500);
+  --level-warning: var(--p-orange-400);
+  --level-critical: var(--p-red-600);
+  --level-emergency: var(--p-red-600);
+  --level-danger: var(--p-red-600);
+  --level-danger-bg: var(--p-red-a18);
+  --level-danger-soft: var(--p-red-a10);
+
+  /* KPI Trend Status (상승 · 하락 · 변동없음) */
+  --kpi-up: var(--p-red-300);
+  --kpi-down: var(--p-blue-300);
+  --kpi-flat: var(--p-neutral-250);
+  --kpi-badge-bg: var(--p-red-tint-a10);
+
+  /* Chart Series: 구역 1~7 (파이·추이·범례 점) */
+  --chart-zone-1: var(--p-red-650);
+  --chart-zone-1-soft: var(--p-red-400);
+  --chart-zone-2: var(--p-orange-500);
+  --chart-zone-2-soft: var(--p-orange-300);
+  --chart-zone-3: var(--p-yellow-400);
+  --chart-zone-3-soft: var(--p-yellow-300);
+  --chart-zone-4: var(--p-green-550);
+  --chart-zone-4-soft: var(--p-green-300);
+  --chart-zone-5: var(--p-blue-650);
+  --chart-zone-5-soft: var(--p-blue-350);
+  --chart-zone-5-alt: var(--p-blue-550);
+  --chart-zone-6: var(--p-purple-500);
+  --chart-zone-6-soft: var(--p-purple-300);
+  --chart-zone-7: var(--p-pink-500);
+  --chart-zone-7-soft: var(--p-pink-300);
+  --chart-zone-7-alt: var(--p-pink-550);
+
+  /* Chart Series: 체류·혼잡·비교·상세 */
+  --chart-stay: var(--p-blue-400);
+  --chart-crowd: var(--p-green-500);
+  --chart-people: var(--p-indigo-450);
+  --chart-grid: var(--p-neutral-350);
+  --chart-axis: var(--p-neutral-200);
+  --chart-visit-past: var(--p-blue-100);
+  --chart-visit-today: var(--p-blue-900);
+  --chart-visit-today-end: var(--p-blue-700);
+  --chart-cong-past: var(--p-green-100);
+  --chart-cong-today: var(--p-green-600);
+  --chart-cong-today-end: var(--p-green-500);
+  --chart-trend-1: var(--p-red-550);
+
+  /* Text Semantic Colors (텍스트 위계) */
+  --text-color-primary: var(--p-white);
+  --text-color-secondary: var(--p-indigo-100);
+  --text-color-muted: var(--p-neutral-400);
+  --text-color-subtle: var(--p-neutral-550);
+  --text-color-inactive: var(--p-neutral-300);
+  --text-color-dark: var(--p-neutral-750);
+  --text-color-dark-strong: var(--p-neutral-700);
+
+  /* Surface & Glass Semantic Colors (배경·위젯·모달·테이블) */
+  --bg-app: var(--p-neutral-950);
+  --bg-shell: var(--p-neutral-980);
+  --surface-widget: var(--p-white-a10);
+  --surface-glass-xs: var(--p-white-a03);
+  --surface-glass-sm: var(--p-white-a05);
+  --surface-glass-md: var(--p-white-a08);
+  --surface-glass-lg: var(--p-white-a10);
+  --surface-glass-hover: var(--p-white-a18);
+  --surface-control: #484a525c;
+  --surface-control-hover: #484a5280;
+  --surface-canvas-dark: var(--p-black-a25);
+  --surface-dropdown: rgba(16, 20, 32, 0.92);
+  --surface-modal: rgb(9 9 19 / 80%);
+  --surface-panel-dark: var(--p-neutral-820);
+  --surface-card-dark: var(--p-neutral-800);
+  --surface-input-dark: var(--p-neutral-900);
+  --surface-table-head: var(--p-neutral-650);
+  --surface-row-hover: var(--p-white-a06);
+  --surface-row-selected: var(--p-indigo-row-a42);
+  --surface-row-selected-hover: var(--p-indigo-row-a50);
+  --surface-brush-mask: rgba(5, 8, 20, 0.45);
+
+  /* Border & Divider Semantic Colors (테두리·구분선) */
+  --border-subtle: var(--p-white-a06);
+  --border-muted: var(--p-white-a08);
+  --border-light: var(--p-white-a20);
+  --border-default: var(--p-white-a24);
+  --border-strong: var(--p-white-a30);
+  --border-accent: var(--p-indigo-400);
+  --border-selected-bar: var(--p-indigo-300);
+  --divider-color: var(--p-white-a35);
+
+  /* Sidebar Semantic Tokens */
+  --sidebar-w: 260px;
+  --sidebar-w-collapsed: 76px;
+  --sidebar-bg: rgba(12, 13, 16, 0.40);
+  --sidebar-surface: rgba(22, 23, 28, 0.55);
+  --sidebar-surface-2: rgba(28, 29, 36, 0.62);
+  --sidebar-line: var(--p-white-a08);
+  --sidebar-text: var(--p-neutral-150);
+  --sidebar-muted: var(--p-neutral-500);
+  --sidebar-accent: var(--color-primary);
+  --sidebar-accent-soft: var(--color-primary-soft);
+
+  /* Legacy aliases (기존 클래스/JS 하위 호환) */
+  --blue: var(--chart-stay);
+  --green: var(--chart-crowd);
+  --ink: var(--text-color-secondary);
+  --down: var(--kpi-down);
+  --up: var(--kpi-up);
+  --muted: var(--text-color-muted);
+  --glass: var(--surface-widget);
+
+  /* ------------------------------------------------------------------------
+     03. FOUNDATION SCALES (Layout, Radius, Blur, Shadow, Z-Index, Typography)
+     ------------------------------------------------------------------------ */
+  /* Layout & Spacing */
+  --min-w: 0px;
+  --min-h: 560px;
+  --page-pad-x: 16px;
+  --page-pad-y: 16px;
+  --widget-gap-min: 16px;
+  --widget-gap: 16px;
+  --widget-pad: clamp(10px, calc(1.1vw + 0.4vh), 20px);
+  --header-h: clamp(56px, 8vh, 90px);
+  --kpi-row-h: clamp(96px, 14vh, 150px);
+
+  /* Border Radius Scale */
+  --radius-2xs: 1px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+  --radius-pill: 100px;
+
+  /* Backdrop Blur Scale */
+  --blur-xs: blur(4px);
+  --blur-sm: blur(16px);
+  --blur-md: blur(20px);
+  --blur-lg: blur(40px);
+  --blur-xl: blur(50px);
+
+  /* Shadows */
+  --shadow-legend: 0 4px 10px rgba(78, 88, 104, 0.6);
+  --shadow-tooltip: 20px 10px 25px var(--p-black-a15);
+  --shadow-floating-modal: 0 4px 16px var(--p-black-a50);
+  --shadow-dialog-modal: 0 24px 64px var(--p-black-a55);
+
+  /* Z-Index Scale */
+  --z-base: 1;
+  --z-board: 2;
+  --z-map-ui: 3;
+  --z-dropdown: 4;
+  --z-header: 5;
+  --z-sidebar: 20;
+  --z-map-point-active: 30;
+  --z-widget-active: 40;
+  --z-edit-chrome: 500;
+  --z-modal: 2000;
+  --z-floating-modal: 3000;
+
+  /* Font Family */
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Typography Size Scale — 뷰포트(vh/vw) 반응형 */
+  --text-xs: clamp(9px, 1.1vh, 10px);
+  --text-sm: clamp(10px, 1.2vh, 11px);
+  --text-md: clamp(11px, 1.35vh, 12px);
+  --text-base: clamp(12px, 1.45vh, 13px);
+  --text-lg: clamp(12px, 1.55vh, 14px);
+  --text-xl: clamp(14px, 1.8vh, 16px);
+  --text-2xl: clamp(15px, 2vh, 18px);
+  --text-3xl: clamp(18px, 2.6vh, 24px);
+  --text-4xl: clamp(22px, calc(2vw + 1vh), 36px);
+
+  /* Typography Weight Scale */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+  --weight-black: 900;
+
+  /* Typography Line-Height Scale */
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.2;
+  --leading-normal: 1.35;
+
+  /* Semantic Typography Size Aliases */
+  --font-display: var(--text-4xl);
+  --font-title: var(--text-4xl);
+  --font-widget-title: var(--text-lg);
+  --font-widget-title-lg: var(--text-xl);
+  --font-widget-title-xl: var(--text-2xl);
+  --font-kpi: var(--text-3xl);
+  --font-body: var(--text-lg);
+  --font-label: var(--text-md);
+  --font-meta: var(--text-sm);
+  --font-micro: var(--text-xs);
+
+  /* Semantic Typography Weight Aliases */
+  --font-weight-body: var(--weight-regular);
+  --font-weight-label: var(--weight-medium);
+  --font-weight-legend: var(--weight-semibold);
+  --font-weight-title: var(--weight-bold);
+  --font-weight-emphasis: var(--weight-extrabold);
+  --font-weight-kpi: var(--weight-extrabold);
+  --font-weight-display: var(--weight-black);
+
+  /* Legacy Typography Aliases */
+  --title: var(--font-title);
+  --h2: var(--font-widget-title);
+  --h3: var(--font-widget-title);
+  --kpi: var(--font-kpi);
+}
+
+/* 짧은 화면 반응형 토큰 보정 */
+@media (max-height: 800px) {
+  :root {
+    --header-h: clamp(52px, 7.5vh, 72px);
+    --kpi-row-h: clamp(88px, 13vh, 130px);
+  }
+}
+
+@media (max-height: 680px) {
+  :root {
+    --header-h: 48px;
+    --kpi-row-h: clamp(80px, 12vh, 110px);
+    --widget-pad: 10px;
+  }
+}
+
+/* ==========================================================================
+   04. TYPOGRAPHY ROLE PRESET CLASSES (.typo-*)
+   - Size + Weight + Line-height 세트 클래스
+   ========================================================================== */
+/* Display / 페이지 메인 타이틀 (H1) */
+.typo-display {
+  font-size: var(--font-display);
+  font-weight: var(--font-weight-title);
+  line-height: var(--leading-none);
+  letter-spacing: 0;
+}
+/* Modal / 대형 팝업 타이틀 */
+.typo-title-lg {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-title);
+  line-height: var(--leading-snug);
+}
+/* Widget Title (대) — 차트·구역리스트·와이드KPI·CCTV모달 제목 */
+.typo-title-md,
+.widget-title {
+  margin: 0;
+  font-size: var(--font-widget-title-xl);
+  font-weight: var(--font-weight-title);
+  line-height: var(--leading-snug);
+  color: var(--text-color-primary);
+  white-space: nowrap;
+}
+/* Widget Title (소) — 1칸 기본 KPI 위젯 제목 */
+.typo-title-sm,
+.widget-title--sm {
+  margin: 0;
+  font-size: var(--font-widget-title);
+  font-weight: var(--font-weight-title);
+  line-height: var(--leading-snug);
+  color: var(--text-color-secondary);
+  white-space: nowrap;
+}
+/* KPI 핵심 수치 */
+.typo-kpi {
+  font-size: var(--font-kpi);
+  font-weight: var(--font-weight-kpi);
+  line-height: var(--leading-none);
+}
+/* Body Large — 강조 본문 / 주소 */
+.typo-body-lg {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+}
+/* Body Default — 일반 본문 / 범례 / 탭 */
+.typo-body {
+  font-size: var(--font-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--leading-normal);
+}
+/* Body Small — 테이블 셀 / 드롭다운 / 시계 */
+.typo-body-sm {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-body);
+  line-height: var(--leading-normal);
+}
+/* Caption / Label — 보조 설명 / 업데이트 시각 / 기간 태그 */
+.typo-caption {
+  font-size: var(--font-label);
+  font-weight: var(--font-weight-label);
+  line-height: var(--leading-snug);
+}
+/* Badge / Micro — 상태 배지 / 필터 칩 */
+.typo-badge {
+  font-size: var(--font-meta);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-none);
+}
