@@ -1,11 +1,23 @@
 (function () {
   const charts = [];
 
-  /** Read --text-* / --font-* from the design-system scale in :root */
+  /** Read --text-* / --font-* from the design-system scale in :root (supports rem & px) */
   function typo(token, fallback) {
-    const raw = getComputedStyle(document.documentElement)
-      .getPropertyValue(token.startsWith("--") ? token : `--text-${token}`)
-      .trim();
+    let prop = token.startsWith("--") ? token : `--text-${token}`;
+    let raw = getComputedStyle(document.documentElement).getPropertyValue(prop).trim() || "";
+    let guard = 0;
+    while (raw && raw.startsWith("var(") && guard++ < 10) {
+      const match = raw.match(/var\(\s*([^,\s)]+)/);
+      if (!match) break;
+      prop = match[1];
+      raw = getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
+    }
+    if (!raw) return fallback;
+    const rootFs = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    if (raw.endsWith("rem")) {
+      const rem = parseFloat(raw);
+      return Number.isFinite(rem) ? Math.round(rem * rootFs) : fallback;
+    }
     const px = parseFloat(raw);
     return Number.isFinite(px) ? px : fallback;
   }

@@ -429,16 +429,31 @@
   /* Font Family */
   --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  /* Typography Size Scale — 뷰포트(vh/vw) 반응형 */
-  --text-xs: clamp(9px, 1.1vh, 10px);
-  --text-sm: clamp(10px, 1.2vh, 11px);
-  --text-md: clamp(11px, 1.35vh, 12px);
-  --text-base: clamp(12px, 1.45vh, 13px);
-  --text-lg: clamp(12px, 1.55vh, 14px);
-  --text-xl: clamp(14px, 1.8vh, 16px);
-  --text-2xl: clamp(15px, 2vh, 18px);
-  --text-3xl: clamp(18px, 2.6vh, 24px);
-  --text-4xl: clamp(22px, calc(2vw + 1vh), 36px);
+  /* Typography Size Scale (rem 기반 표준 디자인 시스템 스케일)
+     - 최상단 html { font-size: 16px; } 기준 (1rem = 16px)
+     - 미디어 쿼리(@media)로 html 폰트 크기를 조절하면 대시보드 전체 글자 크기가 일괄 축소됨 */
+  --font-size-base: 16px;
+  --font-size-4xl: 2.25rem;   /* 36px : 대형 메인 타이틀 */
+  --font-size-3xl: 1.875rem;  /* 30px : 모달 대타이틀, 와이드 KPI */
+  --font-size-2xl: 1.5rem;    /* 24px : KPI 핵심 수치, 큰 타이틀 */
+  --font-size-xl: 1.25rem;    /* 20px : 위젯 메인 타이틀 */
+  --font-size-lg: 1.125rem;   /* 18px : 강조 본문, 중간 타이틀 */
+  --font-size-md: 1rem;       /* 16px : 기본 본문, 메뉴 탭 */
+  --font-size-sm: 0.875rem;   /* 14px : 위젯 소타이틀, 범례 텍스트, 버튼 */
+  --font-size-xs: 0.75rem;    /* 12px : 테이블 셀, 기간 뱃지, 캡션 */
+  --font-size-2xs: 0.6875rem; /* 11px : 상태 뱃지 보조 텍스트, 마이크로 메타 */
+
+  /* 기존 --text-* 토큰 호환 연결 (기존 CSS 100% 무결성 유지) */
+  --text-2xs: var(--font-size-2xs);
+  --text-xs: var(--font-size-2xs);
+  --text-sm: var(--font-size-xs);
+  --text-md: var(--font-size-sm);
+  --text-base: var(--font-size-sm);
+  --text-lg: var(--font-size-sm);
+  --text-xl: var(--font-size-md);
+  --text-2xl: var(--font-size-lg);
+  --text-3xl: var(--font-size-2xl);
+  --text-4xl: var(--font-size-4xl);
 
   /* Typography Weight Scale */
   --weight-regular: 400;
@@ -455,16 +470,16 @@
   --leading-normal: 1.35;
 
   /* Semantic Typography Size Aliases */
-  --font-display: var(--text-4xl);
-  --font-title: var(--text-4xl);
-  --font-widget-title: var(--text-lg);
-  --font-widget-title-lg: var(--text-xl);
-  --font-widget-title-xl: var(--text-2xl);
-  --font-kpi: var(--text-3xl);
-  --font-body: var(--text-lg);
-  --font-label: var(--text-md);
-  --font-meta: var(--text-sm);
-  --font-micro: var(--text-xs);
+  --font-display: var(--font-size-4xl);
+  --font-title: var(--font-size-3xl);
+  --font-widget-title: var(--font-size-sm);
+  --font-widget-title-lg: var(--font-size-md);
+  --font-widget-title-xl: var(--font-size-xl);
+  --font-kpi: var(--font-size-2xl);
+  --font-body: var(--font-size-sm);
+  --font-label: var(--font-size-xs);
+  --font-meta: var(--font-size-2xs);
+  --font-micro: var(--font-size-2xs);
 
   /* Semantic Typography Weight Aliases */
   --font-weight-body: var(--weight-regular);
@@ -476,8 +491,8 @@
   --font-weight-display: var(--weight-black);
 
   /* Chart Pie Center Typography */
-  --font-pie-center-value: var(--text-3xl);
-  --font-pie-center-label: var(--text-lg);
+  --font-pie-center-value: var(--font-size-2xl);
+  --font-pie-center-label: var(--font-size-xs);
   --font-weight-pie-center: var(--weight-black);
 
   /* Map Overview Region Typography */
