@@ -20,13 +20,18 @@
     "3xl": () => typo("3xl", 24),
   };
 
-  /** CSS color token ? amcharts hex number */
+  /** CSS color token → amcharts hex number (var() 체인 해석) */
   function cssHex(token, fallback) {
-    const raw =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue(token.startsWith("--") ? token : `--${token}`)
-        .trim() || fallback;
-    const hex = raw.replace(/^#/, "");
+    let prop = token.startsWith("--") ? token : `--${token}`;
+    let raw = getComputedStyle(document.documentElement).getPropertyValue(prop).trim() || fallback;
+    let guard = 0;
+    while (raw && raw.startsWith("var(") && guard++ < 10) {
+      const match = raw.match(/var\(\s*([^,\s)]+)/);
+      if (!match) break;
+      prop = match[1];
+      raw = getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
+    }
+    const hex = (raw || fallback).replace(/^#/, "");
     const full =
       hex.length === 3
         ? hex
@@ -38,6 +43,9 @@
     return Number.isFinite(n) ? n : parseInt(String(fallback).replace(/^#/, ""), 16);
   }
   const C = {
+    white: () => cssHex("--p-white", "#ffffff"),
+    textPrimary: () => cssHex("--text-color-primary", "#ffffff"),
+    axisTrendY: () => cssHex("--chart-axis-trend-y", "#ffffff"),
     stay: () => cssHex("--chart-stay", "#55adff"),
     crowd: () => cssHex("--chart-crowd", "#25d08e"),
     grid: () => cssHex("--chart-grid", "#b4cde6"),
@@ -248,7 +256,7 @@
 
     chart.seriesContainer.children.push(
       am5.Label.new(root, {
-        html: `<div style="text-align:center;color:#fff;line-height:1.15;font-family:Pretendard,sans-serif"><strong style="font-size:${T["3xl"]()}px;font-weight:900">80,007</strong><br><span style="font-size:${T.lg()}px;opacity:0.5">\uCCB4\uB958 \uC778\uC6D0(\uBA85)</span></div>`,
+        html: `<div class="pie-center-label"><strong>80,007</strong><span>체류 인원(명)</span></div>`,
         centerX: am5.percent(50),
         centerY: am5.percent(50),
       })
@@ -426,7 +434,7 @@
       })
     );
     xAxis.get("renderer").labels.template.setAll({
-      fill: am5.color(0xffffff),
+      fill: am5.color(C.textPrimary()),
       fontSize: T.lg(),
       fontWeight: "700",
       centerX: am5.p50,
@@ -564,7 +572,7 @@
       })
     );
     yAxis.get("renderer").labels.template.setAll({
-      fill: am5.color(0x8ea0b8),
+      fill: am5.color(C.axisTrendY()),
       fontSize: T.base(),
       fontWeight: "700",
     });

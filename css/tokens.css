@@ -2,7 +2,7 @@
    DESIGN SYSTEM TOKENS (css/tokens.css)
    - 01. Primitive Tokens (--p-*) : 빨·주·노·초·파·남·보·핑크·시안·무채색 (각 100~900 9단계 통일),
                                     투명도(White/Black Opacity), 기본 그라데이션
-   - 02. Semantic Tokens          : 브랜드(Primary/Secondary), 혼잡단계(심각·경계·주의·관심),
+   - 02. Semantic Tokens          : 브랜드(Primary/Secondary), 혼잡단계(위험·경계·주의·관심),
                                     KPI, 차트 시리즈, 텍스트, 배경(Surface), 보더, 사이드바
    - 03. Foundation Scales        : 타이포그래피, 간격, 라운드, 블러, 그림자, Z-Index
    - 04. Typography Role Classes  : .typo-display, .typo-title-*, .typo-kpi, .typo-body*, .typo-caption, .typo-badge
@@ -254,7 +254,7 @@
   --gradient-brand-border: var(--p-gradient-brand-border);
   --gradient-brand-fill: var(--p-gradient-brand-fill);
 
-  /* Crowd Status Levels (혼잡도 5단계: 정상 · 관심 · 주의 · 경계 · 심각/위험) */
+  /* Crowd Status Levels (혼잡도 5단계: 정상 · 관심 · 주의 · 경계 · 위험) */
   --level-normal: var(--p-blue-250);
   --level-watch: var(--p-blue-500);
   --level-attention: var(--p-blue-600);
@@ -265,6 +265,18 @@
   --level-danger: var(--p-red-600);
   --level-danger-bg: var(--p-red-a18);
   --level-danger-soft: var(--p-red-a10);
+
+  /* Region Status Colors (지도 개요 구역 상태별 폴리곤 색상 및 글로우) */
+  --region-color-default: var(--p-white);
+  --region-glow-default: rgba(255, 255, 255, 0.25);
+  --region-color-watch: var(--level-watch);
+  --region-glow-watch: rgba(73, 146, 255, 0.45);
+  --region-color-caution: var(--level-caution);
+  --region-glow-caution: rgba(255, 187, 0, 0.45);
+  --region-color-warning: var(--level-warning);
+  --region-glow-warning: rgba(255, 127, 48, 0.45);
+  --region-color-critical: var(--level-critical);
+  --region-glow-critical: rgba(220, 38, 38, 0.55);
 
   /* KPI Trend Status (상승 · 하락 · 변동없음) */
   --kpi-up: var(--p-red-300);
@@ -296,6 +308,7 @@
   --chart-people: var(--p-indigo-450);
   --chart-grid: var(--p-neutral-350);
   --chart-axis: var(--p-neutral-200);
+  --chart-axis-trend-y: var(--text-color-primary);
   --chart-visit-past: var(--p-blue-100);
   --chart-visit-today: var(--p-blue-900);
   --chart-visit-today-end: var(--p-blue-700);
@@ -306,7 +319,7 @@
 
   /* Text Semantic Colors (텍스트 위계) */
   --text-color-primary: var(--p-white);
-  --text-color-secondary: var(--p-indigo-100);
+  --text-color-secondary: var(--p-neutral-200);
   --text-color-muted: var(--p-neutral-400);
   --text-color-subtle: var(--p-neutral-550);
   --text-color-inactive: var(--p-neutral-300);
@@ -377,7 +390,7 @@
   --page-pad-y: 16px;
   --widget-gap-min: 16px;
   --widget-gap: 16px;
-  --widget-pad: clamp(10px, calc(1.1vw + 0.4vh), 20px);
+  --widget-pad: clamp(10px, calc(1.1vw + 0.4vh), 16px);
   --header-h: clamp(56px, 8vh, 90px);
   --kpi-row-h: clamp(96px, 14vh, 150px);
 
@@ -465,6 +478,20 @@
   --font-weight-emphasis: var(--weight-extrabold);
   --font-weight-kpi: var(--weight-extrabold);
   --font-weight-display: var(--weight-black);
+
+  /* Chart Pie Center Typography */
+  --font-pie-center-value: var(--text-3xl);
+  --font-pie-center-label: var(--text-lg);
+  --font-weight-pie-center: var(--weight-black);
+
+  /* Map Overview Region Typography */
+  --font-region-b-code: 32px;
+  --font-region-d-title: 16px;
+  --font-region-d-code: clamp(18px, 1.6vw, 24px);
+  --font-region-c-title: clamp(14px, 1.2vw, 18px);
+  --font-region-c-code: clamp(18px, 1.6vw, 24px);
+  --font-region-a-title: clamp(14px, 1.2vw, 18px);
+  --font-region-a-code: clamp(18px, 1.6vw, 24px);
 
   /* Legacy Typography Aliases */
   --title: var(--font-title);
