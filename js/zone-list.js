@@ -5,10 +5,13 @@
 
   const LEVELS = {
     danger: { label: "위험", cls: "is-danger" },
+    emergency: { label: "심각", cls: "is-emergency" },
     critical: { label: "심각", cls: "is-critical" },
     warning: { label: "경계", cls: "is-warning" },
     caution: { label: "주의", cls: "is-caution" },
+    attention: { label: "관심", cls: "is-attention" },
     watch: { label: "관심", cls: "is-watch" },
+    normal: { label: "정상", cls: "is-normal" },
   };
 
   const ROWS = [
@@ -44,12 +47,12 @@
     return `<svg class="zone-spark" viewBox="0 0 ${w} ${h}" aria-hidden="true">
       <defs>
         <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#25d08e" stop-opacity="0.45"/>
-          <stop offset="100%" stop-color="#25d08e" stop-opacity="0"/>
+          <stop offset="0%" stop-color="var(--chart-crowd, #25d08e)" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="var(--chart-crowd, #25d08e)" stop-opacity="0"/>
         </linearGradient>
       </defs>
       <path d="${area}" fill="url(#${gid})"/>
-      <path d="${line}" fill="none" stroke="#25d08e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${line}" fill="none" stroke="var(--chart-crowd, #25d08e)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
   }
 

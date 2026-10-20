@@ -8,15 +8,19 @@
   const managersEl = document.getElementById("zone-detail-managers");
   if (!modal || !panel || !handle || !btnClose) return;
 
-  const DENSITY = "#25d08e";
-  const PEOPLE = "#6b7dff";
+  const rootStyle = getComputedStyle(document.documentElement);
+  const DENSITY = rootStyle.getPropertyValue("--chart-crowd").trim() || "#25d08e";
+  const PEOPLE = rootStyle.getPropertyValue("--chart-people").trim() || "#6b7dff";
 
   const LEVELS = {
     danger: { label: "위험", cls: "is-danger" },
+    emergency: { label: "심각", cls: "is-emergency" },
     critical: { label: "심각", cls: "is-critical" },
     warning: { label: "경계", cls: "is-warning" },
     caution: { label: "주의", cls: "is-caution" },
+    attention: { label: "관심", cls: "is-attention" },
     watch: { label: "관심", cls: "is-watch" },
+    normal: { label: "정상", cls: "is-normal" },
   };
 
   const MANAGERS = [
