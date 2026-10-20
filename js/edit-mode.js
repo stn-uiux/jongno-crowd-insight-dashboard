@@ -1,12 +1,13 @@
 (function () {
   const STORAGE_KEY = "jongno-dashboard-removed-widgets";
-  /** v13: 구역 리스트 추가 — 예전 절대좌표 캐시 무효화 */
-  const SIZE_KEY = "jongno-dashboard-widget-sizes-v13";
+  /** v14: 그리드 리사이즈/드래그 충돌 검사 버그 수정 (가로/세로 독립 축 검사) */
+  const SIZE_KEY = "jongno-dashboard-widget-sizes-v14";
   try {
     localStorage.removeItem("jongno-dashboard-widget-sizes-v9");
     localStorage.removeItem("jongno-dashboard-widget-sizes-v10");
     localStorage.removeItem("jongno-dashboard-widget-sizes-v11");
     localStorage.removeItem("jongno-dashboard-widget-sizes-v12");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v13");
   } catch (_) {}
   const ORDER_KEY = "jongno-dashboard-widget-order";
   const MIN_W = 160;
@@ -467,8 +468,15 @@
       });
   }
 
+  const COLLISION_EPS = 3; // 서브픽셀 렌더링 오차 허용치(px)
+
   function rectsHit(vl, vt, vr, vb, o, gap) {
-    return vl < o.right + gap && vr > o.left - gap && vt < o.bottom + gap && vb > o.top - gap;
+    return (
+      vl < o.right + gap - COLLISION_EPS &&
+      vr > o.left - gap + COLLISION_EPS &&
+      vt < o.bottom + gap - COLLISION_EPS &&
+      vb > o.top - gap + COLLISION_EPS
+    );
   }
 
   function clearCollisionVisuals() {
@@ -486,6 +494,9 @@
 
   /**
    * 다른 위젯 영역으로는 못 넘어가게 클램프.
+   * - 아래(S)/위(N) 리사이즈 시: 가로(X) 방향으로 실제 겹치는 위젯에만 반응 (옆 열 위젯 간섭 방지)
+   * - 오른쪽(E)/왼쪽(W) 리사이즈 시: 세로(Y) 방향으로 실제 겹치는 위젯에만 반응 (위/아래 행 위젯 간섭 방지)
+   * - 드래그(drag) 이동 시: X와 Y 양방향 모두 gap 이내로 침범했을 때만 부드럽게 밀어냄
    * @returns {{ left, top, w, h, blocked, hitting }}
    */
   function clampToObstacles(baseLeft, baseTop, left, top, w, h, dir, obstacles, gap = collisionGap()) {
@@ -497,62 +508,82 @@
     for (const o of obstacles) {
       let vr = vl + w;
       let vb = vt + h;
-      if (!rectsHit(vl, vt, vr, vb, o, gap)) continue;
 
-      let hit = false;
-
+      // 1) 드래그(drag) 이동 시: X와 Y 양방향 모두에서 gap 이내로 침범했을 때만 충돌
       if (dir === "drag") {
-        // 겹친 만큼 가장 가까운 쪽으로 밀어냄
+        const overlapsX = vl < o.right + gap - COLLISION_EPS && vr > o.left - gap + COLLISION_EPS;
+        const overlapsY = vt < o.bottom + gap - COLLISION_EPS && vb > o.top - gap + COLLISION_EPS;
+        if (!overlapsX || !overlapsY) continue;
+
         const pushL = vr - (o.left - gap);
         const pushR = o.right + gap - vl;
         const pushT = vb - (o.top - gap);
         const pushB = o.bottom + gap - vt;
         const minPush = Math.min(pushL, pushR, pushT, pushB);
+
         if (minPush === pushL) left -= pushL;
         else if (minPush === pushR) left += pushR;
         else if (minPush === pushT) top -= pushT;
         else top += pushB;
+
         vl = baseLeft + left;
         vt = baseTop + top;
-        hit = true;
-      } else {
-        if (dir.includes("e") && vl < o.left && vr > o.left - gap) {
-          const maxW = o.left - gap - vl;
-          if (maxW < w) {
-            w = Math.max(MIN_W, maxW);
-            hit = true;
-          }
+        blocked = true;
+        hitting.push(o);
+        continue;
+      }
+
+      // 2) 리사이즈(resize) 시:
+      // 아래쪽(S) 또는 위쪽(N) 크기 조절은 "가로(X) 방향으로 실제 겹치는 장애물"에만 반응
+      const hOverlap = Math.min(vr, o.right) - Math.max(vl, o.left);
+      // 오른쪽(E) 또는 왼쪽(W) 크기 조절은 "세로(Y) 방향으로 실제 겹치는 장애물"에만 반응
+      const vOverlap = Math.min(vb, o.bottom) - Math.max(vt, o.top);
+
+      let hit = false;
+
+      // 동쪽(E): 오른쪽으로 늘릴 때 — 세로(Y)가 겹치고 장애물이 오른쪽에 있는 경우
+      if (dir.includes("e") && vOverlap > COLLISION_EPS && o.left >= vl && vr > o.left - gap + COLLISION_EPS) {
+        const maxW = Math.max(MIN_W, o.left - gap - vl);
+        if (maxW < w) {
+          w = maxW;
+          hit = true;
         }
-        if (dir.includes("w") && vr > o.right && vl < o.right + gap) {
-          const newLeft = o.right + gap;
-          const newW = vr - newLeft;
-          if (newW >= MIN_W && newLeft > vl) {
-            left += newLeft - vl;
-            vl = newLeft;
-            w = newW;
-            hit = true;
-          } else if (newW < MIN_W) {
-            hit = true;
-          }
+      }
+
+      // 서쪽(W): 왼쪽으로 늘릴 때 — 세로(Y)가 겹치고 장애물이 왼쪽에 있는 경우
+      if (dir.includes("w") && vOverlap > COLLISION_EPS && o.right <= vr && vl < o.right + gap - COLLISION_EPS) {
+        const newLeft = o.right + gap;
+        const newW = vr - newLeft;
+        if (newW >= MIN_W && newLeft > vl) {
+          left += newLeft - vl;
+          vl = newLeft;
+          w = newW;
+          hit = true;
+        } else if (newW < MIN_W) {
+          hit = true;
         }
-        if (dir.includes("s") && vt < o.top && vb > o.top - gap) {
-          const maxH = o.top - gap - vt;
-          if (maxH < h) {
-            h = Math.max(MIN_H, maxH);
-            hit = true;
-          }
+      }
+
+      // 남쪽(S): 아래로 늘릴 때 — 가로(X)가 겹치고 장애물이 아래쪽에 있는 경우
+      if (dir.includes("s") && hOverlap > COLLISION_EPS && o.top >= vt && vb > o.top - gap + COLLISION_EPS) {
+        const maxH = Math.max(MIN_H, o.top - gap - vt);
+        if (maxH < h) {
+          h = maxH;
+          hit = true;
         }
-        if (dir.includes("n") && vb > o.bottom && vt < o.bottom + gap) {
-          const newTop = o.bottom + gap;
-          const newH = vb - newTop;
-          if (newH >= MIN_H && newTop > vt) {
-            top += newTop - vt;
-            vt = newTop;
-            h = newH;
-            hit = true;
-          } else if (newH < MIN_H) {
-            hit = true;
-          }
+      }
+
+      // 북쪽(N): 위로 늘릴 때 — 가로(X)가 겹치고 장애물이 위쪽에 있는 경우
+      if (dir.includes("n") && hOverlap > COLLISION_EPS && o.bottom <= vb && vt < o.bottom + gap - COLLISION_EPS) {
+        const newTop = o.bottom + gap;
+        const newH = vb - newTop;
+        if (newH >= MIN_H && newTop > vt) {
+          top += newTop - vt;
+          vt = newTop;
+          h = newH;
+          hit = true;
+        } else if (newH < MIN_H) {
+          hit = true;
         }
       }
 
