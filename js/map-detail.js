@@ -69,13 +69,13 @@
   }
 
   /**
-   * Figma 25:1474 — Hitmap 원 중심 (프레임 860×950 기준 %)
-   * - state  : "normal"(정상) | "attention"(관심) | "caution"(주의) | "warning"(경계) | "emergency"(심각)
+   * Figma 25:1474 — 익선동 (Region A) Hitmap 원 중심 (프레임 860×950 기준 %)
+   * - state  : "normal"(정상) | "attention"(관심) | "caution"(주의) | "warning"(경계) | "emergency"(위험)
    * - size   : "lg"(기본, 현재 크기) | "md"(중간) | "sm"(소형)
    * - tipPos : "top"(기본, 위) | "bottom"(아래) | "left"(왼쪽) | "right"(오른쪽)
    * - cctvPos: "right" (기본, 우측 상단) | "left" (좌측 상단)
    */
-  const POINTS = [
+  const POINTS_A = [
     { id: "A-1", left: 48.5, top: 17.4, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "A-2", left: 24.4, top: 25.3, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "A-3", left: 49.7, top: 34.3, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
@@ -90,6 +90,70 @@
     { id: "A-12", left: 46.9, top: 92.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "A-13", left: 76.2, top: 83.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
+
+  /**
+   * Figma 39:4868 — 헌법 재판소 일대 (Region B) Hitmap 원 중심 (프레임 860×950 기준 %)
+   */
+  const POINTS_B = [
+    { id: "B-1", left: 49.5, top: 91.3, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-2", left: 68.0, top: 84.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-3", left: 71.1, top: 77.1, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-4", left: 68.0, top: 71.4, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-5", left: 62.0, top: 72.2, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-6", left: 60.0, top: 67.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-7", left: 58.0, top: 61.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-8", left: 66.0, top: 56.0, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-9", left: 82.0, top: 54.0, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-10", left: 54.0, top: 53.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-11", left: 54.0, top: 48.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-12", left: 54.0, top: 42.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-13", left: 61.2, top: 40.0, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-14", left: 54.4, top: 36.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-15", left: 62.0, top: 34.0, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-16", left: 54.0, top: 31.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-17", left: 56.0, top: 26.0, state: "emergency", size: "lg", tipPos: "right", cctvPos: "right" },
+    { id: "B-18", left: 48.0, top: 26.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-19", left: 36.0, top: 19.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-20", left: 30.0, top: 12.0, state: "emergency", size: "lg", tipPos: "left", cctvPos: "left" },
+    { id: "B-21", left: 25.3, top: 52.5, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+  ];
+
+  /**
+   * Figma 40:6922 — 낙원동 (Region C / Detail Map 3) Hitmap 원 중심 (프레임 860×950 기준 %)
+   * - 10개 지점, 전체 관심(attention) 상태, 상단 툴팁(tipPos: "top")
+   */
+  const POINTS_C = [
+    { id: "C-1", left: 64.0, top: 19.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-2", left: 74.0, top: 37.1, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-3", left: 30.0, top: 45.2, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-4", left: 68.3, top: 48.9, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-5", left: 40.9, top: 64.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-6", left: 73.1, top: 66.9, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-7", left: 57.1, top: 72.6, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-8", left: 10.0, top: 80.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-9", left: 30.0, top: 82.1, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-10", left: 63.5, top: 84.8, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+  ];
+
+  /**
+   * Figma 41:8295 — 광화문 광장 접점 (Region D / Detail Map 4) Hitmap 원 중심 (프레임 860×950 기준 %)
+   * - 6개 지점, 전체 관심(attention) 상태, 상단 툴팁(tipPos: "top")
+   */
+  const POINTS_D = [
+    { id: "D-1", left: 71.8, top: 25.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-2", left: 40.2, top: 39.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-3", left: 2, top: 56.3, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-4", left: 72.0, top: 56.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-5", left: 72.2, top: 66.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-6", left: 38.5, top: 86.4, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+  ];
+
+  const REGION_POINTS = {
+    A: POINTS_A,
+    B: POINTS_B,
+    C: POINTS_C,
+    D: POINTS_D,
+  };
 
   const STATE_META = {
     normal: {
@@ -113,7 +177,7 @@
       emoji: "assets/map-detail/emoji-warning.png",
     },
     emergency: {
-      label: "심각",
+      label: "위험",
       glow: "assets/map-detail/glow-emergency.svg",
       emoji: "assets/map-detail/emoji-emergency.png",
     },
@@ -128,6 +192,9 @@
     const size = VALID_SIZE.has(p.size) ? p.size : "lg";
     const tipPos = VALID_TIP_POS.has(p.tipPos) ? p.tipPos : "top";
     const cctvPos = p.cctvPos === "left" ? "left" : "right";
+    const displayText = p.displayText || p.id;
+    const peopleStr = p.people != null ? Number(p.people).toLocaleString("ko-KR") : "45,600";
+    const densityStr = p.density != null ? Number(p.density).toFixed(2) : "0.98";
     return `
       <div class="map-point map-point--${size} is-${stateKey}" style="left:${p.left}%;top:${p.top}%;" data-id="${p.id}">
         <div class="mp-tip mp-tip--${tipPos} mp-tip--cctv-${cctvPos}">
@@ -137,10 +204,10 @@
               <span class="mp-badge"></span>
             </div>
             <div class="mp-stats">
-              <p><span>인원</span><strong>45,600<small>명</small></strong></p>
-              <p><span>밀집</span><strong>0.98<small>명/m²</small></strong></p>
+              <p><span>인원</span><strong>${peopleStr}<small>명</small></strong></p>
+              <p><span>밀집</span><strong>${densityStr}<small>명/m²</small></strong></p>
             </div>
-            <button type="button" class="mp-cctv" title="CCTV" aria-label="${p.id} CCTV" aria-pressed="false">
+            <button type="button" class="mp-cctv" title="CCTV" aria-label="${displayText} CCTV" aria-pressed="false">
               <img class="mp-cctv-cam" src="assets/map-detail/icon-cctv.svg" alt="" width="22" height="22">
               <img class="mp-cctv-pause" src="assets/map-detail/icon-cctv-pause.svg" alt="" width="22" height="22" hidden>
             </button>
@@ -150,17 +217,23 @@
         <div class="mp-core">
           <span class="mp-glow" aria-hidden="true"></span>
           <img class="mp-warn" src="assets/map-detail/warn-mark.svg" alt="" width="18" height="16">
-          <strong class="mp-id">${p.id.replace("-", " - ")}</strong>
+          <strong class="mp-id">${displayText.replace("-", " - ")}</strong>
         </div>
       </div>`;
   }
 
-  function renderPoints() {
-    pointsHost.innerHTML = POINTS.map(pointHtml).join("");
+  let currentRegion = "A";
+
+  function renderPoints(regionKey) {
+    if (regionKey) currentRegion = String(regionKey).toUpperCase();
+    const list = REGION_POINTS[currentRegion] || REGION_POINTS.A;
+    pointsHost.innerHTML = list.map(pointHtml).join("");
   }
 
   function openDetail(regionKey = "A", customSrc) {
     const key = String(regionKey || "A").toUpperCase();
+    currentRegion = key;
+    renderPoints(key);
     const info = REGION_DETAIL_MAP[key] || REGION_DETAIL_MAP.A;
     const targetSrc = customSrc || info.src;
 
@@ -208,4 +281,21 @@
     e.preventDefault();
     closeDetail();
   });
+
+  const sizeBar = document.getElementById("map-point-size-bar");
+  if (sizeBar && pointsHost) {
+    const sizeBtns = sizeBar.querySelectorAll(".point-size-btn");
+    sizeBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const nextSize = btn.dataset.size || "sm";
+        sizeBtns.forEach((b) => {
+          const isActive = b === btn;
+          b.classList.toggle("is-active", isActive);
+          b.setAttribute("aria-checked", isActive ? "true" : "false");
+        });
+        pointsHost.setAttribute("data-point-size", nextSize);
+      });
+    });
+  }
 })();
