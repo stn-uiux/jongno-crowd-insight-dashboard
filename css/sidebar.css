@@ -1,16 +1,7 @@
-:root {
-  --sidebar-w: 260px;
-  --sidebar-w-collapsed: 76px;
-  --sidebar-bg: rgba(12, 13, 16, 0.40);
-  --sidebar-surface: rgba(22, 23, 28, 0.55);
-  --sidebar-surface-2: rgba(28, 29, 36, 0.62);
-  --sidebar-line: rgba(255, 255, 255, 0.08);
-  --sidebar-text: #e8eaef;
-  --sidebar-muted: #8b93a7;
-  --sidebar-accent: var(--color-primary, #505cff);
-  --sidebar-accent-soft: rgba(80, 92, 255, 0.18);
-}
-
+/* ==========================================================================
+   SIDEBAR NAVIGATION (css/sidebar.css)
+   - 전역 디자인 토큰(css/tokens.css) 연동
+   ========================================================================== */
 .app-shell {
   position: relative;
   display: flex;
@@ -18,7 +9,7 @@
   max-width: 100vw;
   height: 100vh;
   min-height: var(--min-h);
-  background: #07080b;
+  background: var(--bg-shell, #07080b);
   overflow: hidden;
 }
 
@@ -39,13 +30,13 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--p-black-a70, rgba(0, 0, 0, 0.7));
   pointer-events: none;
 }
 
 .app-main {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base, 1);
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
@@ -62,7 +53,7 @@
 
 .app-sidebar {
   position: relative;
-  z-index: 20;
+  z-index: var(--z-sidebar, 20);
   width: var(--sidebar-w);
   flex: 0 0 var(--sidebar-w);
   height: 100%;
@@ -81,32 +72,32 @@
   flex-basis: var(--sidebar-w-collapsed);
 }
 
-/* 접기 버튼 — 흰 배경 + 브랜드 그라데이션 화살표 */
+/* 접기 버튼 */
 .sidebar-toggle {
   position: absolute;
   top: 50%;
   right: -12px;
-  z-index: 3;
+  z-index: var(--z-map-ui, 3);
   width: 24px;
   height: 24px;
   margin-top: -12px;
   border-radius: 50%;
   border: 0;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--p-white-a50);
   color: var(--color-primary);
   display: grid;
   place-items: center;
   font-size: var(--text-md);
-  box-shadow: 0 4px 14px rgba(80, 92, 255, 0.28);
+  box-shadow: 0 4px 14px var(--p-indigo-a28);
   cursor: pointer;
 }
 .sidebar-toggle i {
   background: none;
-  color: #000;
-  -webkit-text-fill-color: #000;
+  color: var(--p-black);
+  -webkit-text-fill-color: var(--p-black);
 }
 .sidebar-toggle:hover {
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--p-white-a65);
   box-shadow: 0 4px 16px rgba(227, 55, 63, 0.35);
 }
 
@@ -128,10 +119,10 @@
   min-width: 0;
   width: 100%;
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: var(--radius-xl, 14px);
   background: var(--sidebar-surface);
   border: 1px solid var(--sidebar-line);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 0 var(--p-white-a03);
 }
 
 .sidebar-logo .logo-single {
@@ -139,13 +130,13 @@
   height: 34px;
   flex: none;
   object-fit: contain;
-  border-radius: 10px;
+  border-radius: var(--radius-lg, 10px);
 }
 
 .sidebar-logo .logo-text-label {
   font-size: var(--text-lg);
-  font-weight: 700;
-  color: #fff;
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
   white-space: nowrap;
   letter-spacing: -0.02em;
 }
@@ -217,7 +208,7 @@
   position: relative;
 }
 
-/* 활성 메뉴 왼쪽 파란 바 */
+/* 활성 메뉴 왼쪽 액센트 바 */
 .menu-item.child-active::before,
 .menu-item:has(> .menu-link.active)::before {
   content: "";
@@ -226,9 +217,9 @@
   top: 10px;
   width: 3px;
   height: 28px;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
   background: var(--sidebar-accent);
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 10px var(--p-blue-a55);
 }
 
 .menu-item .menu-link,
@@ -247,25 +238,25 @@
 
 .menu-item .menu-link:hover,
 .submenu-link:hover {
-  background: rgba(255, 255, 255, 0.045);
-  color: #fff;
+  background: var(--p-white-a04);
+  color: var(--text-color-primary);
 }
 
 .menu-item .menu-link.active,
 .menu-item.child-active > .menu-link {
   background: var(--sidebar-surface-2);
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  color: var(--text-color-primary);
+  box-shadow: inset 0 0 0 1px var(--p-white-a04);
 }
 
 .menu-item .icon-box {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   display: grid;
   place-items: center;
   flex: none;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-glass-sm);
   font-size: var(--text-lg);
   box-shadow: none;
 }
@@ -278,14 +269,14 @@
 .menu-item.c-cyan .icon-box,
 .menu-item.c-pink .icon-box,
 .menu-item.c-slate .icon-box {
-  color: #fff;
+  color: var(--text-color-primary);
 }
 
 .menu-item .menu-link > span {
   flex: 1 1 auto;
   min-width: 0;
   font-size: var(--text-lg);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -299,30 +290,30 @@
 
 .menu-item.is-open > .menu-link .submenu-arrow {
   transform: rotate(180deg);
-  color: #93c5fd;
+  color: var(--p-blue-200);
 }
 
 .menu-badge {
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: var(--text-sm);
-  font-weight: 700;
-  line-height: 1;
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-none);
 }
 
 .menu-badge-blue {
   background: var(--sidebar-accent-soft);
-  color: #93c5fd;
+  color: var(--p-blue-200);
 }
 
 .menu-badge-amber {
-  background: #f59e0b;
-  color: #fff;
+  background: var(--p-orange-600);
+  color: var(--text-color-primary);
 }
 
 .submenu {
@@ -350,7 +341,7 @@
   min-height: 38px;
   padding: 0 12px 0 18px;
   margin-left: 22px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: var(--text-base);
   color: var(--sidebar-muted);
   gap: 10px;
@@ -366,7 +357,7 @@
   height: 5px;
   margin-top: -2.5px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.28);
+  background: var(--p-white-a28);
 }
 
 .submenu-link i {
@@ -381,13 +372,13 @@
 }
 
 .submenu-link:hover {
-  color: #dbe3f3;
+  color: var(--p-neutral-180);
 }
 
 .submenu-link.active {
-  background: rgba(255, 255, 255, 0.05);
-  color: #60a5fa;
-  font-weight: 600;
+  background: var(--surface-glass-sm);
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
 }
 
 .submenu-link.active::before {
@@ -396,7 +387,7 @@
 }
 
 .submenu-link.active i {
-  color: #60a5fa;
+  color: var(--color-accent);
 }
 
 .sidebar-toolbar {
@@ -413,7 +404,7 @@
 .theme-toggle-btn {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--sidebar-line);
   background: var(--sidebar-surface);
   color: var(--sidebar-muted);
@@ -425,8 +416,8 @@
 .font-selector-btn:hover,
 .theme-toggle-btn:hover {
   background: var(--sidebar-surface-2);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-color-primary);
+  border-color: var(--p-white-a12);
 }
 
 .sidebar-profile {
@@ -457,10 +448,10 @@
   display: grid;
   place-items: center;
   flex: none;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: #fff;
+  background: var(--p-gradient-avatar);
+  color: var(--text-color-primary);
   font-size: var(--text-lg);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
 }
 
 .profile-info {
@@ -473,8 +464,8 @@
 
 .profile-name {
   font-size: var(--text-base);
-  font-weight: 700;
-  color: #fff;
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
