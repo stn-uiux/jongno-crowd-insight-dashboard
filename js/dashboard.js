@@ -148,6 +148,23 @@
     return tooltip;
   }
 
+  /** XY 라인/바 호버 툴팁 — 커서 없으면 거의 안 뜸 */
+  function attachHoverCursor(chart, root) {
+    const cursor = chart.set(
+      "cursor",
+      am5xy.XYCursor.new(root, {
+        behavior: "none",
+      })
+    );
+    cursor.lineY.set("visible", false);
+    cursor.lineX.setAll({
+      stroke: am5.color(0xffffff),
+      strokeOpacity: 0.22,
+      strokeDasharray: [4, 4],
+    });
+    return cursor;
+  }
+
   function createPieChart(id) {
     const root = createRoot(id);
     const chart = root.container.children.push(
@@ -334,9 +351,6 @@
     staySeries.strokes.template.setAll({
       strokeWidth: 2,
       stroke: am5.color(C.stay()),
-      shadowColor: am5.color(C.stay()),
-      shadowBlur: 8,
-      shadowOpacity: 0.8,
     });
     staySeries.bullets.push(() =>
       am5.Bullet.new(root, {
@@ -345,9 +359,6 @@
           fill: am5.color(0xffffff),
           stroke: am5.color(C.stay()),
           strokeWidth: 2,
-          shadowColor: am5.color(C.stay()),
-          shadowBlur: 6,
-          shadowOpacity: 0.75,
         }),
       })
     );
@@ -368,9 +379,6 @@
     congSeries.strokes.template.setAll({
       strokeWidth: 2,
       stroke: am5.color(C.crowd()),
-      shadowColor: am5.color(C.crowd()),
-      shadowBlur: 8,
-      shadowOpacity: 0.8,
     });
     congSeries.bullets.push(() =>
       am5.Bullet.new(root, {
@@ -379,14 +387,12 @@
           fill: am5.color(0xffffff),
           stroke: am5.color(C.crowd()),
           strokeWidth: 2,
-          shadowColor: am5.color(C.crowd()),
-          shadowBlur: 6,
-          shadowOpacity: 0.75,
         }),
       })
     );
     congSeries.data.setAll(data);
 
+    attachHoverCursor(chart, root);
     staySeries.appear(700);
     congSeries.appear(700);
     chart.appear(700, 80);
@@ -605,6 +611,7 @@
       series.appear(700);
     });
 
+    attachHoverCursor(chart, root);
     chart.appear(700, 80);
     return root;
   }

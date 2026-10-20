@@ -1,19 +1,74 @@
 (function () {
   const STORAGE_KEY = "jongno-dashboard-removed-widgets";
-  /** v9: 보드 절대좌표(left/top/w/h %) — 그리드 칸(=옛 섹션)에 가두지 않음 */
-  const SIZE_KEY = "jongno-dashboard-widget-sizes-v9";
+  /** v13: 구역 리스트 추가 — 예전 절대좌표 캐시 무효화 */
+  const SIZE_KEY = "jongno-dashboard-widget-sizes-v13";
+  try {
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v9");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v10");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v11");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v12");
+  } catch (_) {}
   const ORDER_KEY = "jongno-dashboard-widget-order";
   const MIN_W = 160;
   const MIN_H = 100;
-  const SNAP_STEP = 10;
+  const GRID_COLS = 24;
+  const GRID_ROWS = 10;
 
-  /** CSS --widget-gap-min 과 동일 — 위젯↔위젯 최소 간격 */
+  /** 보드 gap — 위젯↔위젯 최소 간격 */
   function collisionGap() {
+    const board = getBoardEl();
+    if (board) {
+      const g = parseFloat(getComputedStyle(board).gap);
+      if (Number.isFinite(g) && g > 0) return g;
+    }
     const raw = getComputedStyle(document.documentElement)
       .getPropertyValue("--widget-gap-min")
       .trim();
     const n = parseFloat(raw);
-    return Number.isFinite(n) ? n : 8;
+    return Number.isFinite(n) ? n : 16;
+  }
+
+  /** 24×10 균등 칸 메트릭 (칸 크기 + gap) */
+  function getGridMetrics() {
+    const { width, height } = getBoardSize();
+    const gap = collisionGap();
+    const colW = Math.max(1, (width - gap * (GRID_COLS - 1)) / GRID_COLS);
+    const rowH = Math.max(1, (height - gap * (GRID_ROWS - 1)) / GRID_ROWS);
+    return { gap, colW, rowH, pitchX: colW + gap, pitchY: rowH + gap, width, height };
+  }
+
+  function spanSize(count, cell, gap) {
+    const n = Math.max(1, count);
+    return n * cell + (n - 1) * gap;
+  }
+
+  /** 위치·크기를 24×10 칸에 스냅 (인접 위젯 사이 gap 자동 확보) */
+  function snapBoxToGrid(left, top, w, h) {
+    const { gap, colW, rowH, pitchX, pitchY, width, height } = getGridMetrics();
+    let c0 = Math.round(left / pitchX);
+    let r0 = Math.round(top / pitchY);
+    c0 = Math.max(0, Math.min(GRID_COLS - 1, c0));
+    r0 = Math.max(0, Math.min(GRID_ROWS - 1, r0));
+
+    let colSpan = Math.max(1, Math.round((w + gap) / pitchX));
+    let rowSpan = Math.max(1, Math.round((h + gap) / pitchY));
+    colSpan = Math.min(colSpan, GRID_COLS - c0);
+    rowSpan = Math.min(rowSpan, GRID_ROWS - r0);
+
+    // 최소 px 보장 — 칸이 작으면 스팬 늘림
+    while (colSpan < GRID_COLS - c0 && spanSize(colSpan, colW, gap) < MIN_W) colSpan += 1;
+    while (rowSpan < GRID_ROWS - r0 && spanSize(rowSpan, rowH, gap) < MIN_H) rowSpan += 1;
+
+    left = c0 * pitchX;
+    top = r0 * pitchY;
+    w = Math.min(spanSize(colSpan, colW, gap), width - left);
+    h = Math.min(spanSize(rowSpan, rowH, gap), height - top);
+    return {
+      left: Math.round(left),
+      top: Math.round(top),
+      w: Math.round(Math.max(MIN_W, w)),
+      h: Math.round(Math.max(MIN_H, h)),
+    };
   }
 
   /**
@@ -22,8 +77,7 @@
    * 예: { id, name, category, icon }
    */
   const WIDGET_CATALOG = [
-    // 추후 위젯 등록 예:
-    // { id: "chart-hourly", name: "시간대별 방문 추이", category: "차트", icon: "bi-graph-up" },
+    { id: "zone-list", name: "구역 리스트", category: "모니터링", icon: "bi-list-ul" },
   ];
 
   const stage = document.getElementById("stage");
@@ -57,21 +111,7 @@
   /** 최초 DOM 순서 (초기화용) */
   let defaultOrder = null;
 
-  const SIZE_LOCK_PROPS = [
-    "width",
-    "height",
-    "min-width",
-    "min-height",
-    "max-width",
-    "max-height",
-    "flex",
-    "flex-grow",
-    "flex-shrink",
-    "flex-basis",
-    "grid-column",
-    "grid-row",
-    "grid-area",
-  ];
+  const POS_PROPS = ["left", "top", "width", "height", "right", "bottom"];
 
   function widgets() {
     return Array.from(document.querySelectorAll(".board .widget[data-widget-id]"));
@@ -165,8 +205,7 @@
   }
 
   /**
-   * 보드 절대배치. grid-area 를 전체로 펼쳐 % 기준이 칸이 아니라 보드가 되게 함.
-   * 편집·저장·리플로우 동일.
+   * 보드 절대배치. 구조 스타일은 .has-custom-size CSS, 좌표만 인라인 %.
    */
   function lockWidgetOnBoard(el, left, top, w, h, boardSize) {
     const board = boardSize || getBoardSize();
@@ -178,39 +217,27 @@
     top = Math.max(0, Math.min(Math.round(top), bh - h));
 
     el.classList.add("has-custom-size");
-    SIZE_LOCK_PROPS.forEach((prop) => el.style.removeProperty(prop));
+    // 예전에 !important 로 박아둔 잔여 인라인 제거
     [
-      "left",
-      "top",
-      "right",
-      "bottom",
+      ...POS_PROPS,
       "position",
-      "justify-self",
-      "align-self",
+      "grid-column",
+      "grid-row",
+      "grid-area",
       "margin",
-      "margin-left",
-      "margin-top",
+      "min-width",
+      "min-height",
+      "max-width",
+      "max-height",
+      "flex",
       "z-index",
       "overflow",
     ].forEach((prop) => el.style.removeProperty(prop));
 
-    const set = (prop, val) => el.style.setProperty(prop, val, "important");
-    // absolute % 기준 = 그리드 영역 → 전체 스팬해야 보드 기준
-    set("grid-column", "1 / -1");
-    set("grid-row", "1 / -1");
-    set("position", "absolute");
-    set("left", `${((left / bw) * 100).toFixed(3)}%`);
-    set("top", `${((top / bh) * 100).toFixed(3)}%`);
-    set("width", `${((w / bw) * 100).toFixed(3)}%`);
-    set("height", `${((h / bh) * 100).toFixed(3)}%`);
-    set("margin", "0");
-    set("min-width", "0");
-    set("min-height", "0");
-    set("max-width", "none");
-    set("max-height", "none");
-    set("flex", "0 0 auto");
-    set("z-index", "6");
-    set("overflow", "hidden");
+    el.style.left = `${((left / bw) * 100).toFixed(3)}%`;
+    el.style.top = `${((top / bh) * 100).toFixed(3)}%`;
+    el.style.width = `${((w / bw) * 100).toFixed(3)}%`;
+    el.style.height = `${((h / bh) * 100).toFixed(3)}%`;
   }
 
   function applyWidgetSize(el, size, boardSize) {
@@ -221,18 +248,18 @@
 
   function clearWidgetSize(el) {
     if (!el) return;
-    SIZE_LOCK_PROPS.forEach((prop) => el.style.removeProperty(prop));
     [
-      "left",
-      "top",
-      "right",
-      "bottom",
+      ...POS_PROPS,
       "position",
-      "justify-self",
-      "align-self",
+      "grid-column",
+      "grid-row",
+      "grid-area",
       "margin",
-      "margin-left",
-      "margin-top",
+      "min-width",
+      "min-height",
+      "max-width",
+      "max-height",
+      "flex",
       "z-index",
       "overflow",
     ].forEach((prop) => el.style.removeProperty(prop));
@@ -346,9 +373,10 @@
     };
   }
 
-  /** 10px 격자만 (부모 전체 크기로 끌어당기는 자석 없음) */
+  /** @deprecated 칸 스냅은 snapBoxToGrid 사용 */
   function snapValue(value) {
-    return Math.round(value / SNAP_STEP) * SNAP_STEP;
+    const { pitchX } = getGridMetrics();
+    return Math.round(value / pitchX) * pitchX;
   }
 
   /**
@@ -560,23 +588,14 @@
     const gap = collisionGap();
 
     widget.classList.add("is-resizing", "has-custom-size");
-    // 즉시 보드 절대배치로 올려 칸(옛 섹션) 벽 제거
+    if (dir === "drag") widget.classList.add("is-dragging");
     lockWidgetOnBoard(widget, start.left, start.top, start.w, start.h, board);
-    widget.style.zIndex = "40";
 
     const applyLive = (left, top, w, h) => {
-      const set = (prop, val) => widget.style.setProperty(prop, val, "important");
-      set("grid-column", "1 / -1");
-      set("grid-row", "1 / -1");
-      set("position", "absolute");
-      set("left", `${left}px`);
-      set("top", `${top}px`);
-      set("width", `${w}px`);
-      set("height", `${h}px`);
-      set("max-width", "none");
-      set("max-height", "none");
-      set("margin", "0");
-      set("overflow", "hidden");
+      widget.style.left = `${left}px`;
+      widget.style.top = `${top}px`;
+      widget.style.width = `${w}px`;
+      widget.style.height = `${h}px`;
     };
 
     const onMove = (ev) => {
@@ -587,35 +606,51 @@
       let w = start.w;
       let h = start.h;
 
-      if (dir.includes("e")) w = start.w + dx;
-      if (dir.includes("w")) {
+      if (dir === "drag") {
         left = start.left + dx;
-        w = start.w - dx;
-      }
-      if (dir.includes("s")) h = start.h + dy;
-      if (dir.includes("n")) {
         top = start.top + dy;
-        h = start.h - dy;
+        ({ left, top, w, h } = snapBoxToGrid(left, top, start.w, start.h));
+      } else {
+        // "drag" 문자열에 "e"가 포함되므로 includes 전에 drag 분기 필수
+        if (dir.includes("e")) w = start.w + dx;
+        if (dir.includes("w")) {
+          left = start.left + dx;
+          w = start.w - dx;
+        }
+        if (dir.includes("s")) h = start.h + dy;
+        if (dir.includes("n")) {
+          top = start.top + dy;
+          h = start.h - dy;
+        }
+        if (dir.includes("w") && w < MIN_W) {
+          left = start.left + start.w - MIN_W;
+          w = MIN_W;
+        }
+        if (dir.includes("n") && h < MIN_H) {
+          top = start.top + start.h - MIN_H;
+          h = MIN_H;
+        }
+        ({ left, top, w, h } = snapBoxToGrid(left, top, w, h));
       }
 
-      w = Math.max(MIN_W, snapValue(w));
-      h = Math.max(MIN_H, snapValue(h));
-      left = snapValue(left);
-      top = snapValue(top);
-
-      // 보드 밖으로 못 나감
+      // 보드 밖으로 못 나감 → 다시 칸 스냅
       let clamped = clampToBoard(br.left, br.top, left, top, w, h, dir);
-      left = clamped.left;
-      top = clamped.top;
-      w = clamped.w;
-      h = clamped.h;
+      ({ left, top, w, h } = snapBoxToGrid(clamped.left, clamped.top, clamped.w, clamped.h));
 
-      // 다른 위젯과 겹침 방지 (쌓임/침범 없음)
-      const hit = clampToObstacles(br.left, br.top, left, top, w, h, dir, obstacles, gap);
+      // 다른 위젯과 최소 gap 유지 (이후 재스냅 안 함 — 간격 우선)
+      let hit = clampToObstacles(br.left, br.top, left, top, w, h, dir, obstacles, gap);
       left = hit.left;
       top = hit.top;
       w = hit.w;
       h = hit.h;
+      // 여러 장애물일 때 한 번 더
+      if (hit.blocked) {
+        hit = clampToObstacles(br.left, br.top, left, top, w, h, dir, obstacles, gap);
+        left = hit.left;
+        top = hit.top;
+        w = hit.w;
+        h = hit.h;
+      }
       setCollisionVisuals(widget, hit.hitting);
 
       applyLive(left, top, w, h);
@@ -623,11 +658,12 @@
     };
 
     const onUp = () => {
-      widget.classList.remove("is-resizing");
-      widget.style.zIndex = "";
+      widget.classList.remove("is-resizing", "is-dragging");
       clearCollisionVisuals();
-      const box = readBoardBox(widget);
-      lockWidgetOnBoard(widget, box.left, box.top, box.w, box.h, getBoardSize());
+      let box = readBoardBox(widget);
+      box = snapBoxToGrid(box.left, box.top, box.w, box.h);
+      const hit = clampToObstacles(br.left, br.top, box.left, box.top, box.w, box.h, dir, obstacles, gap);
+      lockWidgetOnBoard(widget, hit.left, hit.top, hit.w, hit.h, getBoardSize());
       if (widget.dataset.widgetId) dirtySizeIds.add(widget.dataset.widgetId);
       document.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerup", onUp);
@@ -692,6 +728,9 @@
       e.stopPropagation();
       openSettings(widget);
     });
+    chrome.querySelector(".widget-drag")?.addEventListener("pointerdown", (e) => {
+      startResize(e, widget, "drag");
+    });
     chrome.querySelectorAll(".resize-handle, .resize-edge").forEach((handle) => {
       handle.addEventListener("pointerdown", (e) => {
         startResize(e, widget, handle.dataset.dir);
@@ -701,6 +740,9 @@
 
   const CHROME_HTML = `
     <div class="widget-edit-bar">
+      <button type="button" class="widget-drag" title="이동" aria-label="위젯 이동">
+        <i class="bi bi-arrows-move"></i>
+      </button>
       <div class="widget-edit-right">
         <button type="button" class="widget-gear" title="설정" aria-label="위젯 설정">
           <i class="bi bi-gear"></i>
@@ -735,11 +777,11 @@
       chrome.className = "widget-chrome";
       widget.appendChild(chrome);
     }
-    // 최신 마크업 강제 (드래그 그립 제거·삭제 위치 변경 반영)
+    // 최신 마크업 강제 (이동·삭제·엣지 핸들)
     const hasDrag = !!chrome.querySelector(".widget-drag");
     const removeInBar = !!chrome.querySelector(".widget-edit-right .widget-remove");
     const hasEdges = !!chrome.querySelector(".resize-edge");
-    if (!chrome.querySelector(".widget-edit-bar") || hasDrag || !removeInBar || !hasEdges) {
+    if (!chrome.querySelector(".widget-edit-bar") || !hasDrag || !removeInBar || !hasEdges) {
       chrome.innerHTML = CHROME_HTML;
       chrome.dataset.bound = "0";
     }

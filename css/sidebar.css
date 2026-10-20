@@ -270,14 +270,16 @@
   box-shadow: none;
 }
 
-.menu-item.c-blue .icon-box { color: #60a5fa; }
-.menu-item.c-emerald .icon-box { color: #34d399; }
-.menu-item.c-red .icon-box { color: #f87171; }
-.menu-item.c-violet .icon-box { color: #a78bfa; }
-.menu-item.c-amber .icon-box { color: #fbbf24; }
-.menu-item.c-cyan .icon-box { color: #22d3ee; }
-.menu-item.c-pink .icon-box { color: #f472b6; }
-.menu-item.c-slate .icon-box { color: #94a3b8; }
+.menu-item.c-blue .icon-box,
+.menu-item.c-emerald .icon-box,
+.menu-item.c-red .icon-box,
+.menu-item.c-violet .icon-box,
+.menu-item.c-amber .icon-box,
+.menu-item.c-cyan .icon-box,
+.menu-item.c-pink .icon-box,
+.menu-item.c-slate .icon-box {
+  color: #fff;
+}
 
 .menu-item .menu-link > span {
   flex: 1 1 auto;

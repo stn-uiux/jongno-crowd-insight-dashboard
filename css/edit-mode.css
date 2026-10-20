@@ -57,7 +57,7 @@
   overflow: visible;
 }
 #stage.is-editing .widget {
-  outline: 1px dashed rgba(255, 255, 255, 0.85);
+  outline: 1px dashed rgb(255 255 255 / 20%);
   outline-offset: -1px;
   box-shadow: none;
   z-index: 2;
@@ -74,7 +74,7 @@
   z-index: 40;
 }
 #stage.is-editing .widget.accent {
-  outline-color: rgba(255, 255, 255, 0.9);
+  outline-color: rgba(255, 255, 255, 0.5);
 }
 
 .widget-chrome {
@@ -88,7 +88,7 @@
   display: block !important;
 }
 
-/* 상단 툴바: 설정 / 삭제 */
+/* 상단 툴바: 이동 / 설정 / 삭제 */
 .widget-edit-bar {
   position: absolute;
   top: 8px;
@@ -97,7 +97,7 @@
   z-index: 510;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 8px;
   pointer-events: none;
 }
@@ -111,6 +111,7 @@
   pointer-events: auto;
 }
 
+.widget-drag,
 .widget-gear,
 .widget-remove {
   width: 28px;
@@ -126,12 +127,22 @@
   padding: 0;
   flex: 0 0 auto;
 }
+.widget-drag {
+  cursor: grab;
+}
+.widget-drag:hover { background: rgba(59, 130, 246, 0.55); }
+.widget.is-dragging .widget-drag { cursor: grabbing; }
 .widget-gear:hover { background: rgba(59, 130, 246, 0.55); }
 .widget-remove {
   background: #e11d48;
   border-color: rgba(255, 255, 255, 0.35);
 }
 .widget-remove:hover { background: #be123c; }
+.widget.is-dragging {
+  outline-color: #60a5fa !important;
+  outline-style: solid !important;
+  cursor: grabbing;
+}
 
 /* display:flex 가 [hidden] 을 덮어쓰므로 강제 숨김 */
 .widget[hidden],
@@ -234,8 +245,8 @@
 .resize-edge.e:hover,
 .resize-edge.w:hover { width: 10px; }
 
-/* 커스텀 크기 = 보드 절대배치 (칸/섹션 벽 없음). 좌표는 JS % */
-.widget.has-custom-size {
+/* 커스텀 크기 = 보드 절대배치. left/top/width/height 만 JS 인라인( % / px ) */
+.board > .widget.has-custom-size {
   position: absolute;
   z-index: 6;
   box-sizing: border-box;
@@ -245,6 +256,13 @@
   overflow: hidden;
   min-width: 0;
   min-height: 0;
+  max-width: none;
+  max-height: none;
+  flex: 0 0 auto;
+}
+.board > .widget.has-custom-size.is-resizing,
+.board > .widget.has-custom-size.is-dragging {
+  z-index: 40;
 }
 
 /* —— Add widget modal —— */

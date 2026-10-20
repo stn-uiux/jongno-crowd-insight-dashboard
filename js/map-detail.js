@@ -7,6 +7,61 @@
   const btnBack = document.getElementById("map-back");
   if (!mapWidget || !overview || !detail || !pointsHost || !btnIkseon || !btnBack) return;
 
+  /**
+   * 개요·상세 공통:
+   * - stage: cover로 위젯을 항상 채움
+   * - overlay(.map-regions / .map-points): --region-shift-x/y + scale 1
+   */
+  const MAP_ZOOM = 1;
+  const FALLBACK_BASE = { w: 1920, h: 1080 };
+
+  function stageBaseSize(stage, img) {
+    const raw = stage.getAttribute("data-aspect");
+    if (raw && raw.includes("/")) {
+      const [w, h] = raw.split("/").map(Number);
+      if (w > 0 && h > 0) return { w, h };
+    }
+    if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+      return { w: img.naturalWidth, h: img.naturalHeight };
+    }
+    return { ...FALLBACK_BASE };
+  }
+
+  function fitStage(canvas) {
+    if (!canvas || canvas.hidden) return;
+    const stage = canvas.querySelector(".map-stage");
+    if (!stage) return;
+    const img = stage.querySelector(".map-photo");
+    const base = stageBaseSize(stage, img);
+    const cw = canvas.clientWidth;
+    const ch = canvas.clientHeight;
+    if (cw <= 0 || ch <= 0 || base.w <= 0 || base.h <= 0) return;
+
+    const scale = Math.max(cw / base.w, ch / base.h) * MAP_ZOOM;
+    stage.style.width = `${Math.round(base.w * scale)}px`;
+    stage.style.height = `${Math.round(base.h * scale)}px`;
+    stage.style.setProperty("--region-scale", "1");
+    stage.style.setProperty("--region-shift-x", "-5%");
+    stage.style.setProperty("--region-shift-y", "0%");
+  }
+
+  function fitAllStages() {
+    fitStage(overview);
+    fitStage(detail);
+  }
+
+  function watchStage(canvas) {
+    const stage = canvas.querySelector(".map-stage");
+    const img = stage && stage.querySelector(".map-photo");
+    if (img && !img.complete) {
+      img.addEventListener("load", () => fitStage(canvas), { once: true });
+    }
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(() => fitStage(canvas));
+      ro.observe(canvas);
+    }
+  }
+
   /** Figma 25:1474 — Hitmap 원 중심 (프레임 860×950 기준 %) */
   const POINTS = [
     { id: "A-1", left: 48.5, top: 17.4, state: "attention" },
@@ -33,12 +88,12 @@
     warning: {
       label: "경계",
       glow: "assets/map-detail/glow-warning.svg",
-      face: `<span class="mp-face" aria-hidden="true">😟</span>`,
+      face: `<img src="assets/map-detail/emoji-warning.png" alt="">`,
     },
     emergency: {
       label: "위험",
       glow: "assets/map-detail/glow-emergency.svg",
-      face: `<span class="mp-face" aria-hidden="true">😠</span>`,
+      face: `<img src="assets/map-detail/emoji-emergency.png" alt="">`,
     },
   };
 
@@ -84,6 +139,7 @@
     detail.hidden = false;
     overview.setAttribute("aria-hidden", "true");
     detail.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(fitAllStages);
   }
 
   function closeDetail() {
@@ -91,9 +147,15 @@
     detail.hidden = true;
     overview.setAttribute("aria-hidden", "false");
     detail.setAttribute("aria-hidden", "true");
+    requestAnimationFrame(fitAllStages);
   }
 
   renderPoints();
+  watchStage(overview);
+  watchStage(detail);
+  fitAllStages();
+  window.addEventListener("resize", fitAllStages);
+
   btnIkseon.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();

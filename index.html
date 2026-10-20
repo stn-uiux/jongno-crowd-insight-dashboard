@@ -201,10 +201,10 @@
 
       <article class="widget kpi" data-widget-id="kpi-revisit" data-widget-name="90일 이내 재방문률" data-widget-category="모니터링">
         <div class="kpi-head">
-          <h2 class="with-tag">90일 이내 재방문률 <em>어제</em></h2>
+          <h2>90일 이내 재방문률</h2>
           <img src="assets/icon-people-mid.svg" alt="" width="16" height="16">
         </div>
-        <p class="kpi-value">23%</p>
+        <p class="kpi-value">23%<em class="kpi-period">어제</em></p>
         <p class="badge flat">
           <strong>- 변동없음</strong>
           <i></i>
@@ -213,10 +213,10 @@
       </article>
       <article class="widget kpi" data-widget-id="kpi-avg-stay" data-widget-name="평균 체류 시간" data-widget-category="모니터링">
         <div class="kpi-head">
-          <h2 class="with-tag">평균 체류 시간 <em>어제</em></h2>
+          <h2>평균 체류 시간</h2>
           <img src="assets/icon-clock.svg" alt="" width="16" height="16">
         </div>
-        <p class="kpi-value">109분</p>
+        <p class="kpi-value">109분<em class="kpi-period">어제</em></p>
         <p class="badge down">
           <img src="assets/icon-arrow-down.svg" alt="" width="16" height="16">
           <strong>30분</strong>
@@ -260,7 +260,40 @@
 
       <article class="widget map-widget" data-widget-id="map-jongno" data-widget-name="종로 구역 지도" data-widget-category="모니터링" aria-label="종로 구역 지도">
         <div class="map-canvas map-overview" id="map-overview">
-          <img class="map-photo" src="assets/map-raw-1.png" alt="">
+          <div class="map-stage" data-map-stage="overview" data-aspect="1920/1080">
+            <img class="map-photo" src="assets/map_test.png" alt="">
+            <div class="map-regions map-overlay">
+              <div class="region region-b">
+                <img src="assets/region-b.svg" alt="">
+                <div class="rlabel">
+                  <strong>헌법 재판소 일대</strong>
+                  <em>B</em>
+                </div>
+              </div>
+              <div class="region region-d">
+                <img src="assets/region-d.svg" alt="">
+                <div class="rlabel">
+                  <strong>광화문 광장 접점</strong>
+                  <em>D</em>
+                </div>
+              </div>
+              <div class="region region-c">
+                <img src="assets/region-c.svg" alt="">
+                <div class="rlabel">
+                  <strong>낙원동</strong>
+                  <em>C</em>
+                </div>
+              </div>
+              <button type="button" class="region region-a" id="region-ikseon" title="익선동 상세" aria-label="익선동 구역 상세 보기">
+                <img src="assets/region-a.svg" alt="">
+                <div class="rlabel warn">
+                  <img src="assets/icon-warning.svg" alt="" width="24" height="22">
+                  <strong>익선동</strong>
+                  <em>A</em>
+                </div>
+              </button>
+            </div>
+          </div>
 
           <button type="button" class="update" id="refresh">
             <img src="assets/icon-refresh.svg" alt="" width="16" height="16">
@@ -276,36 +309,6 @@
             <p class="clock"><span>2026.10.03(토)</span><span>16:54</span></p>
           </div>
 
-          <div class="region region-b">
-            <img src="assets/region-b.svg" alt="">
-            <div class="rlabel">
-              <strong>헌법 재판소 일대</strong>
-              <em>B</em>
-            </div>
-          </div>
-          <div class="region region-d">
-            <img src="assets/region-d.svg" alt="">
-            <div class="rlabel">
-              <strong>광화문 광장 접점</strong>
-              <em>D</em>
-            </div>
-          </div>
-          <div class="region region-c">
-            <img src="assets/region-c.svg" alt="">
-            <div class="rlabel">
-              <strong>낙원동</strong>
-              <em>C</em>
-            </div>
-          </div>
-          <button type="button" class="region region-a" id="region-ikseon" title="익선동 상세" aria-label="익선동 구역 상세 보기">
-            <img src="assets/region-a.svg" alt="">
-            <div class="rlabel warn">
-              <img src="assets/icon-warning.svg" alt="" width="24" height="22">
-              <strong>익선동</strong>
-              <em>A</em>
-            </div>
-          </button>
-
           <aside class="crowd-legend" aria-label="혼잡 단계">
             <div class="lv watch"><span>관심</span><b>~2<small>명/ms</small></b></div>
             <div class="lv caution"><span>주의</span><b>2~4<small>명/ms</small></b></div>
@@ -315,8 +318,10 @@
         </div>
 
         <div class="map-canvas map-detail" id="map-detail" hidden>
-          <img class="map-photo map-photo-detail" src="assets/map-raw-1.png" alt="익선동 상세">
-          <div class="map-points" id="map-points" aria-label="익선동 지점"></div>
+          <div class="map-stage" data-map-stage="detail" data-aspect="1920/1080">
+            <img class="map-photo map-photo-detail" src="assets/map_test.png" alt="익선동 상세">
+            <div class="map-points map-overlay" id="map-points" aria-label="익선동 지점"></div>
+          </div>
 
           <button type="button" class="update map-detail-update">
             <img src="assets/icon-refresh.svg" alt="" width="16" height="16">
@@ -334,6 +339,37 @@
             <img src="assets/map-detail/icon-reply.svg" alt="" width="20" height="20">
             <span>돌아가기</span>
           </button>
+        </div>
+      </article>
+
+      <article class="widget zone-list-widget" data-widget-id="zone-list" data-widget-name="구역 리스트" data-widget-category="모니터링">
+        <div class="zone-list-head">
+          <div class="zone-list-title">
+            <h2>구역 리스트</h2>
+            <span class="zone-live"><i class="bi bi-wifi"></i>실시간 업데이트 중</span>
+          </div>
+          <div class="zone-sort" role="group" aria-label="정렬기준">
+            <span class="zone-sort-label">정렬기준</span>
+            <button type="button" class="zone-sort-btn is-active" data-sort="name">구역명</button>
+            <button type="button" class="zone-sort-btn" data-sort="density">밀집도</button>
+            <button type="button" class="zone-sort-btn" data-sort="people">체류인원</button>
+          </div>
+        </div>
+        <div class="zone-list-scroll">
+          <div class="zone-list-table-wrap">
+            <table class="zone-list-table">
+              <thead>
+                <tr>
+                  <th>구역명</th>
+                  <th>밀집 레벨</th>
+                  <th>밀집도</th>
+                  <th>체류인원</th>
+                  <th>밀집도 추이</th>
+                </tr>
+              </thead>
+              <tbody id="zone-list-body"></tbody>
+            </table>
+          </div>
         </div>
       </article>
     </main>
@@ -449,8 +485,49 @@
     </div>
   </div>
 
+  <!-- 구역 상세 팝업 (CCTV 패널 구조 재활용) -->
+  <div class="cctv-modal zone-detail-modal" id="zone-detail-modal" hidden aria-hidden="true">
+    <div class="cctv-panel zone-detail-panel" id="zone-detail-panel" role="dialog" aria-modal="true" aria-labelledby="zone-detail-title">
+      <header class="cctv-head" id="zone-detail-drag">
+        <div class="cctv-head-left">
+          <h2 id="zone-detail-title">A - 4 구역</h2>
+          <span class="zone-level is-danger" id="zone-detail-level"><i></i>위험</span>
+        </div>
+        <div class="cctv-head-right">
+          <button type="button" class="cctv-close" id="zone-detail-close" aria-label="닫기">
+            <img src="assets/cctv/close.svg" alt="" width="24" height="24">
+          </button>
+        </div>
+      </header>
+
+      <div class="zone-detail-body">
+        <div id="zone-detail-main-chart" class="zone-detail-main-chart"></div>
+        <ul class="zone-detail-legend">
+          <li><i class="dot density"></i>밀집도</li>
+          <li><i class="dot people"></i>체류인원</li>
+        </ul>
+        <div class="zone-detail-brush-wrap" id="zone-detail-brush-wrap">
+          <div id="zone-detail-brush-chart" class="zone-detail-brush-chart"></div>
+          <div class="zone-brush-mask zone-brush-mask-left" id="zone-brush-mask-left"></div>
+          <div class="zone-brush-mask zone-brush-mask-right" id="zone-brush-mask-right"></div>
+          <div class="zone-brush-select" id="zone-brush-select" role="slider" aria-label="기간 범위">
+            <i class="zone-brush-handle is-start" id="zone-brush-start"></i>
+            <i class="zone-brush-handle is-end" id="zone-brush-end"></i>
+          </div>
+        </div>
+      </div>
+
+      <footer class="zone-detail-foot">
+        <span class="zone-detail-foot-label">담당자</span>
+        <div class="zone-manager-list" id="zone-detail-managers"></div>
+      </footer>
+    </div>
+  </div>
+
   <script src="js/dashboard.js"></script>
   <script src="js/map-detail.js"></script>
+  <script src="js/zone-list.js"></script>
+  <script src="js/zone-detail.js"></script>
   <script src="js/cctv-modal.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/edit-mode.js"></script>
