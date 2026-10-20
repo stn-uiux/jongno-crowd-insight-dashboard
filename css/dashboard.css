@@ -920,7 +920,8 @@ img {
   object-position: center;
 }
 .map-point {
-  /* 기본 단계: 관심(attention) */
+  /* 기본 단계: 관심(attention), 기본 사이즈: lg(100%) */
+  --mp-scale: var(--mp-scale-lg, 1);
   --mp-level-color: var(--level-attention);
   --mp-badge-label: "관심";
   --mp-emoji-bg: url("../assets/map-detail/emoji-attention.png");
@@ -930,6 +931,22 @@ img {
   height: 0;
   pointer-events: auto;
   z-index: var(--z-base);
+  transform: scale(var(--mp-scale));
+  transform-origin: 0 0;
+}
+/* 상세 맵 지점(map-point) 사이즈 3단계 (lg: 현재 크기 기본 / md: 중간 / sm: 소형)
+   - .map-point 또는 내부 .mp-tip 어디에 붙여도 mp-core + 툴팁 + 이모지 + 배지 + CCTV 카메라 버튼이 정비율로 함께 조절됨 */
+.map-point:is(.map-point--lg, .is-lg, .lg),
+.map-point:has(.mp-tip--lg, .mp-tip.is-lg) {
+  --mp-scale: var(--mp-scale-lg, 1);
+}
+.map-point:is(.map-point--md, .is-md, .md),
+.map-point:has(.mp-tip--md, .mp-tip.is-md) {
+  --mp-scale: var(--mp-scale-md, 0.8);
+}
+.map-point:is(.map-point--sm, .is-sm, .sm),
+.map-point:has(.mp-tip--sm, .mp-tip.is-sm) {
+  --mp-scale: var(--mp-scale-sm, 0.65);
 }
 /* 5단계 상태 클래스 (정상 · 관심 · 주의 · 경계 · 심각)
    - .map-point 또는 .mp-tip, .mp-emo 어디에 클래스를 붙여도 이모지/배지색/배지문구/광원이 자동 변경됨 */

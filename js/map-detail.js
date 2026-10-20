@@ -71,23 +71,24 @@
   /**
    * Figma 25:1474 — Hitmap 원 중심 (프레임 860×950 기준 %)
    * - state  : "normal"(정상) | "attention"(관심) | "caution"(주의) | "warning"(경계) | "emergency"(심각)
+   * - size   : "lg"(기본, 현재 크기) | "md"(중간) | "sm"(소형)
    * - tipPos : "top"(기본, 위) | "bottom"(아래) | "left"(왼쪽) | "right"(오른쪽)
    * - cctvPos: "right" (기본, 우측 상단) | "left" (좌측 상단)
    */
   const POINTS = [
-    { id: "A-1", left: 48.5, top: 17.4, state: "attention", tipPos: "top", cctvPos: "right" },
-    { id: "A-2", left: 24.4, top: 25.3, state: "normal", tipPos: "top", cctvPos: "right" },
-    { id: "A-3", left: 49.7, top: 34.3, state: "attention", tipPos: "top", cctvPos: "right" },
-    { id: "A-4", left: 14.5, top: 39.7, state: "caution", tipPos: "top", cctvPos: "right" },
-    { id: "A-5", left: 40.0, top: 50.4, state: "warning", tipPos: "top", cctvPos: "right" },
-    { id: "A-6", left: 66.7, top: 47.7, state: "attention", tipPos: "top", cctvPos: "right" },
-    { id: "A-7", left: 14.1, top: 63.1, state: "warning", tipPos: "top", cctvPos: "right" },
-    { id: "A-8", left: 30.7, top: 63.0, state: "warning", tipPos: "top", cctvPos: "right" },
-    { id: "A-9", left: 76.1, top: 59.3, state: "normal", tipPos: "top", cctvPos: "right" },
-    { id: "A-10", left: 84.3, top: 71.3, state: "caution", tipPos: "top", cctvPos: "right" },
-    { id: "A-11", left: 20.4, top: 85.0, state: "emergency", tipPos: "top", cctvPos: "right" },
-    { id: "A-12", left: 46.9, top: 92.3, state: "warning", tipPos: "top", cctvPos: "right" },
-    { id: "A-13", left: 76.2, top: 83.3, state: "warning", tipPos: "top", cctvPos: "right" },
+    { id: "A-1", left: 48.5, top: 17.4, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-2", left: 24.4, top: 25.3, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-3", left: 49.7, top: 34.3, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-4", left: 14.5, top: 39.7, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-5", left: 40.0, top: 50.4, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-6", left: 66.7, top: 47.7, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-7", left: 14.1, top: 63.1, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-8", left: 30.7, top: 63.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-9", left: 76.1, top: 59.3, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-10", left: 84.3, top: 71.3, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-11", left: 20.4, top: 85.0, state: "emergency", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-12", left: 46.9, top: 92.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "A-13", left: 76.2, top: 83.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
 
   const STATE_META = {
@@ -119,14 +120,16 @@
   };
 
   const VALID_TIP_POS = new Set(["top", "bottom", "left", "right"]);
+  const VALID_SIZE = new Set(["sm", "md", "lg"]);
 
   function pointHtml(p) {
     const stateKey = STATE_META[p.state] ? p.state : "attention";
     const meta = STATE_META[stateKey];
+    const size = VALID_SIZE.has(p.size) ? p.size : "lg";
     const tipPos = VALID_TIP_POS.has(p.tipPos) ? p.tipPos : "top";
     const cctvPos = p.cctvPos === "left" ? "left" : "right";
     return `
-      <div class="map-point is-${stateKey}" style="left:${p.left}%;top:${p.top}%;" data-id="${p.id}">
+      <div class="map-point map-point--${size} is-${stateKey}" style="left:${p.left}%;top:${p.top}%;" data-id="${p.id}">
         <div class="mp-tip mp-tip--${tipPos} mp-tip--cctv-${cctvPos}">
           <div class="mp-tip-card">
             <div class="mp-emo">

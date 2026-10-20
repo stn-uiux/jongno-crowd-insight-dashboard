@@ -471,6 +471,11 @@
   --h2: var(--font-widget-title);
   --h3: var(--font-widget-title);
   --kpi: var(--font-kpi);
+
+  /* Map Point Size Scale (lg: 현재 기본 크기 100% / md: 80% / sm: 65%) */
+  --mp-scale-lg: 1;
+  --mp-scale-md: 0.8;
+  --mp-scale-sm: 0.65;
 }
 
 /* 짧은 화면 반응형 토큰 보정 */
