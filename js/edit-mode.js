@@ -1,19 +1,21 @@
 (function () {
   const STORAGE_KEY = "jongno-dashboard-removed-widgets";
-  /** v14: 그리드 리사이즈/드래그 충돌 검사 버그 수정 (가로/세로 독립 축 검사) */
-  const SIZE_KEY = "jongno-dashboard-widget-sizes-v14";
+  /** v19: 리사이즈 축 분리 및 인접 위젯 충돌 간섭 버그 완전 해결 */
+  const SIZE_KEY = "jongno-dashboard-widget-sizes-v19";
   try {
-    localStorage.removeItem("jongno-dashboard-widget-sizes-v9");
-    localStorage.removeItem("jongno-dashboard-widget-sizes-v10");
-    localStorage.removeItem("jongno-dashboard-widget-sizes-v11");
-    localStorage.removeItem("jongno-dashboard-widget-sizes-v12");
-    localStorage.removeItem("jongno-dashboard-widget-sizes-v13");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v14");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v15");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v16");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v17");
+    localStorage.removeItem("jongno-dashboard-widget-sizes-v18");
   } catch (_) {}
   const ORDER_KEY = "jongno-dashboard-widget-order";
+  const MIN_COL_SPAN = 3;
+  const MIN_ROW_SPAN = 3;
   const MIN_W = 160;
-  const MIN_H = 100;
+  const MIN_H = 120;
   const GRID_COLS = 24;
-  const GRID_ROWS = 10;
+  const GRID_ROWS = 20;
 
   /** 보드 gap — 위젯↔위젯 최소 간격 */
   function collisionGap() {
@@ -29,7 +31,7 @@
     return Number.isFinite(n) ? n : 16;
   }
 
-  /** 24×10 균등 칸 메트릭 (칸 크기 + gap) */
+  /** 24×20 균등 칸 메트릭 (칸 크기 + gap) */
   function getGridMetrics() {
     const { width, height } = getBoardSize();
     const gap = collisionGap();
@@ -43,32 +45,36 @@
     return n * cell + (n - 1) * gap;
   }
 
-  /** 위치·크기를 24×10 칸에 스냅 (인접 위젯 사이 gap 자동 확보) */
+  /** 위치·크기를 24×20 칸에 스냅 — 최소 3x3 규격 및 보드 경계 엄격 보장 (절대 찌그러지지 않음) */
   function snapBoxToGrid(left, top, w, h) {
     const { gap, colW, rowH, pitchX, pitchY, width, height } = getGridMetrics();
+    let colSpan = Math.max(MIN_COL_SPAN, Math.round((w + gap) / pitchX));
+    let rowSpan = Math.max(MIN_ROW_SPAN, Math.round((h + gap) / pitchY));
+    colSpan = Math.min(colSpan, GRID_COLS);
+    rowSpan = Math.min(rowSpan, GRID_ROWS);
+
     let c0 = Math.round(left / pitchX);
     let r0 = Math.round(top / pitchY);
-    c0 = Math.max(0, Math.min(GRID_COLS - 1, c0));
-    r0 = Math.max(0, Math.min(GRID_ROWS - 1, r0));
-
-    let colSpan = Math.max(1, Math.round((w + gap) / pitchX));
-    let rowSpan = Math.max(1, Math.round((h + gap) / pitchY));
-    colSpan = Math.min(colSpan, GRID_COLS - c0);
-    rowSpan = Math.min(rowSpan, GRID_ROWS - r0);
-
-    // 최소 px 보장 — 칸이 작으면 스팬 늘림
-    while (colSpan < GRID_COLS - c0 && spanSize(colSpan, colW, gap) < MIN_W) colSpan += 1;
-    while (rowSpan < GRID_ROWS - r0 && spanSize(rowSpan, rowH, gap) < MIN_H) rowSpan += 1;
+    c0 = Math.max(0, Math.min(GRID_COLS - colSpan, c0));
+    r0 = Math.max(0, Math.min(GRID_ROWS - rowSpan, r0));
 
     left = c0 * pitchX;
     top = r0 * pitchY;
-    w = Math.min(spanSize(colSpan, colW, gap), width - left);
-    h = Math.min(spanSize(rowSpan, rowH, gap), height - top);
+    w = spanSize(colSpan, colW, gap);
+    h = spanSize(rowSpan, rowH, gap);
     return {
       left: Math.round(left),
       top: Math.round(top),
-      w: Math.round(Math.max(MIN_W, w)),
-      h: Math.round(Math.max(MIN_H, h)),
+      w: Math.round(w),
+      h: Math.round(h),
+      c0,
+      r0,
+      colSpan,
+      rowSpan,
+      colStart: c0 + 1,
+      colEnd: c0 + colSpan + 1,
+      rowStart: r0 + 1,
+      rowEnd: r0 + rowSpan + 1,
     };
   }
 
@@ -79,7 +85,29 @@
    */
   const WIDGET_CATALOG = [
     { id: "zone-list", name: "구역 리스트", category: "모니터링", icon: "bi-list-ul" },
+    { id: "alert-realtime", name: "실시간 위험구역 알림", category: "모니터링", icon: "bi-exclamation-triangle" },
+    { id: "alert-disaster", name: "재난 안전 알림", category: "모니터링", icon: "bi-shield-exclamation" },
   ];
+
+  /** 기본적으로 보드에 노출되지 않고 위젯 추가로만 배치되는 카탈로그 위젯 ID 목록 */
+  const DEFAULT_HIDDEN_IDS = new Set(["alert-realtime", "alert-disaster"]);
+
+  /** 위젯별 기본 24×20 그리드 좌표 및 규격 (공간 감지 및 자동 슬롯 계산용) */
+  const DEFAULT_WIDGET_SPANS = {
+    "kpi-current-stay": { colStart: 1, colEnd: 4, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
+    "kpi-today-visit":  { colStart: 4, colEnd: 7, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
+    "kpi-revisit":      { colStart: 7, colEnd: 10, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
+    "kpi-avg-stay":     { colStart: 10, colEnd: 13, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
+    "kpi-month-visit":  { colStart: 1, colEnd: 7, rowStart: 4, rowEnd: 7, colSpan: 6, rowSpan: 3 },
+    "chart-compare":    { colStart: 7, colEnd: 13, rowStart: 4, rowEnd: 13, colSpan: 6, rowSpan: 9 },
+    "chart-pie":        { colStart: 1, colEnd: 7, rowStart: 7, rowEnd: 14, colSpan: 6, rowSpan: 7 },
+    "chart-stay":       { colStart: 1, colEnd: 7, rowStart: 14, rowEnd: 21, colSpan: 6, rowSpan: 7 },
+    "chart-trend":      { colStart: 7, colEnd: 13, rowStart: 13, rowEnd: 21, colSpan: 6, rowSpan: 8 },
+    "map-jongno":       { colStart: 13, colEnd: 25, rowStart: 1, rowEnd: 16, colSpan: 12, rowSpan: 15 },
+    "zone-list":        { colStart: 13, colEnd: 25, rowStart: 16, rowEnd: 21, colSpan: 12, rowSpan: 5 },
+    "alert-realtime":   { colStart: 19, colEnd: 25, rowStart: 2, rowEnd: 12, colSpan: 6, rowSpan: 10 },
+    "alert-disaster":   { colStart: 13, colEnd: 19, rowStart: 2, rowEnd: 12, colSpan: 6, rowSpan: 10 },
+  };
 
   const stage = document.getElementById("stage");
   const btnEdit = document.getElementById("btn-edit");
@@ -121,10 +149,11 @@
   function loadRemoved() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? new Set(JSON.parse(raw)) : new Set();
-    } catch {
-      return new Set();
-    }
+      if (raw !== null) {
+        return new Set(JSON.parse(raw));
+      }
+    } catch (_) {}
+    return new Set(DEFAULT_HIDDEN_IDS);
   }
 
   function saveRemoved(ids) {
@@ -134,7 +163,15 @@
   function loadSizes() {
     try {
       const raw = localStorage.getItem(SIZE_KEY);
-      return raw ? JSON.parse(raw) : {};
+      const map = raw ? JSON.parse(raw) : {};
+      Object.keys(map).forEach((id) => {
+        const s = map[id];
+        if (s && s.colStart && s.colEnd && s.rowStart && s.rowEnd) {
+          if (s.colEnd - s.colStart < MIN_COL_SPAN) s.colEnd = s.colStart + MIN_COL_SPAN;
+          if (s.rowEnd - s.rowStart < MIN_ROW_SPAN) s.rowEnd = s.rowStart + MIN_ROW_SPAN;
+        }
+      });
+      return map;
     } catch {
       return {};
     }
@@ -177,16 +214,51 @@
   }
 
   function captureWidgetSize(el) {
-    const board = getBoardSize();
-    const box = readBoardBox(el);
-    const bw = Math.max(1, board.width);
-    const bh = Math.max(1, board.height);
+    let colStart, colEnd, rowStart, rowEnd;
+    const colMatch = el.style.gridColumn?.match(/(\d+)\s*\/\s*(\d+)/);
+    const rowMatch = el.style.gridRow?.match(/(\d+)\s*\/\s*(\d+)/);
+    if (colMatch && rowMatch) {
+      colStart = parseInt(colMatch[1], 10);
+      colEnd = parseInt(colMatch[2], 10);
+      rowStart = parseInt(rowMatch[1], 10);
+      rowEnd = parseInt(rowMatch[2], 10);
+    } else {
+      const cs = window.getComputedStyle(el);
+      const cStart = parseInt(cs.gridColumnStart, 10);
+      const cEnd = parseInt(cs.gridColumnEnd, 10);
+      const rStart = parseInt(cs.gridRowStart, 10);
+      const rEnd = parseInt(cs.gridRowEnd, 10);
+      if (!isNaN(cStart) && !isNaN(cEnd) && !isNaN(rStart) && !isNaN(rEnd) && cStart > 0 && rStart > 0) {
+        colStart = cStart;
+        colEnd = cEnd;
+        rowStart = rStart;
+        rowEnd = rEnd;
+      } else {
+        const box = readBoardBox(el);
+        const snapped = snapBoxToGrid(box.left, box.top, box.w, box.h);
+        colStart = snapped.colStart;
+        colEnd = snapped.colEnd;
+        rowStart = snapped.rowStart;
+        rowEnd = snapped.rowEnd;
+      }
+    }
+
+    if (colEnd - colStart < MIN_COL_SPAN) colEnd = colStart + MIN_COL_SPAN;
+    if (rowEnd - rowStart < MIN_ROW_SPAN) rowEnd = rowStart + MIN_ROW_SPAN;
+    if (colEnd > GRID_COLS + 1) {
+      colEnd = GRID_COLS + 1;
+      colStart = Math.max(1, colEnd - MIN_COL_SPAN);
+    }
+    if (rowEnd > GRID_ROWS + 1) {
+      rowEnd = GRID_ROWS + 1;
+      rowStart = Math.max(1, rowEnd - MIN_ROW_SPAN);
+    }
     return {
-      basis: "board",
-      leftRatio: Math.max(0, Math.min(1, box.left / bw)),
-      topRatio: Math.max(0, Math.min(1, box.top / bh)),
-      widthRatio: Math.max(0, Math.min(1, box.w / bw)),
-      heightRatio: Math.max(0, Math.min(1, box.h / bh)),
+      basis: "grid",
+      colStart,
+      colEnd,
+      rowStart,
+      rowEnd,
     };
   }
 
@@ -198,33 +270,22 @@
     let top = Math.round((size.topRatio ?? 0) * bh);
     let w = Math.round((size.widthRatio ?? 0.2) * bw);
     let h = Math.round((size.heightRatio ?? 0.2) * bh);
-    w = Math.max(MIN_W, Math.min(w, bw));
-    h = Math.max(MIN_H, Math.min(h, bh));
+    w = Math.max(10, Math.min(w, bw));
+    h = Math.max(10, Math.min(h, bh));
     left = Math.max(0, Math.min(left, bw - w));
     top = Math.max(0, Math.min(top, bh - h));
     return { left, top, w, h, bw, bh };
   }
 
   /**
-   * 보드 절대배치. 구조 스타일은 .has-custom-size CSS, 좌표만 인라인 %.
+   * 보드 24×20 그리드 배치. 순수 CSS Grid 네이티브 동작으로 화면 크기 축소 시에도 겹치지 않고 축소됨.
    */
-  function lockWidgetOnBoard(el, left, top, w, h, boardSize) {
-    const board = boardSize || getBoardSize();
-    const bw = Math.max(1, board.width);
-    const bh = Math.max(1, board.height);
-    w = Math.max(MIN_W, Math.min(Math.round(w), bw));
-    h = Math.max(MIN_H, Math.min(Math.round(h), bh));
-    left = Math.max(0, Math.min(Math.round(left), bw - w));
-    top = Math.max(0, Math.min(Math.round(top), bh - h));
-
+  function lockWidgetOnGrid(el, colStart, colEnd, rowStart, rowEnd) {
+    if (!el) return;
     el.classList.add("has-custom-size");
-    // 예전에 !important 로 박아둔 잔여 인라인 제거
     [
       ...POS_PROPS,
       "position",
-      "grid-column",
-      "grid-row",
-      "grid-area",
       "margin",
       "min-width",
       "min-height",
@@ -235,16 +296,25 @@
       "overflow",
     ].forEach((prop) => el.style.removeProperty(prop));
 
-    el.style.left = `${((left / bw) * 100).toFixed(3)}%`;
-    el.style.top = `${((top / bh) * 100).toFixed(3)}%`;
-    el.style.width = `${((w / bw) * 100).toFixed(3)}%`;
-    el.style.height = `${((h / bh) * 100).toFixed(3)}%`;
+    el.style.gridColumn = `${colStart} / ${colEnd}`;
+    el.style.gridRow = `${rowStart} / ${rowEnd}`;
+  }
+
+  function lockWidgetOnBoard(el, left, top, w, h) {
+    const snap = snapBoxToGrid(left, top, w, h);
+    lockWidgetOnGrid(el, snap.colStart, snap.colEnd, snap.rowStart, snap.rowEnd);
   }
 
   function applyWidgetSize(el, size, boardSize) {
     if (!el || !size || !hasStoredSize(size)) return;
-    const { left, top, w, h } = resolveBoardBox(size, boardSize);
-    lockWidgetOnBoard(el, left, top, w, h, boardSize || getBoardSize());
+    if (size.colStart != null && size.colEnd != null && size.rowStart != null && size.rowEnd != null) {
+      lockWidgetOnGrid(el, size.colStart, size.colEnd, size.rowStart, size.rowEnd);
+    } else {
+      const board = boardSize || getBoardSize();
+      const { left, top, w, h } = resolveBoardBox(size, board);
+      const snap = snapBoxToGrid(left, top, w, h);
+      lockWidgetOnGrid(el, snap.colStart, snap.colEnd, snap.rowStart, snap.rowEnd);
+    }
   }
 
   function clearWidgetSize(el) {
@@ -271,8 +341,25 @@
 
   function applyPersistedRemoval() {
     const removed = loadRemoved();
+    const sizes = loadSizes();
     widgets().forEach((el) => {
-      if (removed.has(el.dataset.widgetId)) {
+      const id = el.dataset.widgetId;
+      const meta = defaultMeta.get(id);
+      const isInitiallyHidden = meta ? meta.initialHidden : DEFAULT_HIDDEN_IDS.has(id);
+
+      let shouldShow = false;
+      if (isInitiallyHidden) {
+        // 기본 비노출(카탈로그) 위젯은 사용자가 배치하여 sizes에 유효한 좌표가 있고, 삭제 목록에 없을 때 표시
+        shouldShow = !removed.has(id) && Boolean(sizes[id] && hasStoredSize(sizes[id]));
+      } else {
+        // 기본 노출 위젯은 삭제 목록(removed)에 없으면 표시
+        shouldShow = !removed.has(id);
+      }
+
+      if (shouldShow) {
+        el.hidden = false;
+        el.classList.remove("is-removed", "is-pending-remove");
+      } else {
         el.hidden = true;
         el.classList.add("is-removed");
       }
@@ -283,11 +370,8 @@
   function hasStoredSize(size) {
     return !!(
       size &&
-      size.basis === "board" &&
-      size.leftRatio != null &&
-      size.topRatio != null &&
-      size.widthRatio != null &&
-      size.heightRatio != null
+      ((size.colStart != null && size.colEnd != null && size.rowStart != null && size.rowEnd != null) ||
+       (size.basis === "board" && size.leftRatio != null && size.topRatio != null))
     );
   }
 
@@ -454,16 +538,27 @@
   }
 
   function isWidgetVisible(el) {
-    return el && !el.hidden && !el.classList.contains("is-removed");
+    return el && !el.hidden && !el.classList.contains("is-removed") && !pendingRemove.has(el.dataset.widgetId);
   }
 
-  /** 다른 위젯 화면 영역 (리사이즈/드래그 충돌용) */
+  /** 다른 위젯 화면 영역 및 그리드 좌표 (리사이즈/드래그 충돌용) */
   function getObstacles(active) {
     return widgets()
       .filter((w) => w !== active && isWidgetVisible(w))
       .map((w) => {
+        const grid = captureWidgetSize(w);
         const r = w.getBoundingClientRect();
-        return { el: w, left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+        return {
+          el: w,
+          left: r.left,
+          top: r.top,
+          right: r.right,
+          bottom: r.bottom,
+          colStart: grid.colStart,
+          colEnd: grid.colEnd,
+          rowStart: grid.rowStart,
+          rowEnd: grid.rowEnd,
+        };
       });
   }
 
@@ -493,23 +588,19 @@
 
   /**
    * 다른 위젯 영역으로는 못 넘어가게 클램프.
-   * - 아래(S)/위(N) 리사이즈 시: 가로(X) 방향으로 실제 겹치는 위젯에만 반응 (옆 열 위젯 간섭 방지)
-   * - 오른쪽(E)/왼쪽(W) 리사이즈 시: 세로(Y) 방향으로 실제 겹치는 위젯에만 반응 (위/아래 행 위젯 간섭 방지)
-   * - 드래그(drag) 이동 시: X와 Y 양방향 모두 gap 이내로 침범했을 때만 부드럽게 밀어냄
-   * @returns {{ left, top, w, h, blocked, hitting }}
+   * - 최소 3x3 규격(MIN_W, MIN_H) 미만으로 찌그러지지 않도록 방어
    */
   function clampToObstacles(baseLeft, baseTop, left, top, w, h, dir, obstacles, gap = collisionGap()) {
     let vl = baseLeft + left;
     let vt = baseTop + top;
+    let vr = vl + w;
+    let vb = vt + h;
     let blocked = false;
     const hitting = [];
 
-    for (const o of obstacles) {
-      let vr = vl + w;
-      let vb = vt + h;
-
-      // 1) 드래그(drag) 이동 시: X와 Y 양방향 모두에서 gap 이내로 침범했을 때만 충돌
-      if (dir === "drag") {
+    // 1) 드래그(drag) 이동 시: 다른 위젯과 최소 gap 유지 (맞바꾸기 대상 아닐 때만 밀어냄)
+    if (dir === "drag") {
+      for (const o of obstacles) {
         const overlapsX = vl < o.right + gap - COLLISION_EPS && vr > o.left - gap + COLLISION_EPS;
         const overlapsY = vt < o.bottom + gap - COLLISION_EPS && vb > o.top - gap + COLLISION_EPS;
         if (!overlapsX || !overlapsY) continue;
@@ -527,69 +618,20 @@
 
         vl = baseLeft + left;
         vt = baseTop + top;
-        blocked = true;
-        hitting.push(o);
-        continue;
-      }
-
-      // 2) 리사이즈(resize) 시:
-      // 아래쪽(S) 또는 위쪽(N) 크기 조절은 "가로(X) 방향으로 실제 겹치는 장애물"에만 반응
-      const hOverlap = Math.min(vr, o.right) - Math.max(vl, o.left);
-      // 오른쪽(E) 또는 왼쪽(W) 크기 조절은 "세로(Y) 방향으로 실제 겹치는 장애물"에만 반응
-      const vOverlap = Math.min(vb, o.bottom) - Math.max(vt, o.top);
-
-      let hit = false;
-
-      // 동쪽(E): 오른쪽으로 늘릴 때 — 세로(Y)가 겹치고 장애물이 오른쪽에 있는 경우
-      if (dir.includes("e") && vOverlap > COLLISION_EPS && o.left >= vl && vr > o.left - gap + COLLISION_EPS) {
-        const maxW = Math.max(MIN_W, o.left - gap - vl);
-        if (maxW < w) {
-          w = maxW;
-          hit = true;
-        }
-      }
-
-      // 서쪽(W): 왼쪽으로 늘릴 때 — 세로(Y)가 겹치고 장애물이 왼쪽에 있는 경우
-      if (dir.includes("w") && vOverlap > COLLISION_EPS && o.right <= vr && vl < o.right + gap - COLLISION_EPS) {
-        const newLeft = o.right + gap;
-        const newW = vr - newLeft;
-        if (newW >= MIN_W && newLeft > vl) {
-          left += newLeft - vl;
-          vl = newLeft;
-          w = newW;
-          hit = true;
-        } else if (newW < MIN_W) {
-          hit = true;
-        }
-      }
-
-      // 남쪽(S): 아래로 늘릴 때 — 가로(X)가 겹치고 장애물이 아래쪽에 있는 경우
-      if (dir.includes("s") && hOverlap > COLLISION_EPS && o.top >= vt && vb > o.top - gap + COLLISION_EPS) {
-        const maxH = Math.max(MIN_H, o.top - gap - vt);
-        if (maxH < h) {
-          h = maxH;
-          hit = true;
-        }
-      }
-
-      // 북쪽(N): 위로 늘릴 때 — 가로(X)가 겹치고 장애물이 위쪽에 있는 경우
-      if (dir.includes("n") && hOverlap > COLLISION_EPS && o.bottom <= vb && vt < o.bottom + gap - COLLISION_EPS) {
-        const newTop = o.bottom + gap;
-        const newH = vb - newTop;
-        if (newH >= MIN_H && newTop > vt) {
-          top += newTop - vt;
-          vt = newTop;
-          h = newH;
-          hit = true;
-        } else if (newH < MIN_H) {
-          hit = true;
-        }
-      }
-
-      if (hit) {
+        vr = vl + w;
+        vb = vt + h;
         blocked = true;
         hitting.push(o);
       }
+
+      return {
+        left: Math.round(left),
+        top: Math.round(top),
+        w: Math.round(Math.max(MIN_W, w)),
+        h: Math.round(Math.max(MIN_H, h)),
+        blocked,
+        hitting,
+      };
     }
 
     return {
@@ -597,8 +639,8 @@
       top: Math.round(top),
       w: Math.round(Math.max(MIN_W, w)),
       h: Math.round(Math.max(MIN_H, h)),
-      blocked,
-      hitting,
+      blocked: false,
+      hitting: [],
     };
   }
 
@@ -607,6 +649,10 @@
     e.stopPropagation();
     if (e.button != null && e.button !== 0) return;
 
+    try {
+      e.target?.setPointerCapture?.(e.pointerId);
+    } catch (_) {}
+
     const board = getBoardSize();
     const br = getBoardRect();
     if (!br) return;
@@ -614,19 +660,30 @@
     const startX = e.clientX;
     const startY = e.clientY;
     const start = readBoardBox(widget);
+    const startSnap = snapBoxToGrid(start.left, start.top, start.w, start.h);
     const obstacles = getObstacles(widget);
     const gap = collisionGap();
+    const { pitchX, pitchY, colW, rowH } = getGridMetrics();
 
     widget.classList.add("is-resizing", "has-custom-size");
     if (dir === "drag") widget.classList.add("is-dragging");
-    lockWidgetOnBoard(widget, start.left, start.top, start.w, start.h, board);
+
+    let activeSwapTarget = null;
+    let lastValidSnap = snapBoxToGrid(start.left, start.top, start.w, start.h);
+    let resizeRaf = null;
 
     const applyLive = (left, top, w, h) => {
+      widget.style.position = "absolute";
+      widget.style.zIndex = "1000";
+      widget.style.gridColumn = "1 / -1";
+      widget.style.gridRow = "1 / -1";
       widget.style.left = `${left}px`;
       widget.style.top = `${top}px`;
       widget.style.width = `${w}px`;
       widget.style.height = `${h}px`;
+      widget.style.margin = "0";
     };
+    applyLive(start.left, start.top, start.w, start.h);
 
     const onMove = (ev) => {
       const dx = ev.clientX - startX;
@@ -640,61 +697,243 @@
         left = start.left + dx;
         top = start.top + dy;
         ({ left, top, w, h } = snapBoxToGrid(left, top, start.w, start.h));
+
+        // 보드 밖으로 못 나감
+        let clamped = clampToBoard(br.left, br.top, left, top, w, h, dir);
+        left = clamped.left;
+        top = clamped.top;
+
+        // 맞바꾸기(Swap) 대상 탐색
+        let bestScore = 0;
+        let bestTarget = null;
+        const mx = ev.clientX;
+        const my = ev.clientY;
+
+        const curVl = br.left + left;
+        const curVt = br.top + top;
+        const curVr = curVl + w;
+        const curVb = curVt + h;
+
+        for (const o of obstacles) {
+          const pointerInside = mx >= o.left && mx <= o.right && my >= o.top && my <= o.bottom;
+          const overlapW = Math.max(0, Math.min(curVr, o.right) - Math.max(curVl, o.left));
+          const overlapH = Math.max(0, Math.min(curVb, o.bottom) - Math.max(curVt, o.top));
+          const overlapArea = overlapW * overlapH;
+          const oArea = Math.max(1, (o.right - o.left) * (o.bottom - o.top));
+          const myArea = Math.max(1, w * h);
+          const overlapRatio = overlapArea / Math.min(oArea, myArea);
+
+          let score = 0;
+          if (pointerInside) {
+            score = 1000 + overlapRatio * 100;
+          } else if (overlapRatio >= 0.35) {
+            score = overlapRatio * 100;
+          }
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestTarget = o.el;
+          }
+        }
+
+        if (bestScore > 0 && bestTarget) {
+          activeSwapTarget = bestTarget;
+          clearCollisionVisuals();
+          widget.classList.add("is-swap-ready");
+          obstacles.forEach((o) => {
+            if (o.el === activeSwapTarget) {
+              o.el.classList.add("is-swap-target");
+            } else {
+              o.el.classList.remove("is-swap-target");
+            }
+          });
+        } else {
+          activeSwapTarget = null;
+          widget.classList.remove("is-swap-ready");
+          obstacles.forEach((o) => o.el.classList.remove("is-swap-target"));
+
+          // 다른 위젯과 최소 gap 유지 (맞바꾸기 대상 아닐 때만 밀어냄)
+          let hit = clampToObstacles(br.left, br.top, left, top, w, h, dir, obstacles, gap);
+          left = hit.left;
+          top = hit.top;
+          w = hit.w;
+          h = hit.h;
+          setCollisionVisuals(widget, hit.hitting);
+        }
+
+        lastValidSnap = snapBoxToGrid(left, top, start.w, start.h);
       } else {
-        // "drag" 문자열에 "e"가 포함되므로 includes 전에 drag 분기 필수
-        if (dir.includes("e")) w = start.w + dx;
+        // 리사이즈 모드: 마우스 드래그 변위로부터 그리드 슬롯 직접 산출 (인접 위젯 간섭 및 찌그러짐 원천 차단)
+        let rawLeft = start.left;
+        let rawTop = start.top;
+        let rawW = start.w;
+        let rawH = start.h;
+
+        const minWpx = spanSize(MIN_COL_SPAN, colW, gap);
+        const minHpx = spanSize(MIN_ROW_SPAN, rowH, gap);
+
+        if (dir.includes("e")) rawW = Math.max(minWpx, start.w + dx);
         if (dir.includes("w")) {
-          left = start.left + dx;
-          w = start.w - dx;
+          const maxLeft = start.left + start.w - minWpx;
+          rawLeft = Math.min(maxLeft, start.left + dx);
+          rawW = start.left + start.w - rawLeft;
         }
-        if (dir.includes("s")) h = start.h + dy;
+        if (dir.includes("s")) rawH = Math.max(minHpx, start.h + dy);
         if (dir.includes("n")) {
-          top = start.top + dy;
-          h = start.h - dy;
+          const maxTop = start.top + start.h - minHpx;
+          rawTop = Math.min(maxTop, start.top + dy);
+          rawH = start.top + start.h - rawTop;
         }
-        if (dir.includes("w") && w < MIN_W) {
-          left = start.left + start.w - MIN_W;
-          w = MIN_W;
-        }
-        if (dir.includes("n") && h < MIN_H) {
-          top = start.top + start.h - MIN_H;
-          h = MIN_H;
-        }
-        ({ left, top, w, h } = snapBoxToGrid(left, top, w, h));
-      }
 
-      // 보드 밖으로 못 나감 → 다시 칸 스냅
-      let clamped = clampToBoard(br.left, br.top, left, top, w, h, dir);
-      ({ left, top, w, h } = snapBoxToGrid(clamped.left, clamped.top, clamped.w, clamped.h));
+        // 목표 그리드 슬롯 계산
+        let colStart = Math.max(1, Math.min(GRID_COLS, Math.round(rawLeft / pitchX) + 1));
+        let colEnd = Math.max(colStart + MIN_COL_SPAN, Math.min(GRID_COLS + 1, Math.round((rawLeft + rawW + gap) / pitchX) + 1));
+        let rowStart = Math.max(1, Math.min(GRID_ROWS, Math.round(rawTop / pitchY) + 1));
+        let rowEnd = Math.max(rowStart + MIN_ROW_SPAN, Math.min(GRID_ROWS + 1, Math.round((rawTop + rawH + gap) / pitchY) + 1));
 
-      // 다른 위젯과 최소 gap 유지 (이후 재스냅 안 함 — 간격 우선)
-      let hit = clampToObstacles(br.left, br.top, left, top, w, h, dir, obstacles, gap);
-      left = hit.left;
-      top = hit.top;
-      w = hit.w;
-      h = hit.h;
-      // 여러 장애물일 때 한 번 더
-      if (hit.blocked) {
-        hit = clampToObstacles(br.left, br.top, left, top, w, h, dir, obstacles, gap);
-        left = hit.left;
-        top = hit.top;
-        w = hit.w;
-        h = hit.h;
+        // 조절하지 않는 축의 모서리는 시작 위치에 고정
+        if (!dir.includes("w")) colStart = startSnap.colStart;
+        if (!dir.includes("e")) colEnd = startSnap.colEnd;
+        if (!dir.includes("n")) rowStart = startSnap.rowStart;
+        if (!dir.includes("s")) rowEnd = startSnap.rowEnd;
+
+        // 확장 방향에 위치한 장애물과의 충돌 검사 및 클램프 (인접한 다른 축 위젯과의 간섭 완전 차단)
+        const gridHitting = [];
+        for (const o of obstacles) {
+          const rowsOverlap = (rowStart < o.rowEnd && rowEnd > o.rowStart);
+          if (rowsOverlap) {
+            // 서쪽 확장 시: 원래 내 왼쪽(또는 그 이전)에 위치하던 장애물만 서쪽 확장을 가로막음
+            if (dir.includes("w") && o.colEnd <= startSnap.colStart) {
+              if (colStart < o.colEnd) {
+                colStart = o.colEnd;
+                gridHitting.push(o);
+              }
+            }
+            // 동쪽 확장 시: 원래 내 오른쪽(또는 그 이후)에 위치하던 장애물만 동쪽 확장을 가로막음
+            if (dir.includes("e") && o.colStart >= startSnap.colEnd) {
+              if (colEnd > o.colStart) {
+                colEnd = o.colStart;
+                gridHitting.push(o);
+              }
+            }
+          }
+
+          const colsOverlap = (colStart < o.colEnd && colEnd > o.colStart);
+          if (colsOverlap) {
+            // 북쪽 확장 시: 원래 내 위쪽(또는 그 이전)에 위치하던 장애물만 북쪽 확장을 가로막음
+            if (dir.includes("n") && o.rowEnd <= startSnap.rowStart) {
+              if (rowStart < o.rowEnd) {
+                rowStart = o.rowEnd;
+                gridHitting.push(o);
+              }
+            }
+            // 남쪽 확장 시: 원래 내 아래쪽(또는 그 이후)에 위치하던 장애물만 남쪽 확장을 가로막음
+            if (dir.includes("s") && o.rowStart >= startSnap.rowEnd) {
+              if (rowEnd > o.rowStart) {
+                rowEnd = o.rowStart;
+                gridHitting.push(o);
+              }
+            }
+          }
+        }
+
+        // 최소 스팬 규격 보장
+        if (colEnd - colStart < MIN_COL_SPAN) {
+          if (dir.includes("w")) colStart = colEnd - MIN_COL_SPAN;
+          else colEnd = colStart + MIN_COL_SPAN;
+        }
+        if (rowEnd - rowStart < MIN_ROW_SPAN) {
+          if (dir.includes("n")) rowStart = rowEnd - MIN_ROW_SPAN;
+          else rowEnd = rowStart + MIN_ROW_SPAN;
+        }
+
+        // 보드 경계 보장 (1 ~ 25, 1 ~ 21)
+        colStart = Math.max(1, Math.min(GRID_COLS + 1 - MIN_COL_SPAN, colStart));
+        colEnd = Math.max(colStart + MIN_COL_SPAN, Math.min(GRID_COLS + 1, colEnd));
+        rowStart = Math.max(1, Math.min(GRID_ROWS + 1 - MIN_ROW_SPAN, rowStart));
+        rowEnd = Math.max(rowStart + MIN_ROW_SPAN, Math.min(GRID_ROWS + 1, rowEnd));
+
+        const c0 = colStart - 1;
+        const r0 = rowStart - 1;
+        const colSpan = colEnd - colStart;
+        const rowSpan = rowEnd - rowStart;
+
+        left = c0 * pitchX;
+        top = r0 * pitchY;
+        w = spanSize(colSpan, colW, gap);
+        h = spanSize(rowSpan, rowH, gap);
+
+        lastValidSnap = {
+          left: Math.round(left),
+          top: Math.round(top),
+          w: Math.round(w),
+          h: Math.round(h),
+          c0,
+          r0,
+          colSpan,
+          rowSpan,
+          colStart,
+          colEnd,
+          rowStart,
+          rowEnd,
+        };
+
+        setCollisionVisuals(widget, gridHitting);
       }
-      setCollisionVisuals(widget, hit.hitting);
 
       applyLive(left, top, w, h);
-      window.dispatchEvent(new Event("resize"));
+      if (!resizeRaf) {
+        resizeRaf = requestAnimationFrame(() => {
+          resizeRaf = null;
+          window.dispatchEvent(new Event("resize"));
+        });
+      }
     };
 
     const onUp = () => {
-      widget.classList.remove("is-resizing", "is-dragging");
+      if (resizeRaf) {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = null;
+      }
+      try {
+        e.target?.releasePointerCapture?.(e.pointerId);
+      } catch (_) {}
+
+      widget.classList.remove("is-resizing", "is-dragging", "is-swap-ready");
       clearCollisionVisuals();
-      let box = readBoardBox(widget);
-      box = snapBoxToGrid(box.left, box.top, box.w, box.h);
-      const hit = clampToObstacles(br.left, br.top, box.left, box.top, box.w, box.h, dir, obstacles, gap);
-      lockWidgetOnBoard(widget, hit.left, hit.top, hit.w, hit.h, getBoardSize());
-      if (widget.dataset.widgetId) dirtySizeIds.add(widget.dataset.widgetId);
+      document.querySelectorAll(".widget.is-swap-target").forEach((el) => {
+        el.classList.remove("is-swap-target");
+      });
+
+      if (dir === "drag" && activeSwapTarget) {
+        const targetEl = activeSwapTarget;
+        activeSwapTarget = null;
+
+        // 드래그 중이던 위젯 A의 원래 위치/크기 & 맞바꿀 대상 위젯 B의 위치/크기
+        const targetBox = readBoardBox(targetEl);
+        const snappedTarget = snapBoxToGrid(targetBox.left, targetBox.top, targetBox.w, targetBox.h);
+        const snappedStart = snapBoxToGrid(start.left, start.top, start.w, start.h);
+
+        // A를 B 그리드 자리로 배치
+        lockWidgetOnGrid(widget, snappedTarget.colStart, snappedTarget.colEnd, snappedTarget.rowStart, snappedTarget.rowEnd);
+        // B를 A 원래 그리드 자리로 배치
+        lockWidgetOnGrid(targetEl, snappedStart.colStart, snappedStart.colEnd, snappedStart.rowStart, snappedStart.rowEnd);
+
+        if (widget.dataset.widgetId) dirtySizeIds.add(widget.dataset.widgetId);
+        if (targetEl.dataset.widgetId) dirtySizeIds.add(targetEl.dataset.widgetId);
+
+        widget.classList.add("is-swapped");
+        targetEl.classList.add("is-swapped");
+        setTimeout(() => {
+          widget.classList.remove("is-swapped");
+          targetEl.classList.remove("is-swapped");
+        }, 600);
+      } else {
+        // 드래그/리사이즈 완료: lastValidSnap을 적용하여 찌그러짐 원천 차단
+        lockWidgetOnGrid(widget, lastValidSnap.colStart, lastValidSnap.colEnd, lastValidSnap.rowStart, lastValidSnap.rowEnd);
+        if (widget.dataset.widgetId) dirtySizeIds.add(widget.dataset.widgetId);
+      }
+
       document.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerup", onUp);
       window.dispatchEvent(new Event("resize"));
@@ -914,7 +1153,17 @@
     toolbar.hidden = true;
     closeModal();
     closeSettings();
-    widgets().forEach((w) => w.classList.remove("is-resizing", "is-dragging", "is-swap-target"));
+    widgets().forEach((w) =>
+      w.classList.remove(
+        "is-resizing",
+        "is-dragging",
+        "is-swap-target",
+        "is-swap-ready",
+        "is-swapped",
+        "is-resize-blocked",
+        "is-collision-target"
+      )
+    );
     pendingRemove = new Set();
   }
 
@@ -922,9 +1171,15 @@
     defaultMeta.clear();
     widgets().forEach((el) => {
       const titleEl = getWidgetTitleEl(el);
+      const isInitiallyHidden =
+        el.hasAttribute("hidden") ||
+        el.classList.contains("is-removed") ||
+        el.dataset.widgetId === "alert-realtime" ||
+        el.dataset.widgetId === "alert-disaster";
       defaultMeta.set(el.dataset.widgetId, {
         name: el.dataset.widgetName || "",
         titleHtml: titleEl ? titleEl.innerHTML : null,
+        initialHidden: isInitiallyHidden,
       });
     });
   }
@@ -940,10 +1195,39 @@
 
     widgets().forEach((el) => {
       clearWidgetSize(el);
-      el.hidden = false;
-      el.classList.remove("is-removed", "is-pending-remove", "is-resizing", "is-dragging");
-
       const meta = defaultMeta.get(el.dataset.widgetId);
+      const shouldHide = meta
+        ? meta.initialHidden
+        : DEFAULT_HIDDEN_IDS.has(el.dataset.widgetId);
+
+      if (shouldHide) {
+        el.hidden = true;
+        el.classList.add("is-removed");
+        el.classList.remove(
+          "is-pending-remove",
+          "is-resizing",
+          "is-dragging",
+          "is-swap-target",
+          "is-swap-ready",
+          "is-swapped",
+          "is-resize-blocked",
+          "is-collision-target"
+        );
+      } else {
+        el.hidden = false;
+        el.classList.remove(
+          "is-removed",
+          "is-pending-remove",
+          "is-resizing",
+          "is-dragging",
+          "is-swap-target",
+          "is-swap-ready",
+          "is-swapped",
+          "is-resize-blocked",
+          "is-collision-target"
+        );
+      }
+
       if (meta) {
         if (meta.name) el.dataset.widgetName = meta.name;
         const titleEl = getWidgetTitleEl(el);
@@ -952,28 +1236,39 @@
 
       if (editing) {
         el.querySelector(".widget-chrome")?.remove();
-        ensureChrome(el);
+        if (!shouldHide) ensureChrome(el);
       }
     });
 
     refreshEmptyRows();
     visibilitySnapshot.clear();
-    widgets().forEach((w) => visibilitySnapshot.set(w.dataset.widgetId, true));
+    widgets().forEach((w) => visibilitySnapshot.set(w.dataset.widgetId, !w.hidden));
     snapshotSizes();
     window.dispatchEvent(new Event("resize"));
   }
 
   function cancelEdit() {
     dirtySizeIds.clear();
-    pendingRemove.forEach((id) => {
-      const el = document.querySelector(`.widget[data-widget-id="${id}"]`);
-      if (!el) return;
-      if (visibilitySnapshot.get(id)) {
+    widgets().forEach((el) => {
+      const id = el.dataset.widgetId;
+      const wasVisible = visibilitySnapshot.get(id);
+      if (wasVisible) {
         el.hidden = false;
         el.classList.remove("is-pending-remove", "is-removed");
+      } else {
+        el.hidden = true;
+        el.classList.add("is-removed");
+        el.classList.remove("is-pending-remove");
       }
+      el.classList.remove(
+        "is-pending-remove",
+        "is-swap-target",
+        "is-swap-ready",
+        "is-swapped",
+        "is-resize-blocked",
+        "is-collision-target"
+      );
     });
-    widgets().forEach((w) => w.classList.remove("is-pending-remove"));
     refreshEmptyRows();
     if (orderSnapshot) applyOrderMap(orderSnapshot);
     restoreSizeSnapshot();
@@ -986,15 +1281,19 @@
     const sizes = loadSizes();
     widgets().forEach((el) => {
       const id = el.dataset.widgetId;
-      if (pendingRemove.has(id) || el.classList.contains("is-pending-remove")) {
+      const isPending = pendingRemove.has(id) || el.classList.contains("is-pending-remove");
+      const isRemovedOrHidden = isPending || el.hidden || el.classList.contains("is-removed");
+
+      if (isRemovedOrHidden) {
         el.hidden = true;
         el.classList.add("is-removed");
         el.classList.remove("is-pending-remove");
         removed.add(id);
         delete sizes[id];
         dirtySizeIds.delete(id);
-      } else if (!el.hidden) {
-        el.classList.remove("is-removed");
+      } else {
+        el.hidden = false;
+        el.classList.remove("is-removed", "is-pending-remove");
         removed.delete(id);
         if (dirtySizeIds.has(id) || el.classList.contains("has-custom-size")) {
           sizes[id] = captureWidgetSize(el);
@@ -1004,6 +1303,7 @@
     refreshEmptyRows();
     saveRemoved(removed);
     saveSizes(sizes);
+    saveOrder();
     dirtySizeIds.clear();
     exitEdit();
     applyPersistedSizes();
@@ -1017,6 +1317,224 @@
     );
   }
 
+  /** 위젯의 현재 그리드 영역(1-indexed 시작/끝 및 span) 조회 */
+  function getWidgetGridPlacement(el) {
+    if (!el) return null;
+    const id = el.dataset.widgetId;
+    const colMatch = el.style.gridColumn?.match(/(\d+)\s*\/\s*(\d+)/);
+    const rowMatch = el.style.gridRow?.match(/(\d+)\s*\/\s*(\d+)/);
+    if (colMatch && rowMatch) {
+      const colStart = parseInt(colMatch[1], 10);
+      const colEnd = parseInt(colMatch[2], 10);
+      const rowStart = parseInt(rowMatch[1], 10);
+      const rowEnd = parseInt(rowMatch[2], 10);
+      return {
+        colStart,
+        colEnd,
+        rowStart,
+        rowEnd,
+        colSpan: colEnd - colStart,
+        rowSpan: rowEnd - rowStart,
+      };
+    }
+    if (!el.hidden && !el.classList.contains("is-removed")) {
+      const box = readBoardBox(el);
+      if (box.w > 0 && box.h > 0) {
+        const snapped = snapBoxToGrid(box.left, box.top, box.w, box.h);
+        return {
+          colStart: snapped.colStart,
+          colEnd: snapped.colEnd,
+          rowStart: snapped.rowStart,
+          rowEnd: snapped.rowEnd,
+          colSpan: snapped.colSpan,
+          rowSpan: snapped.rowSpan,
+        };
+      }
+    }
+    return DEFAULT_WIDGET_SPANS[id] || null;
+  }
+
+  /** 현재 보드의 24×20 점유 맵 생성 (점유된 칸에 widgetId 기록) */
+  function getBoardOccupancyGrid() {
+    const grid = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(null));
+    widgets().forEach((w) => {
+      const id = w.dataset.widgetId;
+      if (w.hidden || w.classList.contains("is-removed") || pendingRemove.has(id)) {
+        return;
+      }
+      const placement = getWidgetGridPlacement(w);
+      if (!placement) return;
+
+      const r0 = Math.max(0, Math.min(GRID_ROWS, placement.rowStart - 1));
+      const r1 = Math.max(0, Math.min(GRID_ROWS, placement.rowEnd - 1));
+      const c0 = Math.max(0, Math.min(GRID_COLS, placement.colStart - 1));
+      const c1 = Math.max(0, Math.min(GRID_COLS, placement.colEnd - 1));
+
+      for (let r = r0; r < r1; r++) {
+        for (let c = c0; c < c1; c++) {
+          grid[r][c] = id;
+        }
+      }
+    });
+    return grid;
+  }
+
+  /** 지정된 직사각형 슬롯이 비어있는지 검사 */
+  function isSlotAvailable(grid, colStart, colEnd, rowStart, rowEnd, ignoreWidgetId = null) {
+    const r0 = rowStart - 1;
+    const r1 = rowEnd - 1;
+    const c0 = colStart - 1;
+    const c1 = colEnd - 1;
+
+    if (r0 < 0 || r1 > GRID_ROWS || c0 < 0 || c1 > GRID_COLS) return false;
+
+    for (let r = r0; r < r1; r++) {
+      for (let c = c0; c < c1; c++) {
+        const occupant = grid[r][c];
+        if (occupant !== null && occupant !== ignoreWidgetId) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /** 보드 전체에서 colSpan × rowSpan 크기의 연속된 빈 슬롯 탐색 */
+  function findFreeGridSlot(grid, colSpan, rowSpan, ignoreWidgetId = null) {
+    for (let r = 0; r <= GRID_ROWS - rowSpan; r++) {
+      for (let c = 0; c <= GRID_COLS - colSpan; c++) {
+        if (isSlotAvailable(grid, c + 1, c + colSpan + 1, r + 1, r + rowSpan + 1, ignoreWidgetId)) {
+          return {
+            colStart: c + 1,
+            colEnd: c + colSpan + 1,
+            rowStart: r + 1,
+            rowEnd: r + rowSpan + 1,
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  /** 보드에 비어있는 셀 개수 계산 */
+  function getFreeCellCount(grid) {
+    let count = 0;
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        if (grid[r][c] === null) count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * 보드에서 위젯이 들어갈 수 있는 최적의 슬롯 탐색 (원래 크기 -> 적응형 축소 크기)
+   */
+  function findBestAvailableSlot(grid, targetColSpan, targetRowSpan, ignoreWidgetId = null) {
+    const minCol = MIN_COL_SPAN;
+    const minRow = MIN_ROW_SPAN;
+    const maxCol = Math.min(GRID_COLS, Math.max(minCol, targetColSpan));
+    const maxRow = Math.min(GRID_ROWS, Math.max(minRow, targetRowSpan));
+
+    // 1. 선호 크기 완전 일치
+    let slot = findFreeGridSlot(grid, maxCol, maxRow, ignoreWidgetId);
+    if (slot) return slot;
+
+    // 2. 가로/세로를 점진적으로 줄이며 들어갈 수 있는 최대 직사각형 공간 탐색
+    for (let cs = maxCol; cs >= minCol; cs--) {
+      for (let rs = maxRow; rs >= minRow; rs--) {
+        slot = findFreeGridSlot(grid, cs, rs, ignoreWidgetId);
+        if (slot) return slot;
+      }
+    }
+
+    // 3. 최소 3x3 사각 영역 탐색
+    return findFreeGridSlot(grid, minCol, minRow, ignoreWidgetId);
+  }
+
+  /**
+   * 특정 위젯을 보드에 배치할 공간이 있는지 검사
+   * - 보드에 빈 칸이 1칸이라도 존재하면 위젯 추가 가능!
+   * - 보드가 100% 완전 포화(빈 셀 0개)일 때만 공간 부족!
+   */
+  function checkWidgetSpace(widgetId) {
+    const grid = getBoardOccupancyGrid();
+
+    const sizes = loadSizes();
+    const stored = sizes[widgetId];
+    const def =
+      stored && hasStoredSize(stored)
+        ? stored
+        : DEFAULT_WIDGET_SPANS[widgetId] || { colSpan: 6, rowSpan: 6, colStart: 1, colEnd: 7, rowStart: 1, rowEnd: 7 };
+
+    const targetColSpan = def.colSpan || (def.colEnd - def.colStart) || 6;
+    const targetRowSpan = def.rowSpan || (def.rowEnd - def.rowStart) || 6;
+
+    // 1. 선호(기존) 위치가 완전히 비어있는지 확인
+    if (def.colStart && def.rowStart && isSlotAvailable(grid, def.colStart, def.colEnd, def.rowStart, def.rowEnd, widgetId)) {
+      return {
+        hasSpace: true,
+        slot: { colStart: def.colStart, colEnd: def.colEnd, rowStart: def.rowStart, rowEnd: def.rowEnd },
+        isOriginal: true,
+      };
+    }
+
+    // 2. 보드 내 적응형 슬롯 탐색 (원래 크기 -> 가능한 크기, 다른 위젯과 겹치지 않는 완전한 빈 사각 슬롯)
+    const slot = findBestAvailableSlot(grid, targetColSpan, targetRowSpan, widgetId);
+    if (slot) {
+      return {
+        hasSpace: true,
+        slot: slot,
+        isOriginal: false,
+      };
+    }
+
+    // 3. 다른 위젯과 겹치지 않고 들어갈 수 있는 공간이 전혀 없으면 추가 불가
+    return {
+      hasSpace: false,
+      slot: null,
+      isOriginal: false,
+    };
+  }
+
+  /** 세련된 피드백 토스트 알림 띄우기 (경고, 성공, 일반) */
+  let toastTimer = null;
+  function showToast(message, type = "info") {
+    let container = document.querySelector(".board-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "board-toast-container";
+      document.body.appendChild(container);
+    }
+
+    const existing = container.querySelector(".board-toast");
+    if (existing) {
+      existing.remove();
+      if (toastTimer) clearTimeout(toastTimer);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `board-toast is-${type}`;
+
+    let iconClass = "bi-info-circle-fill";
+    if (type === "warning") iconClass = "bi-exclamation-triangle-fill";
+    else if (type === "success") iconClass = "bi-check-circle-fill";
+
+    toast.innerHTML = `
+      <span class="board-toast-icon"><i class="bi ${iconClass}"></i></span>
+      <span class="board-toast-text">${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    toastTimer = setTimeout(() => {
+      toast.classList.add("is-leaving");
+      setTimeout(() => {
+        toast.remove();
+      }, 230);
+    }, 3200);
+  }
+
   function availableCatalog() {
     const placed = placedIds();
     // 보드에 이미 있는 위젯 + 카탈로그 중 미배치만
@@ -1026,7 +1544,7 @@
       .map((w) => ({
         id: w.dataset.widgetId,
         name: w.dataset.widgetName || w.dataset.widgetId,
-        category: w.dataset.widgetCategory || "정보",
+        category: w.dataset.widgetCategory || "모니터링",
         icon: categoryIcon(w.dataset.widgetCategory),
         restore: true,
       }));
@@ -1076,43 +1594,94 @@
     }
 
     catalogList.innerHTML = items
-      .map(
-        (item) => `
-      <div class="wcat-item" data-id="${item.id}" data-restore="${item.restore ? "1" : "0"}">
-        <div class="wcat-icon"><i class="bi ${item.icon || categoryIcon(item.category)}"></i></div>
-        <div class="wcat-meta">
-          <strong>${item.name}</strong>
-          <span>${item.category}</span>
-        </div>
-        <button type="button" class="wcat-add" title="추가" aria-label="${item.name} 추가">
-          <i class="bi bi-plus-lg"></i>
-        </button>
-      </div>`
-      )
+      .map((item) => {
+        const spaceInfo = checkWidgetSpace(item.id);
+        const isSpaceFull = !spaceInfo.hasSpace;
+        const fullBadge = isSpaceFull
+          ? `<span class="wcat-badge-full"><i class="bi bi-exclamation-triangle"></i>공간 부족</span>`
+          : "";
+        const itemClass = `wcat-item${isSpaceFull ? " is-space-full" : ""}`;
+        const btnClass = `wcat-add${isSpaceFull ? " is-disabled" : ""}`;
+        const btnTitle = isSpaceFull ? "공간 부족 (위젯 크기 조절 또는 삭제 필요)" : `${item.name} 추가`;
+
+        return `
+          <div class="${itemClass}" data-id="${item.id}" data-restore="${item.restore ? "1" : "0"}" data-space-full="${isSpaceFull ? "1" : "0"}">
+            <div class="wcat-icon"><i class="bi ${item.icon || categoryIcon(item.category)}"></i></div>
+            <div class="wcat-meta">
+              <div class="wcat-meta-title-row">
+                <strong>${item.name}</strong>
+                ${fullBadge}
+              </div>
+              <span>${item.category}</span>
+            </div>
+            <button type="button" class="${btnClass}" title="${btnTitle}" aria-label="${item.name} 추가">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
+        `;
+      })
       .join("");
 
     catalogList.querySelectorAll(".wcat-item").forEach((row) => {
-      row.querySelector(".wcat-add").addEventListener("click", () => {
-        addWidget(row.dataset.id, row.dataset.restore === "1");
+      const id = row.dataset.id;
+      const isRestore = row.dataset.restore === "1";
+      const isSpaceFull = row.dataset.spaceFull === "1";
+
+      const handleAddAttempt = () => {
+        if (isSpaceFull) {
+          row.classList.remove("is-shaking");
+          void row.offsetWidth; // DOM reflow로 진동 애니메이션 재실행
+          row.classList.add("is-shaking");
+          showToast(
+            "현재 보드에 위젯을 추가할 공간이 부족합니다.<br>기존 위젯의 크기를 줄이거나 삭제한 뒤 추가해 주세요.",
+            "warning"
+          );
+          return;
+        }
+        addWidget(id, isRestore);
+      };
+
+      row.querySelector(".wcat-add").addEventListener("click", (e) => {
+        e.stopPropagation();
+        handleAddAttempt();
+      });
+
+      row.addEventListener("click", () => {
+        handleAddAttempt();
       });
     });
   }
 
   function addWidget(id, restore) {
-    if (restore) {
-      const el = document.querySelector(`.widget[data-widget-id="${id}"]`);
-      if (el) {
-        el.hidden = false;
-        el.classList.remove("is-removed", "is-pending-remove");
-        pendingRemove.delete(id);
-        el.querySelector(".widget-chrome")?.remove();
-        ensureChrome(el);
-        refreshEmptyRows();
-        window.dispatchEvent(new Event("resize"));
-      }
+    const spaceInfo = checkWidgetSpace(id);
+    if (!spaceInfo.hasSpace || !spaceInfo.slot) {
+      showToast(
+        "현재 보드에 위젯을 추가할 공간이 부족합니다.<br>기존 위젯의 크기를 줄이거나 삭제한 뒤 추가해 주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    const el = document.querySelector(`.widget[data-widget-id="${id}"]`);
+    const name = el?.dataset?.widgetName || id;
+
+    if (el) {
+      lockWidgetOnGrid(el, spaceInfo.slot.colStart, spaceInfo.slot.colEnd, spaceInfo.slot.rowStart, spaceInfo.slot.rowEnd);
+      dirtySizeIds.add(id);
+
+      el.hidden = false;
+      el.classList.remove("is-removed", "is-pending-remove");
+      pendingRemove.delete(id);
+      el.querySelector(".widget-chrome")?.remove();
+      ensureChrome(el);
+      refreshEmptyRows();
+      window.dispatchEvent(new Event("resize"));
+
+      showToast(`'${name}' 위젯이 보드에 추가되었습니다.`, "success");
       renderCatalog();
       return;
     }
+
     // 신규 카탈로그 위젯: 추후 템플릿 렌더 연결
     console.info("[widget] add not implemented yet:", id);
     renderCatalog();
