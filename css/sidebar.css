@@ -30,7 +30,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: var(--p-black-a70, rgba(0, 0, 0, 0.7));
+  background: var(--p-black-a70);
   pointer-events: none;
 }
 
@@ -98,7 +98,7 @@
 }
 .sidebar-toggle:hover {
   background: var(--p-white-a65);
-  box-shadow: 0 4px 16px rgba(227, 55, 63, 0.35);
+  box-shadow: 0 4px 16px var(--p-red-a35);
 }
 
 /* 로고 — 둥근 카드 */
@@ -134,7 +134,7 @@
 }
 
 .sidebar-logo .logo-text-label {
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   color: var(--text-color-primary);
   white-space: nowrap;
@@ -383,7 +383,7 @@
 
 .submenu-link.active::before {
   background: var(--sidebar-accent);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+  box-shadow: 0 0 8px var(--region-glow-watch);
 }
 
 .submenu-link.active i {
