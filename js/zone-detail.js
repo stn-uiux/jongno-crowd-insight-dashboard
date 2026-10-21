@@ -9,7 +9,7 @@
   if (!modal || !panel || !handle || !btnClose) return;
 
   const rootStyle = getComputedStyle(document.documentElement);
-  const DENSITY = rootStyle.getPropertyValue("--chart-crowd").trim() || "#25d08e";
+  const DENSITY = rootStyle.getPropertyValue("--chart-crowd").trim() || "#25C789";
   const PEOPLE = rootStyle.getPropertyValue("--chart-people").trim() || "#6b7dff";
 
   const LEVELS = {
@@ -256,7 +256,7 @@
     const LineType = am5xy.SmoothedXLineSeries || am5xy.LineSeries;
     const densSeries = chart.series.push(
       LineType.new(root, {
-        name: "밀집도",
+        name: "혼잡도",
         xAxis,
         yAxis: yDensity,
         valueYField: "density",

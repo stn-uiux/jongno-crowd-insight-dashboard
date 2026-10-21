@@ -60,15 +60,15 @@
     axisTrendY: () => cssHex("--chart-axis-trend-y", "#ffffff"),
     tooltipBg: () => cssHex("--surface-card-dark", "#1a2030"),
     stay: () => cssHex("--chart-stay", "#55adff"),
-    crowd: () => cssHex("--chart-crowd", "#25d08e"),
+    crowd: () => cssHex("--chart-crowd", "#25C789"),
     grid: () => cssHex("--chart-grid", "#b4cde6"),
     axis: () => cssHex("--chart-axis", "#d5deea"),
     visitPast: () => cssHex("--chart-visit-past", "#cee5ff"),
     visitToday: () => cssHex("--chart-visit-today", "#065bac"),
     visitTodayEnd: () => cssHex("--chart-visit-today-end", "#227ed7"),
-    congPast: () => cssHex("--chart-cong-past", "#d7f4e2"),
-    congToday: () => cssHex("--chart-cong-today", "#00aea0"),
-    congTodayEnd: () => cssHex("--chart-cong-today-end", "#25d08e"),
+    congPast: () => cssHex("--chart-cong-past", "#B8EFD5"),
+    congToday: () => cssHex("--chart-cong-today", "#16A56F"),
+    congTodayEnd: () => cssHex("--chart-cong-today-end", "#25C789"),
     zone1: () => cssHex("--chart-zone-1", "#d42a2a"),
     zone2: () => cssHex("--chart-zone-2", "#ee7c26"),
     zone3: () => cssHex("--chart-zone-3", "#ffce00"),
@@ -191,9 +191,9 @@
     const chart = root.container.children.push(
       am5percent.PieChart.new(root, {
         layout: root.verticalLayout,
-        innerRadius: am5.percent(72),
-        radius: am5.percent(82),
-        paddingTop: 8,
+        innerRadius: am5.percent(70),
+        radius: am5.percent(78),
+        paddingTop: 10,
         paddingBottom: 8,
         paddingLeft: 8,
         paddingRight: 8,
@@ -215,7 +215,7 @@
       fontWeight: "700",
       fontFamily: "Pretendard, sans-serif",
       fill: am5.color(C.textPrimary()),
-      radius: 16,
+      radius: 18,
       paddingTop: 0,
       paddingBottom: 0,
       paddingLeft: 2,
@@ -230,13 +230,26 @@
     });
     series.ticks.template.setAll({
       visible: true,
-      strokeOpacity: 0.85,
+      strokeOpacity: 0.9,
       strokeWidth: 1.5,
-      length: 10,
     });
     series.ticks.template.adapters.add("stroke", (stroke, target) =>
       am5.color(target.dataItem?.dataContext?.color || C.white())
     );
+    series.ticks.template.adapters.add("points", (points) => {
+      if (!points || points.length < 2) return points;
+      const p0 = points[0];
+      const pEnd = points[points.length - 1];
+      const dx = pEnd.x - p0.x;
+      const dy = pEnd.y - p0.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist <= 2) return points;
+      // 선이 글자 중심까지 닿아 겹치지 않도록, 슬라이스에서 바깥으로 7px만 뻗게 제한하여 글자와의 여백 확보
+      const tickLen = Math.min(7, Math.max(3, dist - 10));
+      const endX = p0.x + (dx / dist) * tickLen;
+      const endY = p0.y + (dy / dist) * tickLen;
+      return [p0, { x: endX, y: endY }];
+    });
     series.set(
       "tooltip",
       makeTooltip(root, "{category}: {valuePercentTotal}%", null, { fromSprite: true })
@@ -291,7 +304,7 @@
         layout: root.verticalLayout,
         paddingLeft: 0,
         paddingRight: 0,
-        paddingTop: 8,
+        paddingTop: 10,
         paddingBottom: 0,
       })
     );
@@ -301,8 +314,6 @@
         categoryField: "hour",
         renderer: am5xy.AxisRendererX.new(root, {
           minGridDistance: 30,
-          cellStartLocation: 0.1,
-          cellEndLocation: 0.9,
         }),
       })
     );
@@ -311,7 +322,11 @@
       fontSize: T.base(),
       fontWeight: "500",
     });
-    xAxis.get("renderer").grid.template.setAll({ strokeOpacity: 0 });
+    xAxis.get("renderer").grid.template.setAll({
+      location: 0.5,
+      stroke: am5.color(C.grid()),
+      strokeOpacity: 0.22,
+    });
 
     const yStay = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
@@ -431,7 +446,7 @@
         layout: root.verticalLayout,
         paddingLeft: 4,
         paddingRight: 4,
-        paddingTop: 4,
+        paddingTop: 10,
         paddingBottom: 0,
       })
     );
@@ -555,7 +570,7 @@
         layout: root.verticalLayout,
         paddingLeft: 0,
         paddingRight: 4,
-        paddingTop: 4,
+        paddingTop: 10,
         paddingBottom: 0,
       })
     );
@@ -572,6 +587,7 @@
       fontWeight: "500",
     });
     xAxis.get("renderer").grid.template.setAll({
+      location: 0.5,
       stroke: am5.color(C.grid()),
       strokeOpacity: 0.22,
     });
