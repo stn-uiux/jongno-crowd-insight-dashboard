@@ -17,15 +17,15 @@
 </head>
 <body>
   <div class="app-shell">
-    <img class="page-bg" src="assets/page-bg-figma.png" alt="">
+    <img class="page-bg" src="assets/jongno-dashboard-bg.png" alt="">
     <aside class="app-sidebar" id="app-sidebar">
       <button type="button" class="sidebar-toggle" title="메뉴 접기" aria-label="메뉴 접기">
         <i class="bi bi-chevron-left"></i>
       </button>
       <div class="sidebar-logo">
         <a href="./index.html">
-          <img alt="종로" class="logo-single logo-animated" src="assets/logo.png">
-          <span class="logo-text-label">종로구 스마트인파</span>
+          <img alt="종로" class="logo-single logo-animated" src="assets/logo-only-img.png">
+          <span class="logo-text-label">종로구 스마트인파 관리</span>
         </a>
       </div>
       <nav class="sidebar-menu">
@@ -79,7 +79,7 @@
   <div id="stage">
     <header class="header">
       <div class="brand">
-        <img src="assets/logo.png" alt="서울의 정 종로" width="149" height="36">
+        <img src="assets/logo-only-img.png" alt="종로구" width="65" height="36">
         <h1 class="typo-display">종로구 <em>스마트인파</em> 관리</h1>
       </div>
 
@@ -266,44 +266,47 @@
           <div class="map-stage" data-map-stage="overview" data-aspect="1920/1080">
             <img class="map-photo" src="assets/maps/map-overview.png" alt="">
             <div class="map-regions map-overlay">
-              <button type="button" class="region region-b" id="region-court" data-region="B" data-detail-img="assets/maps/map-detail-2.png" title="헌법 재판소 일대 상세" aria-label="헌법 재판소 일대 구역 상세 보기">
+              <button type="button" class="region region-a" id="region-court" data-region="A" data-detail-img="assets/maps/map-detail-2.png" title="헌법 재판소 일대 상세" aria-label="헌법 재판소 일대 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 274.387 381.027" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M0.5 71.8041L39.4252 0.585459L156.777 32.3023L257.118 153.98L273.841 267.295L61.3386 380.322L0.5 225.775V71.8041Z" />
                 </svg>
-                <div class="rlabel">
-                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="24" height="22">
-                  <strong>헌법 재판소 일대</strong>
-                  <em>B</em>
+                <div class="rlabel-inline">
+                  <span class="rlabel-badge">A</span>
+                  <span class="rlabel-name">헌법 재판소 일대</span>
+                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="14" height="13">
                 </div>
               </button>
-              <button type="button" class="region region-d" id="region-gwanghwamun" data-region="D" data-detail-img="assets/maps/map-detail-4.png" title="광화문 광장 접점 상세" aria-label="광화문 광장 접점 구역 상세 보기">
+
+              <button type="button" class="region region-b" id="region-gwanghwamun" data-region="B" data-detail-img="assets/maps/map-detail-4.png" title="광화문 광장 접점 상세" aria-label="광화문 광장 접점 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 134.283 142.279" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M0.73565 51.5284L97.8943 0.597832L133.736 30.4537L118.875 105.972L63.8014 141.598L0.73565 51.5284Z" />
                 </svg>
-                <div class="rlabel">
-                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="24" height="22">
-                  <strong>광화문 광장 접점</strong>
-                  <em>D</em>
+                <div class="rlabel-inline">
+                  <span class="rlabel-badge">B</span>
+                  <span class="rlabel-name">광화문 광장 접점</span>
+                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="14" height="13">
                 </div>
               </button>
+
               <button type="button" class="region region-c" id="region-nakwon" data-region="C" data-detail-img="assets/maps/map-detail-3.png" title="낙원동 상세" aria-label="낙원동 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 90.5421 114.885" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M26.4866 41.5031H47.1874L50.954 56.3672L68.0728 41.5031L58.9706 3.17362L86.156 0.543165L90.035 25.6369L82.6864 64.9684L87.4463 85.9285L70.19 114.352L17.0381 108.416L0.59956 87.4316L26.4866 41.5031Z" />
                 </svg>
-                <div class="rlabel">
-                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="24" height="22">
-                  <strong>낙원동</strong>
-                  <em>C</em>
+                <div class="rlabel-inline">
+                  <span class="rlabel-badge">C</span>
+                  <span class="rlabel-name">낙원동</span>
+                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="14" height="13">
                 </div>
               </button>
-              <button type="button" class="region region-a is-critical" id="region-ikseon" data-region="A" data-detail-img="assets/maps/map-detail-1.png" title="익선동 상세" aria-label="익선동 구역 상세 보기">
+
+              <button type="button" class="region region-d is-critical" id="region-ikseon" data-region="D" data-detail-img="assets/maps/map-detail-1.png" title="익선동 상세" aria-label="익선동 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 100.574 121.728" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M12.5357 29.2679L47.1909 0.708642L100.05 66.8458L95.4576 102.085L58.8818 121.208L5.35415 112.774V88.1399L0.510775 67.1798L4.93662 43.7145L12.5357 29.2679Z" />
                 </svg>
-                <div class="rlabel warn">
-                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="24" height="22">
-                  <strong>익선동</strong>
-                  <em>A</em>
+                <div class="rlabel-inline">
+                  <span class="rlabel-badge">D</span>
+                  <span class="rlabel-name">익선동</span>
+                  <img class="region-warn" src="assets/icons/icon-warning.svg" alt="" width="14" height="13">
                 </div>
               </button>
             </div>
@@ -333,8 +336,8 @@
 
         <div class="map-canvas map-detail" id="map-detail" hidden>
           <div class="map-stage" data-map-stage="detail" data-aspect="1920/1080">
-            <img class="map-photo map-photo-detail" src="assets/maps/map-detail-1.png" alt="익선동 상세">
-            <div class="map-points map-overlay" id="map-points" data-point-size="sm" aria-label="익선동 지점"></div>
+            <img class="map-photo map-photo-detail" src="assets/maps/map-detail-2.png" alt="헌법 재판소 일대 상세">
+            <div class="map-points map-overlay" id="map-points" data-point-size="sm" aria-label="헌법 재판소 일대 지점"></div>
           </div>
 
           <!-- 지점 아이콘 크기 조절 컨트롤러 (SM · MD · LG) -->
@@ -379,7 +382,7 @@
           <div class="zone-sort" role="group" aria-label="정렬기준">
             <span class="zone-sort-label">정렬기준</span>
             <button type="button" class="zone-sort-btn is-active" data-sort="name">구역명</button>
-            <button type="button" class="zone-sort-btn" data-sort="density">밀집도</button>
+            <button type="button" class="zone-sort-btn" data-sort="density">혼잡도</button>
             <button type="button" class="zone-sort-btn" data-sort="people">체류인원</button>
           </div>
         </div>
@@ -389,14 +392,272 @@
               <thead>
                 <tr>
                   <th>구역명</th>
-                  <th>밀집 레벨</th>
-                  <th>밀집도</th>
+                  <th>혼잡 레벨</th>
+                  <th>혼잡도</th>
                   <th>체류인원</th>
-                  <th>밀집도 추이</th>
+                  <th>혼잡도 추이</th>
                 </tr>
               </thead>
               <tbody id="zone-list-body"></tbody>
             </table>
+          </div>
+        </div>
+      </article>
+
+      <!-- 실시간 위험구역 알림 위젯 (Figma) — 초기화/기본 상태에서는 미노출, 위젯추가로 배치 가능 -->
+      <article class="widget alert-widget is-removed" data-widget-id="alert-realtime" data-widget-name="실시간 위험구역 알림" data-widget-category="모니터링" hidden>
+        <header class="widget-head alert-widget-head" title="클릭 시 위험 목록 ⇄ Clear(안전) 상태 전환">
+          <div class="alert-head-left">
+            <i class="bi bi-shield-exclamation alert-title-icon" aria-hidden="true"></i>
+            <h2 class="widget-title">실시간 위험구역 알림</h2>
+          </div>
+          <div class="alert-head-right">
+            <span class="alert-count-badge is-critical" id="alert-count-badge">3건</span>
+          </div>
+        </header>
+
+        <!-- 알림 리스트 영역 (알림 구역이 많아져도 세로 영역 내 스크롤) -->
+        <div class="alert-widget-body">
+          <div class="alert-list" id="alert-list">
+            <!-- 1. D-11 위험 (익선동 한옥거리) -->
+            <div class="alert-item is-critical" data-region="D" data-point="D-11">
+              <div class="alert-item-left">
+                <span class="alert-num-badge">1</span>
+                <div class="alert-item-info">
+                  <div class="alert-item-top">
+                    <strong class="alert-code">D - 11</strong>
+                    <span class="alert-pill-badge is-critical">위험</span>
+                    <span class="alert-location">익선동 한옥거리</span>
+                  </div>
+                  <div class="alert-stats">
+                    <span class="alert-stat">
+                      <img src="assets/icons/icon-people.svg" alt="" width="14" height="14">
+                      <span>45,600명</span>
+                    </span>
+                    <span class="alert-stat-sep" aria-hidden="true">|</span>
+                    <span class="alert-stat">
+                      <img src="assets/icons/icon-chart.svg" alt="" width="14" height="14">
+                      <span>0.98명/m²</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item-actions">
+                <button type="button" class="alert-btn-cctv" data-cctv="D-11" title="CCTV 실시간 영상 보기" aria-label="D-11 구역 CCTV 영상 보기">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor"/><rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+                </button>
+                <span class="alert-action-divider" aria-hidden="true"></span>
+                <button type="button" class="alert-btn-arrow" data-region="D" title="해당 구역 상세 보기" aria-label="익선동 구역 상세 보기">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. C-03 주의 (낙원동) -->
+            <div class="alert-item is-caution" data-region="C" data-point="C-3">
+              <div class="alert-item-left">
+                <span class="alert-num-badge">2</span>
+                <div class="alert-item-info">
+                  <div class="alert-item-top">
+                    <strong class="alert-code">C - 03</strong>
+                    <span class="alert-pill-badge is-caution">주의</span>
+                    <span class="alert-location">낙원동</span>
+                  </div>
+                  <div class="alert-stats">
+                    <span class="alert-stat">
+                      <img src="assets/icons/icon-people.svg" alt="" width="14" height="14">
+                      <span>28,300명</span>
+                    </span>
+                    <span class="alert-stat-sep" aria-hidden="true">|</span>
+                    <span class="alert-stat">
+                      <img src="assets/icons/icon-chart.svg" alt="" width="14" height="14">
+                      <span>0.72명/m²</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item-actions">
+                <button type="button" class="alert-btn-cctv" data-cctv="C-3" title="CCTV 실시간 영상 보기" aria-label="C-03 구역 CCTV 영상 보기">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor"/><rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+                </button>
+                <span class="alert-action-divider" aria-hidden="true"></span>
+                <button type="button" class="alert-btn-arrow" data-region="C" title="해당 구역 상세 보기" aria-label="낙원동 구역 상세 보기">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. A-05 주의 (헌법 재판소 일대) -->
+            <div class="alert-item is-caution" data-region="A" data-point="A-5">
+              <div class="alert-item-left">
+                <span class="alert-num-badge">3</span>
+                <div class="alert-item-info">
+                  <div class="alert-item-top">
+                    <strong class="alert-code">A - 05</strong>
+                    <span class="alert-pill-badge is-caution">주의</span>
+                    <span class="alert-location">헌법 재판소 일대</span>
+                  </div>
+                  <div class="alert-stats">
+                    <span class="alert-stat">
+                      <img src="assets/icons/icon-people.svg" alt="" width="14" height="14">
+                      <span>21,400명</span>
+                    </span>
+                    <span class="alert-stat-sep" aria-hidden="true">|</span>
+                    <span class="alert-stat">
+                      <img src="assets/icons/icon-chart.svg" alt="" width="14" height="14">
+                      <span>0.61명/m²</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item-actions">
+                <button type="button" class="alert-btn-cctv" data-cctv="A-5" title="CCTV 실시간 영상 보기" aria-label="A-05 구역 CCTV 영상 보기">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor"/><rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+                </button>
+                <span class="alert-action-divider" aria-hidden="true"></span>
+                <button type="button" class="alert-btn-arrow" data-region="A" title="해당 구역 상세 보기" aria-label="헌법 재판소 일대 구역 상세 보기">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 안전(위험 없음) 상태 화면 (4번 이미지 정가운데) -->
+          <div class="alert-empty-state" id="alert-empty-state" hidden>
+            <img class="alert-empty-shield" src="assets/icons/icon-shield-safe.png" alt="안전 상태" width="92" height="92">
+            <h3 class="alert-empty-title">현재 감지된 위험 구역이 없습니다</h3>
+            <p class="alert-empty-desc">종로구 전 구역이 원활 및 안전 상태를 유지하고 있습니다.</p>
+          </div>
+        </div>
+
+        <!-- 하단 푸터 -->
+        <footer class="alert-foot">
+          <div class="alert-foot-status">
+            <span class="alert-foot-dot"></span>
+            <span>실시간 모니터링 중</span>
+          </div>
+          <div class="alert-foot-time">
+            <img src="assets/icons/icon-clock.svg" alt="" width="13" height="13">
+            <span id="alert-foot-timestamp">2026.10.03 (토) 16:54 기준</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- 재난 안전 알림 위젯 (초기에는 숨김, 위젯 추가 모달에서 추가 가능) -->
+      <article class="widget disaster-widget is-removed" data-widget-id="alert-disaster" data-widget-name="재난 안전 알림" data-widget-category="모니터링" hidden>
+        <header class="widget-head disaster-widget-head">
+          <div class="disaster-head-left">
+            <i class="bi bi-shield-exclamation disaster-title-icon" aria-hidden="true"></i>
+            <h2 class="widget-title">재난 안전 알림</h2>
+          </div>
+          <div class="disaster-head-right">
+            <span class="disaster-count-badge is-critical">5건</span>
+          </div>
+        </header>
+
+        <div class="disaster-widget-body">
+          <div class="disaster-list" id="disaster-list">
+            <!-- 1. 긴급 (재난문자) -->
+            <div class="disaster-item is-critical" data-id="disaster-1" role="button" tabindex="0" aria-label="재난문자: 종로구 지역에 강풍주의보가 발효되었습니다.">
+              <div class="disaster-icon-box">
+                <i class="bi bi-megaphone-fill"></i>
+              </div>
+              <div class="disaster-item-main">
+                <div class="disaster-item-top">
+                  <span class="disaster-badge is-critical">긴급</span>
+                  <strong class="disaster-item-title">재난문자</strong>
+                </div>
+                <p class="disaster-item-sub">종로구 지역에 강풍주의보가 발효되었습니다.</p>
+              </div>
+              <div class="disaster-item-right">
+                <span class="disaster-item-time">10.03 16:54</span>
+                <button type="button" class="disaster-item-arrow" title="상세보기" aria-label="재난문자 상세 팝업 열기">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. 기상 (기상특보) -->
+            <div class="disaster-item" data-id="disaster-2" role="button" tabindex="0" aria-label="기상특보: 오늘 밤부터 많은 비가 예상되니 안전에 유의하세요.">
+              <div class="disaster-icon-box">
+                <i class="bi bi-cloud-rain-heavy-fill"></i>
+              </div>
+              <div class="disaster-item-main">
+                <div class="disaster-item-top">
+                  <span class="disaster-badge is-weather">기상</span>
+                  <strong class="disaster-item-title">기상특보</strong>
+                </div>
+                <p class="disaster-item-sub">오늘 밤부터 많은 비가 예상되니 안전에 유의하세요.</p>
+              </div>
+              <div class="disaster-item-right">
+                <span class="disaster-item-time">10.03 14:20</span>
+                <button type="button" class="disaster-item-arrow" title="상세보기" aria-label="기상특보 상세 팝업 열기">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. 교통 (도로 통제) -->
+            <div class="disaster-item" data-id="disaster-3" role="button" tabindex="0" aria-label="도로 통제: 세종대로 일부 구간이 통제 중입니다.">
+              <div class="disaster-icon-box">
+                <i class="bi bi-car-front-fill"></i>
+              </div>
+              <div class="disaster-item-main">
+                <div class="disaster-item-top">
+                  <span class="disaster-badge is-traffic">교통</span>
+                  <strong class="disaster-item-title">도로 통제</strong>
+                </div>
+                <p class="disaster-item-sub">세종대로 일부 구간이 통제 중입니다.</p>
+              </div>
+              <div class="disaster-item-right">
+                <span class="disaster-item-time">10.03 11:18</span>
+                <button type="button" class="disaster-item-arrow" title="상세보기" aria-label="도로 통제 상세 팝업 열기">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. 생활안전 (상수도 점검 안내) -->
+            <div class="disaster-item" data-id="disaster-4" role="button" tabindex="0" aria-label="상수도 점검 안내: 종로구 일부 지역에서 단수 작업이 진행됩니다.">
+              <div class="disaster-icon-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 4h4v2H6V4zm10 2h-4v2h2v3H7a3 3 0 0 0-3 3v2h2v-2a1 1 0 0 1 1-1h9a2 2 0 0 0 2-2v-4a1 1 0 0 0-1-1zm-4 11.5a1.5 1.5 0 1 1-3 0c0-.83 1.5-2.5 1.5-2.5s1.5 1.67 1.5 2.5z"/>
+                </svg>
+              </div>
+              <div class="disaster-item-main">
+                <div class="disaster-item-top">
+                  <span class="disaster-badge is-living">생활안전</span>
+                  <strong class="disaster-item-title">상수도 점검 안내</strong>
+                </div>
+                <p class="disaster-item-sub">종로구 일부 지역에서 단수 작업이 진행됩니다.</p>
+              </div>
+              <div class="disaster-item-right">
+                <span class="disaster-item-time">10.03 09:32</span>
+                <button type="button" class="disaster-item-arrow" title="상세보기" aria-label="상수도 점검 안내 상세 팝업 열기">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 5. 행사안전 (행사 안전 안내) -->
+            <div class="disaster-item" data-id="disaster-5" role="button" tabindex="0" aria-label="행사 안전 안내: 주말 행사로 인파가 증가할 수 있으니 안전에 유의하세요.">
+              <div class="disaster-icon-box">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div class="disaster-item-main">
+                <div class="disaster-item-top">
+                  <span class="disaster-badge is-event">행사안전</span>
+                  <strong class="disaster-item-title">행사 안전 안내</strong>
+                </div>
+                <p class="disaster-item-sub">주말 행사로 인파가 증가할 수 있으니 안전에 유의하세요.</p>
+              </div>
+              <div class="disaster-item-right">
+                <span class="disaster-item-time">10.02 17:10</span>
+                <button type="button" class="disaster-item-arrow" title="상세보기" aria-label="행사 안전 안내 상세 팝업 열기">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </article>
@@ -429,12 +690,6 @@
         </button>
         <button type="button" class="wfilter" data-filter="차트" role="tab" aria-selected="false">
           <i class="bi bi-bar-chart"></i>차트
-        </button>
-        <button type="button" class="wfilter" data-filter="사용자 정의" role="tab" aria-selected="false">
-          <i class="bi bi-sliders"></i>사용자 정의
-        </button>
-        <button type="button" class="wfilter" data-filter="정보" role="tab" aria-selected="false">
-          <i class="bi bi-info-circle"></i>정보
         </button>
       </div>
 
@@ -479,21 +734,21 @@
       <header class="cctv-head" id="cctv-drag-handle">
         <div class="cctv-head-left">
           <span class="cctv-zone" id="cctv-zone">
-            <img src="assets/cctv/icon-warn.svg" alt="" width="17" height="15">
-            <em id="cctv-zone-id">A-11</em>
+            <img src="assets/icons/icon-warn.svg" alt="" width="17" height="15">
+            <em id="cctv-zone-id">D-11</em>
           </span>
           <h2 id="cctv-title">종로 3가 앞 CCTV</h2>
         </div>
         <div class="cctv-head-right">
           <span class="cctv-live"><i></i>실시간</span>
           <button type="button" class="cctv-close" id="cctv-close" aria-label="닫기">
-            <img src="assets/cctv/icon-close.svg" alt="" width="24" height="24">
+            <img src="assets/icons/icon-close.svg" alt="" width="24" height="24">
           </button>
         </div>
       </header>
 
       <div class="cctv-feed">
-        <img class="cctv-feed-img" id="cctv-feed-img" src="assets/cctv/feed.png" alt="CCTV 영상">
+        <img class="cctv-feed-img" id="cctv-feed-img" src="assets/cctv/example.png" alt="CCTV 영상">
         <div class="cctv-stamp" id="cctv-stamp">2026-10-03 16:54:12</div>
         <button type="button" class="cctv-play" id="cctv-play" aria-label="재생" aria-pressed="false">
           <span class="cctv-play-rings" aria-hidden="true">
@@ -507,7 +762,7 @@
       </div>
 
       <footer class="cctv-foot">
-        <img src="assets/cctv/icon-pin.svg" alt="" width="24" height="24">
+        <img src="assets/icons/icon-pin.svg" alt="" width="24" height="24">
         <span id="cctv-address">서울 종로구 종로3가 123</span>
       </footer>
     </div>
@@ -523,7 +778,7 @@
         </div>
         <div class="cctv-head-right">
           <button type="button" class="cctv-close" id="zone-detail-close" aria-label="닫기">
-            <img src="assets/cctv/icon-close.svg" alt="" width="24" height="24">
+            <img src="assets/icons/icon-close.svg" alt="" width="24" height="24">
           </button>
         </div>
       </header>
@@ -531,7 +786,7 @@
       <div class="zone-detail-body">
         <div id="zone-detail-main-chart" class="zone-detail-main-chart"></div>
         <ul class="zone-detail-legend">
-          <li><i class="dot density"></i>밀집도</li>
+          <li><i class="dot density"></i>혼잡도</li>
           <li><i class="dot people"></i>체류인원</li>
         </ul>
         <div class="zone-detail-brush-wrap" id="zone-detail-brush-wrap">
@@ -552,11 +807,57 @@
     </div>
   </div>
 
+  <!-- 재난 안전 알림 상세 팝업 모달 (Dim 오버레이 처리 포함) -->
+  <div class="disaster-modal" id="disaster-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" id="disaster-modal-backdrop"></div>
+    <div class="disaster-modal-container">
+      <div class="disaster-modal-panel" role="dialog" aria-modal="true" aria-labelledby="disaster-modal-title">
+        <header class="disaster-modal-head">
+          <div class="disaster-modal-head-left">
+            <span class="disaster-badge is-critical" id="modal-disaster-badge">긴급</span>
+            <h2 class="disaster-modal-title" id="disaster-modal-title">재난문자 상세</h2>
+          </div>
+          <button type="button" class="disaster-modal-close" id="disaster-modal-close" title="닫기" aria-label="팝업 닫기">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <div class="disaster-modal-body">
+          <div class="disaster-modal-headline" id="modal-disaster-headline">
+            종로구 지역에 강풍주의보가 발효되었습니다.
+          </div>
+          <div class="disaster-modal-meta">
+            <div class="disaster-meta-row">
+              <span class="meta-label">발령일시</span>
+              <span class="meta-val" id="modal-disaster-time">2026.10.03 16:54</span>
+            </div>
+            <div class="disaster-meta-row">
+              <span class="meta-label">발령기관</span>
+              <span class="meta-val" id="modal-disaster-sender">기상청 / 종로구청 재난안전대책본부</span>
+            </div>
+            <div class="disaster-meta-row">
+              <span class="meta-label">대상지역</span>
+              <span class="meta-val" id="modal-disaster-area">서울특별시 종로구 전역</span>
+            </div>
+          </div>
+          <div class="disaster-modal-content" id="modal-disaster-content"></div>
+        </div>
+        <footer class="disaster-modal-foot">
+          <button type="button" class="disaster-modal-confirm-btn" id="disaster-modal-confirm">
+            <i class="bi bi-check-lg"></i>
+            <span>확인</span>
+          </button>
+        </footer>
+      </div>
+    </div>
+  </div>
+
   <script src="js/dashboard.js"></script>
   <script src="js/map-detail.js"></script>
   <script src="js/zone-list.js"></script>
   <script src="js/zone-detail.js"></script>
   <script src="js/cctv-modal.js"></script>
+  <script src="js/alert-widget.js"></script>
+  <script src="js/disaster-widget.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/edit-mode.js"></script>
 </body>
