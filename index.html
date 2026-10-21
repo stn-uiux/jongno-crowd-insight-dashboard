@@ -14,6 +14,41 @@
   <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <!-- 저장된 위젯 레이아웃 즉시 적용 (새로고침 시 초기화 화면 깜빡임/FOUC 완전 방지) -->
+  <script>
+    (function () {
+      try {
+        var rawRemoved = localStorage.getItem("jongno-dashboard-removed-widgets");
+        var rawSizes = localStorage.getItem("jongno-dashboard-widget-sizes-v19");
+        var removed = rawRemoved ? JSON.parse(rawRemoved) : null;
+        var sizes = rawSizes ? JSON.parse(rawSizes) : null;
+        var css = "";
+        if (Array.isArray(removed) && removed.length > 0) {
+          removed.forEach(function (id) {
+            css += '.board > [data-widget-id="' + id + '"] { display: none !important; }\n';
+          });
+        }
+        if (sizes && typeof sizes === "object") {
+          Object.entries(sizes).forEach(function (entry) {
+            var id = entry[0];
+            var s = entry[1];
+            if (s && s.colStart && s.colEnd && s.rowStart && s.rowEnd) {
+              var isRemoved = removed && removed.indexOf(id) !== -1;
+              if (!isRemoved) {
+                css += '.board > [data-widget-id="' + id + '"] { display: flex !important; grid-column: ' + s.colStart + ' / ' + s.colEnd + ' !important; grid-row: ' + s.rowStart + ' / ' + s.rowEnd + ' !important; }\n';
+              }
+            }
+          });
+        }
+        if (css) {
+          var style = document.createElement("style");
+          style.id = "persisted-layout-fast";
+          style.textContent = css;
+          document.head.appendChild(style);
+        }
+      } catch (_) {}
+    })();
+  </script>
 </head>
 <body>
   <div class="app-shell">
@@ -851,6 +886,7 @@
     </div>
   </div>
 
+  <script src="js/edit-mode.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/map-detail.js"></script>
   <script src="js/zone-list.js"></script>
@@ -859,6 +895,5 @@
   <script src="js/alert-widget.js"></script>
   <script src="js/disaster-widget.js"></script>
   <script src="js/sidebar.js"></script>
-  <script src="js/edit-mode.js"></script>
 </body>
 </html>

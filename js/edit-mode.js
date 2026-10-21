@@ -1759,4 +1759,10 @@
   applyPersistedOrder();
   applyPersistedSizes();
   bindBoardReflow();
+
+  // 초기 깜빡임 방지용 고속 인라인 스타일(#persisted-layout-fast)의 역할을 DOM 인라인으로 온전히 인계 후 태그 제거
+  const fastStyle = document.getElementById("persisted-layout-fast");
+  if (fastStyle) {
+    fastStyle.remove();
+  }
 })();
