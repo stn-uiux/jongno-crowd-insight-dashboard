@@ -90,8 +90,9 @@ img {
   min-width: 0;
 }
 .brand img {
-  width: clamp(120px, 8vw, 149px);
-  height: auto;
+  height: clamp(30px, 2.2vw, 36px);
+  width: auto;
+  object-fit: contain;
 }
 .brand h1 {
   margin: 0;
@@ -134,9 +135,9 @@ img {
 }
 .tab.is-active {
   color: var(--text-color-primary);
-  border: 1px solid var(--border-accent);
+  border: none;
   background: var(--gradient-brand);
-  box-shadow: inset 0 0 0 1px var(--border-tab-active);
+  box-shadow: none;
 }
 
 .edit-btn {
@@ -218,23 +219,25 @@ img {
   margin: 0 var(--page-pad-x) var(--page-pad-y);
   display: grid;
   grid-template-columns: repeat(24, minmax(0, 1fr));
-  grid-template-rows: repeat(10, minmax(0, 1fr));
+  grid-template-rows: repeat(20, minmax(0, 1fr));
   gap: var(--widget-gap);
   align-items: stretch;
 }
 
-/* 24×10 균등 격자 — 피그마(원본) 비율. 편집 모드와 공유 */
-.board > [data-widget-id="kpi-current-stay"] { grid-column: 1 / 4; grid-row: 1 / 3; }
-.board > [data-widget-id="kpi-today-visit"]  { grid-column: 4 / 7; grid-row: 1 / 3; }
-.board > [data-widget-id="kpi-revisit"]      { grid-column: 7 / 10; grid-row: 1 / 3; }
-.board > [data-widget-id="kpi-avg-stay"]     { grid-column: 10 / 13; grid-row: 1 / 3; }
-.board > [data-widget-id="kpi-month-visit"]  { grid-column: 1 / 7; grid-row: 3 / 5; }
-.board > [data-widget-id="chart-compare"]    { grid-column: 7 / 13; grid-row: 3 / 7; }
-.board > [data-widget-id="chart-pie"]        { grid-column: 1 / 7; grid-row: 5 / 8; }
-.board > [data-widget-id="chart-stay"]       { grid-column: 1 / 7; grid-row: 8 / 11; }
-.board > [data-widget-id="chart-trend"]      { grid-column: 7 / 13; grid-row: 7 / 11; }
-.board > [data-widget-id="map-jongno"]       { grid-column: 13 / 25; grid-row: 1 / 7; }
-.board > [data-widget-id="zone-list"]        { grid-column: 13 / 25; grid-row: 7 / 11; }
+/* 24×20 균등 격자 — 피그마(원본) 비율 100% 유지 + 세로 2배 정밀도. 편집 모드와 공유 */
+.board > [data-widget-id="kpi-current-stay"] { grid-column: 1 / 4; grid-row: 1 / 4; }
+.board > [data-widget-id="kpi-today-visit"]  { grid-column: 4 / 7; grid-row: 1 / 4; }
+.board > [data-widget-id="kpi-revisit"]      { grid-column: 7 / 10; grid-row: 1 / 4; }
+.board > [data-widget-id="kpi-avg-stay"]     { grid-column: 10 / 13; grid-row: 1 / 4; }
+.board > [data-widget-id="kpi-month-visit"]  { grid-column: 1 / 7; grid-row: 4 / 7; }
+.board > [data-widget-id="chart-compare"]    { grid-column: 7 / 13; grid-row: 4 / 13; }
+.board > [data-widget-id="chart-pie"]        { grid-column: 1 / 7; grid-row: 7 / 14; }
+.board > [data-widget-id="chart-stay"]       { grid-column: 1 / 7; grid-row: 14 / 21; }
+.board > [data-widget-id="chart-trend"]      { grid-column: 7 / 13; grid-row: 13 / 21; }
+.board > [data-widget-id="map-jongno"]       { grid-column: 13 / 25; grid-row: 1 / 16; }
+.board > [data-widget-id="zone-list"]        { grid-column: 13 / 25; grid-row: 16 / 21; }
+.board > [data-widget-id="alert-disaster"]   { grid-column: 13 / 19; grid-row: 2 / 12; z-index: 10; }
+.board > [data-widget-id="alert-realtime"]   { grid-column: 19 / 25; grid-row: 2 / 12; z-index: 10; }
 
 /* ==========================================================================
    05. WIDGET BASE & COMMON SLOTS (.widget, .widget--*, .widget-head, .widget-title)
@@ -402,25 +405,6 @@ img {
   flex: 1 1 auto;
   overflow: hidden;
 }
-.chart-widget h2,
-.chart-widget h3 {
-  font-size: var(--font-widget-title);
-  font-weight: var(--font-weight-title);
-}
-.kpi.wide h2,
-.widget--kpi-wide h2,
-.compare-widget .chart-head h2,
-.compare-widget .chart-head h3,
-.pie-widget .chart-head h2,
-.pie-widget .chart-head h3,
-.pie-widget > h2,
-.stay-widget > h2,
-.stay-widget .chart-head h2,
-.trend-widget .chart-head h2,
-.trend-widget .chart-head h3,
-.widget-title:not(.widget-title--sm) {
-  font-size: var(--font-widget-title-xl);
-}
 .pie-widget,
 .stay-widget,
 .compare-widget,
@@ -436,17 +420,20 @@ img {
   position: relative;
 }
 .select-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  width: 80px;
+  gap: 8px;
+  width: auto;
+  min-width: 96px;
   height: 29px;
-  padding: 0 8px;
+  padding: 0 10px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
   color: var(--text-color-primary);
   font-family: var(--font-sans);
   font-size: var(--text-base);
+  white-space: nowrap;
 }
 .select-btn img { transform: scaleY(-1); }
 .select.is-open .select-btn img { transform: none; }
@@ -458,7 +445,8 @@ img {
   margin: 0;
   padding: 4px;
   list-style: none;
-  min-width: 110px;
+  min-width: 100%;
+  width: max-content;
   border-radius: var(--radius-md);
   border: 1px solid var(--p-white-a25);
   background: var(--surface-dropdown);
@@ -688,6 +676,8 @@ img {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  container-type: inline-size;
+  container-name: mapwidget;
 }
 .map-canvas {
   position: relative;
@@ -804,9 +794,9 @@ img {
   --region-color: var(--region-color-warning);
   --region-glow: var(--region-glow-warning);
 }
-.region:is(.is-critical, .is-emergency, .is-danger, .region--critical) {
-  --region-color: var(--region-color-critical);
-  --region-glow: var(--region-glow-critical);
+.region:is(.is-critical, .is-emergency, .is-danger, .region--critical, .region--danger) {
+  --region-color: var(--region-color-danger);
+  --region-glow: var(--region-glow-danger);
 }
 
 .region:focus-visible {
@@ -843,10 +833,10 @@ img {
 .region .rlabel {
   z-index: 2;
 }
-.region-b { left: 52%; top: 18%; width: 31.8%; height: 40.0%; }
-.region-d { left: 18.1%; top: 82.5%; width: 15.5%; height: 14.8%; }
+.region-a { left: 52%; top: 18%; width: 31.8%; height: 40.0%; }
+.region-b { left: 18.1%; top: 82.5%; width: 15.5%; height: 14.8%; }
 .region-c { left: 78.4%; top: 67.1%; width: 10.4%; height: 12.0%; }
-.region-a {
+.region-d {
   left: 88.0%;
   top: 66.9%;
   width: 11.6%;
@@ -854,76 +844,81 @@ img {
   z-index: 2;
   cursor: pointer;
 }
-.region-a:focus-visible {
+.region-d:focus-visible {
   outline: 2px solid var(--chart-stay);
   outline-offset: 2px;
 }
-.rlabel {
+/* ==========================================================================
+   구역 한 줄 플로팅 라벨 (.rlabel-inline) — 전 화면 단일 표준
+   ========================================================================== */
+.rlabel-inline {
   position: absolute;
-  display: flex;
-  flex-direction: column;
+  z-index: 4;
+  display: inline-flex;
   align-items: center;
-  text-align: center;
-  font-family: var(--font-sans);
+  gap: 6px;
+  padding: 4px 10px 4px 5px;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--p-neutral-900-a68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  white-space: nowrap;
   pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
-.rlabel strong {
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-black);
+
+.rlabel-inline .rlabel-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--weight-extrabold);
   line-height: var(--leading-none);
-  text-shadow: 0 0 16px var(--p-black), 0 0 16px var(--shadow-text-contrast);
+  color: var(--region-color);
+  font-family: var(--font-sans);
+  transition: color 0.2s ease;
 }
-.rlabel em {
-  margin-top: 8px;
-  font-style: normal;
-  font-size: var(--text-3xl);
-  font-weight: var(--weight-black);
+
+.rlabel-inline .rlabel-name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-bold);
   line-height: var(--leading-none);
-  text-shadow: 0 4px 16px var(--p-black), 0 4px 16px var(--shadow-text-contrast);
-}
-.region-b .rlabel {
-  left: 50%;
-  top: 38%;
-  transform: translateX(-50%);
-  width: max-content;
-  white-space: nowrap;
-}
-.region-b .rlabel strong {
-  white-space: nowrap;
-}
-.region-b .rlabel em {
-  font-size: var(--font-region-b-code);
-  margin-top: 6px;
+  color: var(--region-color);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
 }
 
-.region-d .rlabel { left: 8%; top: 26%; width: 84%; }
-.region-d .rlabel strong { font-size: var(--font-region-d-title); white-space: nowrap; }
-.region-d .rlabel em { font-size: var(--font-region-d-code); margin-top: 6px; }
+.region-a .rlabel-inline { left: 50%; top: 50%; }
+.region-b .rlabel-inline { left: 50%; top: 50%; }
+.region-c .rlabel-inline { left: 50%; top: 50%; }
+.region-d .rlabel-inline { left: 70%; top: 50%; }
 
-.region-c .rlabel { left: 12%; top: 26%; width: 76%; }
-.region-c .rlabel strong { font-size: var(--font-region-c-title); }
-.region-c .rlabel em { font-size: var(--font-region-c-code); margin-top: 6px; }
-
-.region-a .rlabel { left: 10%; top: 18%; width: 80%; }
-.region-a .rlabel strong { font-size: var(--font-region-a-title); }
-.region-a .rlabel em { font-size: var(--font-region-a-code); margin-top: 6px; }
-
-/* 구역 경고 아이콘: 위험(is-critical / is-emergency / is-danger)일 때만 표시 */
+/* 경고 아이콘 스타일 */
 .region .region-warn {
   display: none;
-  width: clamp(16px, 1.3vw, 22px);
+  width: 14px;
   height: auto;
-  margin-bottom: 6px;
+  vertical-align: middle;
 }
 .region:is(.is-critical, .is-emergency, .is-danger, .region--critical) .region-warn {
-  display: block;
+  display: inline-block;
+}
+
+/* 호버 시 플로팅 라벨 반응 */
+.region:hover .rlabel-inline {
+  transform: translate(-50%, -53%) scale(1.05);
+  background: var(--p-neutral-900-a85);
 }
 
 /* 지도 우측 하단 혼잡단계 범례 (관심·주의·경계·위험 시멘틱 컬러 연동) */
 .crowd-legend {
   position: absolute;
-  right: clamp(12px, 1.5vw, 24px);
-  bottom: clamp(12px, 1.5vh, 24px);
+  right: 12px;
+  bottom: 12px;
   left: auto;
   top: auto;
   z-index: var(--z-map-ui);
@@ -966,12 +961,14 @@ img {
 .lv.caution b       { color: var(--level-caution); }
 .lv.warning         { border-color: var(--level-warning); }
 .lv.warning b       { color: var(--level-warning); }
-.lv.critical        { border-color: var(--level-critical); }
-.lv.critical b      { color: var(--level-critical); }
+.lv.critical,
+.lv.danger          { border-color: var(--level-danger); }
+.lv.critical b,
+.lv.danger b        { color: var(--level-danger); }
 
 /* —— 익선동 상세 맵 (Figma 25:1474) —— */
 .map-canvas.map-detail[hidden] {
-  display: none !important;
+  display: none;
 }
 .map-widget.is-detail .map-overview {
   visibility: hidden;
@@ -1024,13 +1021,13 @@ img {
 
 /* 컨트롤러 일괄 사이즈 전환 */
 #map-points[data-point-size="sm"] .map-point {
-  --mp-scale: var(--mp-scale-sm, 0.65) !important;
+  --mp-scale: var(--mp-scale-sm, 0.65);
 }
 #map-points[data-point-size="md"] .map-point {
-  --mp-scale: var(--mp-scale-md, 0.8) !important;
+  --mp-scale: var(--mp-scale-md, 0.8);
 }
 #map-points[data-point-size="lg"] .map-point {
-  --mp-scale: var(--mp-scale-lg, 1) !important;
+  --mp-scale: var(--mp-scale-lg, 1);
 }
 /* 5단계 상태 클래스 (정상 · 관심 · 주의 · 경계 · 위험)
    - .map-point 또는 .mp-tip, .mp-emo 어디에 클래스를 붙여도 이모지/배지색/배지문구/광원이 자동 변경됨 */
@@ -1058,8 +1055,8 @@ img {
   --mp-emoji-bg: url("../assets/map-detail/emoji-warning.png");
   --mp-glow-bg: url("../assets/map-detail/glow-warning.svg");
 }
-:is(.map-point, .mp-tip, .mp-emo):is(.is-emergency, .is-critical, .is-danger, .mp-state--emergency, .mp-state--critical) {
-  --mp-level-color: var(--level-emergency);
+:is(.map-point, .mp-tip, .mp-emo):is(.is-emergency, .is-critical, .is-danger, .mp-state--emergency, .mp-state--critical, .mp-state--danger) {
+  --mp-level-color: var(--level-danger);
   --mp-badge-label: "위험";
   --mp-emoji-bg: url("../assets/map-detail/emoji-emergency.png");
   --mp-glow-bg: url("../assets/map-detail/glow-emergency.svg");
@@ -1201,8 +1198,8 @@ img {
    - 우측 상단(기본): .mp-cctv--right, .mp-tip--cctv-right .mp-cctv
    - 좌측 상단      : .mp-cctv--left,  .mp-tip--cctv-left .mp-cctv */
 .mp-cctv {
-  --mp-cctv-offset-x: -14px;
-  --mp-cctv-offset-y: -14px;
+  --mp-cctv-offset-x: -12px;
+  --mp-cctv-offset-y: -20px;
   position: absolute;
   top: var(--mp-cctv-offset-y);
   right: var(--mp-cctv-offset-x);
@@ -1316,7 +1313,7 @@ img {
   transform: translateX(-50%);
   min-width: 30px;
   padding: 1px 6px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   background: var(--mp-level-color, var(--level-attention));
   font-size: 10px;
   font-weight: var(--weight-bold);
@@ -1364,8 +1361,10 @@ img {
 .mp-tip.is-emergency .mp-badge,
 .mp-badge.is-emergency,
 .mp-badge.is-critical,
-.mp-badge--emergency {
-  background: var(--level-emergency);
+.mp-badge.is-danger,
+.mp-badge--emergency,
+.mp-badge--danger {
+  background: var(--level-danger);
   --mp-badge-label: "위험";
 }
 
@@ -1505,7 +1504,7 @@ img {
   transform: translateY(-50%);
   height: 2px;
   background: var(--p-white-a35);
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   pointer-events: none;
   z-index: 0;
 }
@@ -1603,13 +1602,13 @@ img {
   border-radius: var(--radius-pill);
   border: 0;
   background: var(--p-white-a07);
-  color: var(--chart-crowd);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   white-space: nowrap;
 }
 .zone-live i {
-  font-size: 12px;
+  color: var(--status-live-icon);
+  font-size: var(--font-size-xs);
 }
 .zone-sort {
   display: flex;
@@ -1764,7 +1763,7 @@ img {
    10. FLOATING MODALS (CCTV & Zone Detail)
    ========================================================================== */
 .cctv-modal[hidden] {
-  display: none !important;
+  display: none;
 }
 .cctv-modal {
   position: fixed;
@@ -2227,3 +2226,908 @@ img {
     gap: 4px;
   }
 }
+
+/* ==========================================================================
+   실시간 위험구역 알림 위젯 (.alert-widget)
+   - 기존 위젯(.widget)의 공통 스타일(배경, 글래스모피즘, 패딩, 라운드)을 100% 그대로 상속
+   - 클래스(.is-empty / .is-safe)로 위험 목록 또는 빈 화면을 단독으로 노출 (동시 노출 원천 방지)
+   ========================================================================== */
+.alert-widget {
+  min-height: 0;
+  overflow: hidden;
+  justify-content: space-between;
+}
+
+/* 헤더 */
+.alert-widget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.alert-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-title-icon {
+  font-size: var(--font-size-xl);
+  color: var(--level-danger);
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+/* 감지된 위험구역 없음 (안전/Clear 상태) 시 타이틀 아이콘을 흰색으로 전환 */
+.alert-widget.is-empty .alert-title-icon,
+.alert-widget.is-safe .alert-title-icon {
+  color: var(--p-white);
+}
+
+.alert-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border: 1px solid var(--level-danger);
+  background: var(--level-danger-bg);
+  color: var(--p-red-200);
+}
+
+/* clear / empty 상태에서는 건수 배지(3건) 자체를 완전히 숨김 */
+.alert-widget:is(.is-empty, .is-safe) .alert-count-badge {
+  display: none;
+}
+
+/* 본문 컨테이너 */
+.alert-widget-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. 기본 상태: 위험 구역 목록 단독 표시 */
+.alert-widget .alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 4px 6px 4px 2px;
+}
+
+.alert-widget .alert-empty-state {
+  display: none;
+}
+
+/* 2. 안전/비어있음 상태(.is-empty / .is-safe): 빈 화면 단독 표시 */
+.alert-widget:is(.is-empty, .is-safe) .alert-list {
+  display: none;
+}
+
+.alert-widget:is(.is-empty, .is-safe) .alert-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex: 1 1 auto;
+  text-align: center;
+  padding: 24px 16px;
+  animation: fadeInEmpty 0.25s ease;
+}
+
+@keyframes fadeInEmpty {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.alert-empty-shield {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 16px var(--p-blue-a50));
+}
+
+.alert-empty-title {
+  margin: 0 0 6px 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
+  letter-spacing: -0.01em;
+}
+
+.alert-empty-desc {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-color-muted);
+  line-height: 1.45;
+}
+
+/* 리스트 스크롤바 */
+.alert-list::-webkit-scrollbar {
+  width: 4px;
+}
+.alert-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.alert-list::-webkit-scrollbar-thumb {
+  background: var(--p-white-a20);
+  border-radius: var(--radius-pill);
+}
+
+/* 리스트 아이템 카드 */
+.alert-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface-glass-sm);
+  border: 1px solid transparent;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s ease,
+              border-color 0.2s ease,
+              background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.alert-item.is-critical,
+.alert-item.is-danger {
+  border-color: transparent;
+  background: var(--level-danger-soft);
+}
+
+.alert-item.is-caution {
+  border-color: transparent;
+  background: var(--level-warning-soft);
+}
+
+/* 호버 시: 살짝 위로 뜨며 테두리 생성 및 네온 글로우 */
+.alert-item:hover,
+.alert-item.is-hovered {
+  transform: translateY(-2px);
+}
+
+.alert-item.is-critical:hover,
+.alert-item.is-critical.is-hovered,
+.alert-item.is-danger:hover,
+.alert-item.is-danger.is-hovered {
+  border-color: var(--level-danger);
+  box-shadow: 0 8px 20px var(--p-black-a50), 0 0 16px var(--region-glow-danger);
+  background: var(--level-danger-bg);
+}
+
+.alert-item.is-caution:hover,
+.alert-item.is-caution.is-hovered {
+  border-color: var(--level-warning);
+  box-shadow: 0 8px 20px var(--p-black-a50), 0 0 16px var(--region-glow-warning);
+  background: var(--level-warning-bg);
+}
+
+/* 아이템 좌측 */
+.alert-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* 순번 배지: 그라데이션 및 box-shadow 제거 */
+.alert-num-badge {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-bold);
+  color: var(--p-white);
+  box-shadow: none;
+}
+
+.alert-item.is-critical .alert-num-badge,
+.alert-item.is-danger .alert-num-badge {
+  background: var(--level-danger);
+}
+
+.alert-item.is-caution .alert-num-badge {
+  background: var(--level-warning);
+}
+
+/* 정보 텍스트 (2줄 컴팩트 레이아웃) */
+.alert-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.alert-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.alert-code {
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.alert-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--p-white);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.alert-pill-badge.is-critical,
+.alert-pill-badge.is-danger {
+  background: var(--level-danger);
+  box-shadow: 0 0 8px var(--region-glow-danger);
+}
+
+.alert-pill-badge.is-caution {
+  background: var(--level-warning);
+  box-shadow: 0 0 8px var(--region-glow-warning);
+}
+
+.alert-location {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 auto;
+  cursor: default;
+  transition: color 0.15s ease;
+}
+
+.alert-location:hover {
+  color: var(--text-color-primary);
+}
+
+.alert-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--text-color-muted);
+}
+
+.alert-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.alert-stat img {
+  opacity: 0.75;
+}
+
+.alert-stat-sep {
+  opacity: 0.3;
+}
+
+/* 아이템 우측 버튼들 */
+.alert-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.alert-btn-cctv {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--p-white-a18);
+  background: var(--p-white-a08);
+  color: var(--p-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.alert-btn-cctv:hover {
+  background: var(--p-white-a24);
+  border-color: var(--p-white-a40);
+  transform: scale(1.08);
+  box-shadow: 0 0 12px var(--p-white-a30);
+}
+
+.alert-action-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--p-white-a18);
+  margin: 0 6px;
+}
+
+.alert-btn-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--p-white-a75);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.alert-btn-arrow:hover {
+  color: var(--p-white);
+  transform: translateX(2px);
+}
+
+/* 푸터 */
+.alert-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--p-white-a08);
+  flex-shrink: 0;
+  font-size: var(--font-size-2xs);
+  color: var(--text-color-muted);
+}
+
+.alert-foot-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.alert-foot-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--p-green-550);
+  box-shadow: 0 0 8px var(--p-green-a70);
+  animation: alertPulse 2s infinite ease-in-out;
+}
+
+@keyframes alertPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.alert-foot-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   재난 안전 알림 위젯 (.disaster-widget) & 상세 팝업 모달 (.disaster-modal)
+   ========================================================================== */
+.disaster-widget {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.disaster-widget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  flex: 0 0 auto;
+}
+
+.disaster-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.disaster-title-icon {
+  font-size: var(--font-size-xl);
+  color: var(--level-danger);
+}
+
+.disaster-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
+  background: var(--surface-glass-sm);
+  border: 1px solid var(--border-light);
+  color: var(--text-color-primary);
+}
+
+.disaster-count-badge.is-critical,
+.disaster-count-badge.is-danger {
+  background: var(--level-danger-bg);
+  border-color: var(--disaster-modal-headline-border);
+  color: var(--level-danger);
+}
+
+.disaster-widget-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.disaster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  padding-right: 2px;
+}
+
+.disaster-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.disaster-list::-webkit-scrollbar-thumb {
+  background: var(--p-white-a15);
+  border-radius: var(--radius-xs);
+}
+
+/* 개별 알림 카드 */
+.disaster-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+  user-select: none;
+}
+
+.disaster-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--p-blue-a35);
+}
+
+/* 긴급 (재난문자) 카드 특수 스타일 */
+.disaster-item.is-critical,
+.disaster-item.is-danger {
+  border: 1px solid var(--disaster-card-critical-border);
+  background: var(--disaster-card-critical-bg);
+  box-shadow: none;
+}
+
+.disaster-item.is-critical:hover,
+.disaster-item.is-danger:hover {
+  border-color: var(--disaster-card-critical-hover-border);
+  box-shadow: none;
+}
+
+/* 좌측 아이콘 박스 */
+.disaster-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: var(--p-white-a06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-color-primary);
+  font-size: var(--font-size-xl);
+  transition: transform 0.15s ease;
+}
+
+.disaster-item:hover .disaster-icon-box {
+  transform: scale(1.05);
+}
+
+.disaster-item.is-critical .disaster-icon-box,
+.disaster-item.is-danger .disaster-icon-box {
+  background: var(--disaster-icon-critical-bg);
+  border: 1px solid var(--disaster-icon-critical-border);
+  color: var(--disaster-icon-critical-text);
+}
+
+/* 카드 본문 메인 */
+.disaster-item-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.disaster-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.disaster-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
+  flex: 0 0 auto;
+  background: var(--p-white-a10);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-color-primary);
+}
+
+.disaster-badge.is-critical,
+.disaster-badge.is-danger {
+  background: var(--level-danger);
+  border-color: transparent;
+  color: var(--p-white);
+  box-shadow: var(--disaster-badge-critical-glow);
+}
+
+.disaster-badge.is-weather {
+  background: var(--badge-weather-bg);
+  border-color: var(--badge-weather-border);
+  color: var(--badge-weather-text);
+}
+
+.disaster-badge.is-traffic {
+  background: var(--badge-traffic-bg);
+  border-color: var(--badge-traffic-border);
+  color: var(--badge-traffic-text);
+}
+
+.disaster-badge.is-living {
+  background: var(--badge-living-bg);
+  border-color: var(--badge-living-border);
+  color: var(--badge-living-text);
+}
+
+.disaster-badge.is-event {
+  background: var(--badge-event-bg);
+  border-color: var(--badge-event-border);
+  color: var(--badge-event-text);
+}
+
+.disaster-item-title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
+  letter-spacing: -0.01em;
+}
+
+.disaster-item-sub {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--p-white-a60);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: var(--leading-normal);
+}
+
+/* 카드 우측 */
+.disaster-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.disaster-item-time {
+  font-size: var(--text-xs);
+  color: var(--p-white-a45);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.disaster-item-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--p-white-a60);
+  font-size: var(--font-size-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  padding: 0;
+}
+
+.disaster-item:hover .disaster-item-arrow,
+.disaster-item-arrow:hover {
+  color: var(--p-white);
+  transform: translateX(3px);
+  background: var(--surface-glass-md);
+}
+
+/* ==========================================================================
+   재난 안전 알림 상세 팝업 모달 (.disaster-modal) — Dim 배경 처리 포함
+   ========================================================================== */
+.disaster-modal[hidden] {
+  display: none;
+}
+
+.disaster-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dim 배경 오버레이 (단일 표준 .modal-backdrop) */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--p-black-a55);
+  backdrop-filter: var(--blur-xs);
+  -webkit-backdrop-filter: var(--blur-xs);
+  animation: modalBackdropFadeIn 0.2s ease forwards;
+}
+
+.disaster-modal-container {
+  position: relative;
+  z-index: var(--z-base);
+  width: min(540px, 92vw);
+  max-height: min(760px, 92vh);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.disaster-modal-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-light);
+  background: var(--surface-panel-dark);
+  box-shadow: var(--shadow-modal-critical), 0 0 24px var(--p-black-a50);
+  overflow: hidden;
+  animation: disasterModalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.disaster-modal-panel.is-critical,
+.disaster-modal-panel.is-danger {
+  border-top: 3px solid var(--level-danger);
+  box-shadow: var(--disaster-modal-critical-glow);
+}
+
+.disaster-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex: 0 0 auto;
+}
+
+.disaster-modal-head-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.disaster-modal-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
+  line-height: var(--leading-snug);
+}
+
+.disaster-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--p-white-a70);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  transition: all 0.15s ease;
+}
+
+.disaster-modal-close:hover {
+  color: var(--text-color-primary);
+  background: var(--surface-glass-md);
+}
+
+.disaster-modal-body {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  max-height: 520px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--p-white-a20) transparent;
+}
+
+/* 얇은 스크롤바 표준 (4px) */
+.disaster-modal-body::-webkit-scrollbar {
+  width: 4px;
+}
+.disaster-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.disaster-modal-body::-webkit-scrollbar-thumb {
+  background: var(--p-white-a20);
+  border-radius: var(--radius-pill);
+}
+.disaster-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--p-white-a40);
+}
+
+.disaster-modal-headline {
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-card-dark);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  color: var(--text-color-primary);
+  display: flex;
+  align-items: center;
+}
+
+.disaster-modal-panel.is-critical .disaster-modal-headline,
+.disaster-modal-panel.is-danger .disaster-modal-headline {
+  background: var(--level-danger-bg);
+  border-color: var(--disaster-modal-headline-border);
+  color: var(--p-white);
+}
+
+.disaster-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-glass-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+.disaster-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: var(--text-sm);
+}
+
+.disaster-meta-row .meta-label {
+  width: 68px;
+  color: var(--p-white-a50);
+  font-weight: var(--weight-medium);
+  flex: 0 0 auto;
+}
+
+.disaster-meta-row .meta-val {
+  color: var(--text-color-primary);
+  font-weight: var(--weight-semibold);
+  flex: 1 1 auto;
+}
+
+.disaster-modal-content {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface-canvas-dark);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--p-white-a85);
+  white-space: pre-line;
+  font-family: var(--font-sans);
+}
+
+.disaster-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--border-subtle);
+  flex: 0 0 auto;
+}
+
+/* 확인 버튼 — 상단 편집 저장(.edit-action.save) 버튼과 100% 동일한 필 디자인 */
+.disaster-modal-confirm-btn {
+  height: 44px;
+  padding: 0 24px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-accent);
+  background: var(--surface-control);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-color-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
+
+.disaster-modal-confirm-btn i {
+  font-size: var(--text-lg);
+  line-height: var(--leading-none);
+}
+
+.disaster-modal-confirm-btn:hover {
+  background: var(--surface-control-hover);
+  border-color: var(--border-accent);
+}
+
+.disaster-modal-confirm-btn:active {
+  transform: scale(0.98);
+}
+
+@keyframes modalBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes disasterModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
