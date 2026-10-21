@@ -16,13 +16,13 @@
 
   const ROWS = [
     { name: "A - 4", level: "danger", density: 0.98, people: 47500, trend: [0.62, 0.7, 0.66, 0.78, 0.84, 0.9, 0.86, 0.94, 0.98] },
-    { name: "A - 5", level: "critical", density: 0.95, people: 46200, trend: [0.55, 0.6, 0.72, 0.68, 0.8, 0.76, 0.88, 0.92, 0.95] },
+    { name: "A - 5", level: "danger", density: 0.95, people: 46200, trend: [0.55, 0.6, 0.72, 0.68, 0.8, 0.76, 0.88, 0.92, 0.95] },
     { name: "B - 2", level: "warning", density: 0.9, people: 44100, trend: [0.48, 0.52, 0.6, 0.58, 0.7, 0.74, 0.8, 0.86, 0.9] },
     { name: "A - 2", level: "caution", density: 0.84, people: 41800, trend: [0.4, 0.46, 0.5, 0.58, 0.55, 0.66, 0.72, 0.78, 0.84] },
     { name: "A - 1", level: "watch", density: 0.72, people: 38600, trend: [0.35, 0.4, 0.38, 0.48, 0.52, 0.58, 0.62, 0.68, 0.72] },
     { name: "C - 3", level: "caution", density: 0.81, people: 40200, trend: [0.42, 0.5, 0.47, 0.56, 0.6, 0.68, 0.7, 0.76, 0.81] },
     { name: "D - 1", level: "warning", density: 0.88, people: 42900, trend: [0.5, 0.55, 0.62, 0.6, 0.7, 0.75, 0.82, 0.85, 0.88] },
-    { name: "B - 5", level: "critical", density: 0.93, people: 45500, trend: [0.58, 0.64, 0.7, 0.75, 0.8, 0.85, 0.88, 0.91, 0.93] },
+    { name: "B - 5", level: "danger", density: 0.93, people: 45500, trend: [0.58, 0.64, 0.7, 0.75, 0.8, 0.85, 0.88, 0.91, 0.93] },
   ];
 
   let sortKey = "name";
@@ -47,12 +47,12 @@
     return `<svg class="zone-spark" viewBox="0 0 ${w} ${h}" aria-hidden="true">
       <defs>
         <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="var(--chart-crowd, #25d08e)" stop-opacity="0.45"/>
-          <stop offset="100%" stop-color="var(--chart-crowd, #25d08e)" stop-opacity="0"/>
+          <stop offset="0%" stop-color="var(--chart-crowd, #25C789)" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="var(--chart-crowd, #25C789)" stop-opacity="0"/>
         </linearGradient>
       </defs>
       <path d="${area}" fill="url(#${gid})"/>
-      <path d="${line}" fill="none" stroke="var(--chart-crowd, #25d08e)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${line}" fill="none" stroke="var(--chart-crowd, #25C789)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
   }
 
