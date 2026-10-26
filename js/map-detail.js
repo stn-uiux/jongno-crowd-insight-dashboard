@@ -337,13 +337,12 @@
     if (existing) existing.remove();
   }
 
-  function setMapFullscreen(enable, syncNative = false) {
+  function setMapFullscreen(enable) {
     if (!mapWidget) return;
     const isCurrentlyFs = mapWidget.classList.contains("is-fullscreen");
     if (enable === isCurrentlyFs) return;
 
     mapWidget.classList.toggle("is-fullscreen", enable);
-    document.body.classList.toggle("has-map-fullscreen", enable);
 
     fullscreenBtns.forEach((btn) => {
       const icon = btn.querySelector("i");
@@ -356,8 +355,8 @@
       } else {
         if (icon) icon.className = "bi bi-fullscreen";
         if (label) label.textContent = "전체보기";
-        btn.setAttribute("title", "지도 전체보기 (확대)");
-        btn.setAttribute("aria-label", "지도 전체보기");
+        btn.setAttribute("title", "그리드 전체보기 (확대)");
+        btn.setAttribute("aria-label", "그리드 전체보기");
       }
     });
 
@@ -365,18 +364,6 @@
       showFullscreenToast();
     } else {
       removeFullscreenToast();
-    }
-
-    if (syncNative) {
-      if (enable) {
-        if (!document.fullscreenElement && mapWidget.requestFullscreen) {
-          mapWidget.requestFullscreen().catch(() => {});
-        }
-      } else {
-        if (document.fullscreenElement && document.exitFullscreen) {
-          document.exitFullscreen().catch(() => {});
-        }
-      }
     }
 
     // 지도 캔버스 및 스테이지 contain 스케일 재계산

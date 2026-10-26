@@ -1072,28 +1072,25 @@ img {
 }
 
 /* ==========================================================================
-   지도 위젯 전체보기(Fullscreen Overlay) 모드
-   - 꺽쇠 4개 아이콘 클릭 시 대시보드 화면 전체(100vw × 100vh)로 시원하게 확대
+   지도 위젯 전체보기 (위젯 그리드 .board 영역 전체 확대)
+   - 헤더는 그대로 노출하고, 위젯 grid 범위(대시보드 보드) 내에서 전체화면으로 시원하게 확대
    - 축소하기 버튼 또는 ESC 키로 원래 대시보드 그리드 위치로 복귀
    ========================================================================== */
 #stage .board > .map-widget.is-fullscreen {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   max-width: none;
   max-height: none;
-  z-index: 1500;
+  z-index: 100;
   margin: 0;
-  border-radius: 0;
-  background: var(--p-neutral-950);
-  padding: 18px;
-  box-shadow: 0 0 48px var(--p-black-a85);
-  animation: mapFullscreenExpand 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-body.has-map-fullscreen {
-  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--surface-widget);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  box-shadow: 0 16px 48px var(--p-black-a60);
+  animation: mapGridFullscreenExpand 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* 편집 모드 진입 시 전체보기 버튼 숨김 (편집 드래그 핸들과 충돌 방지) */
@@ -1101,10 +1098,10 @@ body.has-map-fullscreen {
   display: none;
 }
 
-@keyframes mapFullscreenExpand {
+@keyframes mapGridFullscreenExpand {
   from {
-    opacity: 0.8;
-    transform: scale(0.985);
+    opacity: 0.85;
+    transform: scale(0.99);
   }
   to {
     opacity: 1;
