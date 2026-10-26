@@ -1090,7 +1090,7 @@ img {
 .region-a .rlabel-inline { left: 50%; top: 50%; }
 .region-b .rlabel-inline { left: 50%; top: 50%; }
 .region-c .rlabel-inline { left: 50%; top: 50%; }
-.region-d .rlabel-inline { left: 70%; top: 50%; }
+.region-d .rlabel-inline { left: 50%; top: 50%; }
 
 /* 경고 아이콘 스타일 */
 .region .region-warn {
