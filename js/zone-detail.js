@@ -8,9 +8,55 @@
   const managersEl = document.getElementById("zone-detail-managers");
   if (!modal || !panel || !handle || !btnClose) return;
 
-  const rootStyle = getComputedStyle(document.documentElement);
-  const DENSITY = rootStyle.getPropertyValue("--chart-crowd").trim() || "#25C789";
-  const PEOPLE = rootStyle.getPropertyValue("--chart-people").trim() || "#6b7dff";
+  function isLightMode() {
+    return document.documentElement.getAttribute("data-mode") === "light";
+  }
+
+  /** CSS color token → amcharts hex number (var() 체인 해석) */
+  function cssHex(token, fallback) {
+    let prop = token.startsWith("--") ? token : `--${token}`;
+    let raw = getComputedStyle(document.documentElement).getPropertyValue(prop).trim() || fallback;
+    let guard = 0;
+    while (raw && raw.startsWith("var(") && guard++ < 10) {
+      const match = raw.match(/var\(\s*([^,\s)]+)/);
+      if (!match) break;
+      prop = match[1];
+      raw = getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
+    }
+    const hex = (raw || fallback).replace(/^#/, "");
+    const full =
+      hex.length === 3
+        ? hex
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : hex;
+    const n = parseInt(full, 16);
+    return Number.isFinite(n) ? n : parseInt(String(fallback).replace(/^#/, ""), 16);
+  }
+
+  function getChartColors() {
+    const light = isLightMode();
+    const rootStyle = getComputedStyle(document.documentElement);
+    const stay = cssHex("--chart-stay", "#55adff");
+    const crowd = cssHex("--chart-crowd", "#25C789");
+    const axisLabel = cssHex("--chart-axis", light ? "#434f63" : "#d5deea");
+    const gridStroke = cssHex("--chart-grid", light ? "#788aa2" : "#b4cde6");
+    const gridOpacityX = parseFloat(rootStyle.getPropertyValue("--chart-grid-opacity-x")) || (light ? 0.38 : 0.22);
+    const gridOpacityY = parseFloat(rootStyle.getPropertyValue("--chart-grid-opacity-y")) || (light ? 0.42 : 0.28);
+    const textPrimary = cssHex("--text-color-primary", light ? "#202a3b" : "#ffffff");
+    return {
+      stay,
+      crowd,
+      axisLabel,
+      gridStroke,
+      gridOpacityX,
+      gridOpacityY,
+      brushGridOpacity: light ? 0.12 : 0.15,
+      cursorStroke: textPrimary,
+      cursorOpacity: light ? 0.35 : 0.2,
+    };
+  }
 
   const LEVELS = {
     danger: { label: "위험", cls: "is-danger" },
@@ -198,6 +244,8 @@
     root._logo?.dispose();
     mainRoot = root;
 
+    const colors = getChartColors();
+
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
         panX: false,
@@ -219,16 +267,21 @@
       })
     );
     xAxis.get("renderer").labels.template.setAll({
-      fill: am5.color(0x9eaed0),
-      fontSize: 11,
+      fill: am5.color(colors.axisLabel),
+      fontSize: 12,
+      fontWeight: "500",
     });
     xAxis.get("renderer").labels.template.adapters.add("text", (_text, target) => {
       const di = target.dataItem;
       return di ? di.dataContext.hour : "";
     });
-    xAxis.get("renderer").grid.template.setAll({ strokeOpacity: 0.15, stroke: am5.color(0xffffff) });
+    xAxis.get("renderer").grid.template.setAll({
+      location: 0.5,
+      stroke: am5.color(colors.gridStroke),
+      strokeOpacity: colors.gridOpacityX,
+    });
 
-    const yDensity = chart.yAxes.push(
+    const yStay = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         min: 0,
         max: 100,
@@ -236,10 +289,10 @@
         renderer: am5xy.AxisRendererY.new(root, {}),
       })
     );
-    yDensity.get("renderer").labels.template.setAll({ fill: am5.color(DENSITY), fontSize: 11, fontWeight: "700" });
-    yDensity.get("renderer").grid.template.setAll({ strokeOpacity: 0.12, stroke: am5.color(0xffffff) });
+    yStay.get("renderer").labels.template.setAll({ fill: am5.color(colors.stay), fontSize: 12, fontWeight: "700" });
+    yStay.get("renderer").grid.template.setAll({ strokeOpacity: colors.gridOpacityY, stroke: am5.color(colors.gridStroke) });
 
-    const yPeople = chart.yAxes.push(
+    const yCong = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         min: 0,
         max: 100,
@@ -247,44 +300,44 @@
         renderer: am5xy.AxisRendererY.new(root, { opposite: true }),
       })
     );
-    yPeople.get("renderer").labels.template.setAll({ fill: am5.color(PEOPLE), fontSize: 11, fontWeight: "700" });
-    yPeople.get("renderer").grid.template.setAll({ strokeOpacity: 0 });
+    yCong.get("renderer").labels.template.setAll({ fill: am5.color(colors.crowd), fontSize: 12, fontWeight: "700" });
+    yCong.get("renderer").grid.template.setAll({ strokeOpacity: 0 });
 
     const data = buildSeriesData(row);
     xAxis.data.setAll(data);
 
     const LineType = am5xy.SmoothedXLineSeries || am5xy.LineSeries;
-    const densSeries = chart.series.push(
-      LineType.new(root, {
-        name: "혼잡도",
-        xAxis,
-        yAxis: yDensity,
-        valueYField: "density",
-        categoryXField: "hourKey",
-        stroke: am5.color(DENSITY),
-        tooltip: makeTooltip(root, "{name}: {valueY.formatNumber('#.')}", DENSITY),
-      })
-    );
-    densSeries.strokes.template.setAll({ strokeWidth: 2 });
-    densSeries.data.setAll(data);
-
-    const peopleSeries = chart.series.push(
+    const staySeries = chart.series.push(
       LineType.new(root, {
         name: "체류인원",
         xAxis,
-        yAxis: yPeople,
+        yAxis: yStay,
         valueYField: "people",
         categoryXField: "hourKey",
-        stroke: am5.color(PEOPLE),
-        tooltip: makeTooltip(root, "{name}: {valueY.formatNumber('#.')}", PEOPLE),
+        stroke: am5.color(colors.stay),
+        tooltip: makeTooltip(root, "{name}: {valueY.formatNumber('#.')}", colors.stay),
       })
     );
-    peopleSeries.strokes.template.setAll({ strokeWidth: 2 });
-    peopleSeries.data.setAll(data);
+    staySeries.strokes.template.setAll({ strokeWidth: 2 });
+    staySeries.data.setAll(data);
+
+    const congSeries = chart.series.push(
+      LineType.new(root, {
+        name: "혼잡도",
+        xAxis,
+        yAxis: yCong,
+        valueYField: "density",
+        categoryXField: "hourKey",
+        stroke: am5.color(colors.crowd),
+        tooltip: makeTooltip(root, "{name}: {valueY.formatNumber('#.')}", colors.crowd),
+      })
+    );
+    congSeries.strokes.template.setAll({ strokeWidth: 2 });
+    congSeries.data.setAll(data);
 
     const cursor = chart.set("cursor", am5xy.XYCursor.new(root, { behavior: "none" }));
     cursor.lineY.set("visible", false);
-    cursor.lineX.setAll({ stroke: am5.color(0xffffff), strokeOpacity: 0.2, strokeDasharray: [4, 4] });
+    cursor.lineX.setAll({ stroke: am5.color(colors.cursorStroke), strokeOpacity: colors.cursorOpacity, strokeDasharray: [4, 4] });
 
     chart.appear(500, 60);
   }
@@ -297,6 +350,8 @@
     root.setThemes([am5themes_Animated.new(root)]);
     root._logo?.dispose();
     brushRoot = root;
+
+    const colors = getChartColors();
 
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
@@ -317,7 +372,7 @@
         renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 40 }),
       })
     );
-    xAxis.get("renderer").labels.template.setAll({ fill: am5.color(0x9eaed0), fontSize: 11 });
+    xAxis.get("renderer").labels.template.setAll({ fill: am5.color(colors.axisLabel), fontSize: 11, fontWeight: "500" });
     xAxis.get("renderer").labels.template.adapters.add("text", (_text, target) => {
       const di = target.dataItem;
       return di && di.dataContext.day ? di.dataContext.day : "";
@@ -334,40 +389,40 @@
       })
     );
     yAxis.get("renderer").labels.template.setAll({ visible: false });
-    yAxis.get("renderer").grid.template.setAll({ strokeOpacity: 0.08, stroke: am5.color(0xffffff) });
+    yAxis.get("renderer").grid.template.setAll({ strokeOpacity: colors.brushGridOpacity, stroke: am5.color(colors.gridStroke) });
     yAxis.get("renderer").setAll({ strokeOpacity: 0 });
 
     const data = buildBrushData(row);
     xAxis.data.setAll(data);
 
     const LineType = am5xy.SmoothedXLineSeries || am5xy.LineSeries;
-    const dens = chart.series.push(
-      LineType.new(root, {
-        xAxis,
-        yAxis,
-        valueYField: "density",
-        categoryXField: "dayKey",
-        stroke: am5.color(DENSITY),
-        fill: am5.color(DENSITY),
-      })
-    );
-    dens.strokes.template.setAll({ strokeWidth: 1.5 });
-    dens.fills.template.setAll({ fillOpacity: 0.35, visible: true });
-    dens.data.setAll(data);
-
     const people = chart.series.push(
       LineType.new(root, {
         xAxis,
         yAxis,
         valueYField: "people",
         categoryXField: "dayKey",
-        stroke: am5.color(PEOPLE),
-        fill: am5.color(PEOPLE),
+        stroke: am5.color(colors.stay),
+        fill: am5.color(colors.stay),
       })
     );
     people.strokes.template.setAll({ strokeWidth: 1.5 });
     people.fills.template.setAll({ fillOpacity: 0.28, visible: true });
     people.data.setAll(data);
+
+    const dens = chart.series.push(
+      LineType.new(root, {
+        xAxis,
+        yAxis,
+        valueYField: "density",
+        categoryXField: "dayKey",
+        stroke: am5.color(colors.crowd),
+        fill: am5.color(colors.crowd),
+      })
+    );
+    dens.strokes.template.setAll({ strokeWidth: 1.5 });
+    dens.fills.template.setAll({ fillOpacity: 0.35, visible: true });
+    dens.data.setAll(data);
 
     applyBrushUi();
     bindBrushInteraction();
@@ -446,6 +501,14 @@
   };
   handle.addEventListener("pointerup", endDrag);
   handle.addEventListener("pointercancel", endDrag);
+
+  window.addEventListener("themechange", () => {
+    if (modal && !modal.hidden && currentRow) {
+      disposeCharts();
+      createMainChart(currentRow);
+      createBrushChart(currentRow);
+    }
+  });
 
   window.openZoneDetail = openZoneDetail;
   window.closeZoneDetail = closeZoneDetail;
