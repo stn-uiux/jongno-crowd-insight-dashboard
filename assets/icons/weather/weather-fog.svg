@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Faint Upper Cloud Silhouette -->
+  <path opacity="0.6" d="M20 12H19.5C19.8 11.4 20 10.7 20 10C20 7.8 18.2 6 16 6C14.3 6 12.8 7.1 12.2 8.6C11.8 8.2 11.2 8 10.5 8C9.1 8 8 9.1 8 10.5C8 11.1 8.2 11.6 8.5 12H5C4.2 12 3.5 12.7 3.5 13.5C3.5 14.3 4.2 15 5 15H27C27.8 15 28.5 14.3 28.5 13.5C28.5 12.7 27.8 12 27 12H20Z" fill="white"/>
+  <!-- Fog / Mist Horizontal Bars -->
+  <rect x="4" y="18" width="24" height="2.5" rx="1.25" fill="white"/>
+  <rect x="7" y="22.5" width="18" height="2.5" rx="1.25" fill="white"/>
+  <rect x="5" y="27" width="22" height="2.5" rx="1.25" fill="white"/>
+</svg>

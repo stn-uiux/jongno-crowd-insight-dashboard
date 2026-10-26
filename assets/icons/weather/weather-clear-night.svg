@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Crescent Moon -->
+  <path d="M19.8 4C14.3 4.8 10 9.5 10 15.3C10 21.7 15.3 27 21.7 27C23.9 27 26 26.3 27.7 25.1C24.4 27.5 19.9 27.8 16.2 25.5C11.6 22.6 10.3 16.6 13.2 12C15 9.1 18.2 7.2 21.6 7C21 6 20.4 5 19.8 4Z" fill="white"/>
+  <!-- Sparkle Star 1 -->
+  <path d="M24 7L24.8 9.2L27 10L24.8 10.8L24 13L23.2 10.8L21 10L23.2 9.2L24 7Z" fill="white"/>
+  <!-- Sparkle Star 2 -->
+  <path d="M6 9L6.5 10.5L8 11L6.5 11.5L6 13L5.5 11.5L4 11L5.5 10.5L6 9Z" fill="white"/>
+</svg>

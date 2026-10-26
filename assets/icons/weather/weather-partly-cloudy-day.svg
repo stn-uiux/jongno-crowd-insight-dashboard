@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sun behind cloud -->
+  <circle cx="21" cy="11" r="5" fill="white"/>
+  <rect x="19.75" y="2" width="2.5" height="3" rx="1.25" fill="white"/>
+  <rect x="27.5" y="9.75" width="3" height="2.5" rx="1.25" fill="white"/>
+  <rect x="25.5" y="4.5" width="2.5" height="3" rx="1.25" transform="rotate(45 25.5 4.5)" fill="white"/>
+  <!-- Foreground Cloud -->
+  <path d="M22 26H9.5C6.5 26 4 23.5 4 20.5C4 17.8 6 15.5 8.7 15.1C9.6 11.6 12.8 9 16.5 9C20.6 9 24 12.1 24.5 16.2C26.5 16.8 28 18.7 28 21C28 23.8 25.3 26 22 26Z" fill="white"/>
+</svg>

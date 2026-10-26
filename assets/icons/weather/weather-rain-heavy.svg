@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dense Cloud -->
+  <path d="M22 19H9.5C6.5 19 4 16.5 4 13.5C4 10.8 6 8.5 8.7 8.1C9.6 4.6 12.8 2 16.5 2C20.6 2 24 5.1 24.5 9.2C26.5 9.8 28 11.7 28 14C28 16.8 25.3 19 22 19Z" fill="white"/>
+  <!-- Heavy Rain Streaks (4 thick streaks) -->
+  <path d="M8 22L6 29" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M13.5 22L11.5 29" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M19 22L17 29" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M24.5 22L22.5 29" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

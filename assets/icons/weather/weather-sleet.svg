@@ -1,0 +1,10 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cloud -->
+  <path d="M22 18H9.5C6.5 18 4 15.5 4 12.5C4 9.8 6 7.5 8.7 7.1C9.6 3.6 12.8 1 16.5 1C20.6 1 24 4.1 24.5 8.2C26.5 8.8 28 10.7 28 13C28 15.8 25.3 18 22 18Z" fill="white"/>
+  <!-- Rain Streak Left -->
+  <path d="M9 22L7 28" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Snowflake Center -->
+  <path d="M16 22V28M13 25H19M13.8 22.8L18.2 27.2M18.2 22.8L13.8 27.2" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- Rain Streak Right -->
+  <path d="M23 22L21 28" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
