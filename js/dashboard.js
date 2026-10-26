@@ -62,6 +62,8 @@
     stay: () => cssHex("--chart-stay", "#55adff"),
     crowd: () => cssHex("--chart-crowd", "#25C789"),
     grid: () => cssHex("--chart-grid", "#b4cde6"),
+    gridOpacityX: () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--chart-grid-opacity-x")) || 0.22,
+    gridOpacityY: () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--chart-grid-opacity-y")) || 0.28,
     axis: () => cssHex("--chart-axis", "#d5deea"),
     visitPast: () => cssHex("--chart-visit-past", "#cee5ff"),
     visitToday: () => cssHex("--chart-visit-today", "#065bac"),
@@ -122,11 +124,23 @@
     document.getElementById("updated-at").textContent = text;
   });
 
-  am5.ready(function () {
+  function initCharts() {
+    charts.forEach((root) => {
+      try { root.dispose(); } catch (_) {}
+    });
+    charts.length = 0;
     charts.push(createPieChart("chart-pie"));
     charts.push(createStayChart("chart-stay"));
     charts.push(createCompareChart("chart-compare"));
     charts.push(createTrendChart("chart-trend"));
+  }
+
+  am5.ready(function () {
+    initCharts();
+  });
+
+  window.addEventListener("themechange", function () {
+    initCharts();
   });
 
   function createRoot(id) {
@@ -325,7 +339,7 @@
     xAxis.get("renderer").grid.template.setAll({
       location: 0.5,
       stroke: am5.color(C.grid()),
-      strokeOpacity: 0.22,
+      strokeOpacity: C.gridOpacityX(),
     });
 
     const yStay = chart.yAxes.push(
@@ -343,7 +357,7 @@
     });
     yStay.get("renderer").grid.template.setAll({
       stroke: am5.color(C.grid()),
-      strokeOpacity: 0.28,
+      strokeOpacity: C.gridOpacityY(),
     });
 
     const yCong = chart.yAxes.push(
@@ -486,7 +500,7 @@
     });
     yLeft.get("renderer").grid.template.setAll({
       stroke: am5.color(C.grid()),
-      strokeOpacity: 0.28,
+      strokeOpacity: C.gridOpacityY(),
     });
 
     const yRight = chart.yAxes.push(
@@ -589,7 +603,7 @@
     xAxis.get("renderer").grid.template.setAll({
       location: 0.5,
       stroke: am5.color(C.grid()),
-      strokeOpacity: 0.22,
+      strokeOpacity: C.gridOpacityX(),
     });
 
     const yAxis = chart.yAxes.push(
@@ -607,7 +621,7 @@
     });
     yAxis.get("renderer").grid.template.setAll({
       stroke: am5.color(C.grid()),
-      strokeOpacity: 0.28,
+      strokeOpacity: C.gridOpacityY(),
     });
 
     const data = [
