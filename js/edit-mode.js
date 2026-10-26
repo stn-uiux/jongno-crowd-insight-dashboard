@@ -1192,6 +1192,7 @@
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(SIZE_KEY);
     localStorage.removeItem(ORDER_KEY);
+    localStorage.removeItem("jongno-dashboard-map-fullscreen-state");
     pendingRemove = new Set();
     dirtySizeIds.clear();
     if (defaultOrder) applyOrderMap(defaultOrder);

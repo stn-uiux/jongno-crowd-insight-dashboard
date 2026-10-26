@@ -110,19 +110,19 @@
 
   /**
    * Figma 40:6922 — 낙원동 (Region C / Detail Map 3) Hitmap 원 중심 (프레임 860×950 기준 %)
-   * - 10개 지점, 전체 관심(attention) 상태, 상단 툴팁(tipPos: "top")
+   * - 10개 지점, 전체 정상(normal) 상태, 상단 툴팁(tipPos: "top")
    */
   const POINTS_C = [
-    { id: "C-1", left: 64.0, top: 19.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-2", left: 74.0, top: 37.1, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-3", left: 30.0, top: 45.2, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-4", left: 68.3, top: 48.9, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-5", left: 40.9, top: 64.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-6", left: 73.1, top: 66.9, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-7", left: 57.1, top: 72.6, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-8", left: 10.0, top: 80.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-9", left: 30.0, top: 82.1, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-10", left: 63.5, top: 84.8, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-1", left: 64.0, top: 19.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-2", left: 74.0, top: 37.1, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-3", left: 30.0, top: 45.2, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-4", left: 68.3, top: 48.9, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-5", left: 40.9, top: 64.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-6", left: 73.1, top: 66.9, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-7", left: 57.1, top: 72.6, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-8", left: 10.0, top: 80.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-9", left: 30.0, top: 82.1, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-10", left: 63.5, top: 84.8, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
 
   /**
@@ -143,7 +143,7 @@
     { id: "D-8", left: 30.7, top: 63.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "D-9", left: 76.1, top: 59.3, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "D-10", left: 84.3, top: 71.3, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-11", left: 20.4, top: 85.0, state: "danger", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-11", left: 20.4, top: 85.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "D-12", left: 46.9, top: 92.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "D-13", left: 76.2, top: 83.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
@@ -313,9 +313,71 @@
   window.openMapDetail = openDetail;
   window.closeMapDetail = closeDetail;
 
-  // —— 지도 위젯 전체보기 (확대) 및 축소하기 (원래대로) 기능 ——
-  const fullscreenBtns = document.querySelectorAll(".map-view-toggle-btn");
+  // —— 지도 위젯 크게보기 (확대: full, 3/4, 1/2) 및 축소하기 (원래대로) 기능 ——
+  const FS_STORAGE_KEY = "jongno-dashboard-map-fullscreen-state";
   let fsToastTimer = null;
+  let currentMapRatio = "full";
+
+  const RATIO_GRID_COLS = {
+    "full": "1 / -1",
+    "3/4": "7 / 25",
+    "1/2": "13 / 25"
+  };
+
+  function saveFullscreenState(isFullscreen, ratio) {
+    try {
+      localStorage.setItem(
+        FS_STORAGE_KEY,
+        JSON.stringify({
+          isFullscreen: Boolean(isFullscreen),
+          ratio: ratio || currentMapRatio || "full"
+        })
+      );
+    } catch (_) {}
+  }
+
+  function syncRatioInputs(ratio) {
+    document.querySelectorAll(".map-ratio-selector").forEach((selector) => {
+      selector.querySelectorAll(".map-ratio-option").forEach((opt) => {
+        const input = opt.querySelector("input[type='radio']");
+        if (!input) return;
+        const isActive = input.value === ratio;
+        input.checked = isActive;
+        opt.classList.toggle("is-active", isActive);
+        opt.setAttribute("aria-checked", isActive ? "true" : "false");
+      });
+    });
+  }
+
+  function applyMapGridRatio(ratio) {
+    if (!mapWidget) return;
+    if (!RATIO_GRID_COLS[ratio]) ratio = "full";
+    currentMapRatio = ratio;
+    mapWidget.setAttribute("data-ratio", ratio);
+
+    if (mapWidget.classList.contains("is-fullscreen")) {
+      const colRule = RATIO_GRID_COLS[ratio];
+      mapWidget.style.setProperty("grid-column", colRule, "important");
+      mapWidget.style.setProperty("grid-row", "1 / -1", "important");
+      mapWidget.style.setProperty("position", "absolute", "important");
+      mapWidget.style.setProperty("top", "0", "important");
+      mapWidget.style.setProperty("left", "0", "important");
+      mapWidget.style.setProperty("right", "0", "important");
+      mapWidget.style.setProperty("bottom", "0", "important");
+      mapWidget.style.setProperty("width", "100%", "important");
+      mapWidget.style.setProperty("height", "100%", "important");
+      mapWidget.style.setProperty("z-index", "100", "important");
+
+      saveFullscreenState(true, currentMapRatio);
+    }
+
+    syncRatioInputs(ratio);
+
+    requestAnimationFrame(() => {
+      fitAllStages();
+      window.dispatchEvent(new Event("resize"));
+    });
+  }
 
   function showFullscreenToast() {
     removeFullscreenToast();
@@ -341,7 +403,7 @@
   let savedGridRow = "";
   let savedInlineZIndex = "";
 
-  function setMapFullscreen(enable) {
+  function setMapFullscreen(enable, showToast = true) {
     if (!mapWidget) return;
     const isCurrentlyFs = mapWidget.classList.contains("is-fullscreen");
     if (enable === isCurrentlyFs) return;
@@ -351,19 +413,28 @@
       savedGridRow = mapWidget.style.gridRow || "";
       savedInlineZIndex = mapWidget.style.zIndex || "";
 
-      mapWidget.style.setProperty("grid-column", "1 / -1", "important");
-      mapWidget.style.setProperty("grid-row", "1 / -1", "important");
-      mapWidget.style.setProperty("position", "absolute", "important");
-      mapWidget.style.setProperty("top", "0", "important");
-      mapWidget.style.setProperty("left", "0", "important");
-      mapWidget.style.setProperty("right", "0", "important");
-      mapWidget.style.setProperty("bottom", "0", "important");
-      mapWidget.style.setProperty("width", "100%", "important");
-      mapWidget.style.setProperty("height", "100%", "important");
-      mapWidget.style.setProperty("z-index", "100", "important");
       mapWidget.classList.add("is-fullscreen");
+      applyMapGridRatio(currentMapRatio);
+
+      // 크게보기 진입 시 비율 선택 라디오 버튼 표시
+      document.querySelectorAll(".map-ratio-selector").forEach((sel) => {
+        sel.hidden = false;
+      });
+
+      saveFullscreenState(true, currentMapRatio);
     } else {
       mapWidget.classList.remove("is-fullscreen");
+      mapWidget.removeAttribute("data-ratio");
+
+      // 축소 시 비율 선택 라디오 버튼 숨김
+      document.querySelectorAll(".map-ratio-selector").forEach((sel) => {
+        sel.hidden = true;
+      });
+
+      // 새로고침 FOUC 방지용 fast 스타일 태그가 남아있다면 제거
+      const fastFsStyle = document.getElementById("persisted-fs-fast");
+      if (fastFsStyle) fastFsStyle.remove();
+
       if (savedGridColumn) {
         mapWidget.style.gridColumn = savedGridColumn;
       } else {
@@ -386,6 +457,8 @@
       mapWidget.style.removeProperty("bottom");
       mapWidget.style.removeProperty("width");
       mapWidget.style.removeProperty("height");
+
+      saveFullscreenState(false, currentMapRatio);
     }
 
     document.querySelectorAll(".map-view-toggle-btn").forEach((btn) => {
@@ -398,14 +471,14 @@
         btn.setAttribute("aria-label", "지도 원래 크기로 축소");
       } else {
         if (icon) icon.className = "bi bi-fullscreen";
-        if (label) label.textContent = "전체보기";
-        btn.setAttribute("title", "그리드 전체보기 (확대)");
-        btn.setAttribute("aria-label", "그리드 전체보기");
+        if (label) label.textContent = "크게보기";
+        btn.setAttribute("title", "지도 크게보기 (확대)");
+        btn.setAttribute("aria-label", "지도 크게보기");
       }
     });
 
     if (enable) {
-      showFullscreenToast();
+      if (showToast) showFullscreenToast();
     } else {
       removeFullscreenToast();
     }
@@ -426,10 +499,29 @@
   // 버튼 직접 클릭 및 문서 이벤트 위임 이중 바인딩 (100% 클릭 보장)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".map-view-toggle-btn");
-    if (!btn) return;
-    e.preventDefault();
-    e.stopPropagation();
-    toggleMapFullscreen();
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMapFullscreen();
+      return;
+    }
+
+    // 라디오 버튼 라벨 및 닷 직접 클릭 지원
+    const opt = e.target.closest(".map-ratio-option");
+    if (opt) {
+      const radio = opt.querySelector("input[type='radio']");
+      if (radio && (!radio.checked || currentMapRatio !== radio.value)) {
+        radio.checked = true;
+        applyMapGridRatio(radio.value);
+      }
+    }
+  });
+
+  // 라디오 인풋 change 이벤트 리스너
+  document.addEventListener("change", (e) => {
+    const input = e.target.closest(".map-ratio-selector input[type='radio']");
+    if (!input) return;
+    applyMapGridRatio(input.value);
   });
 
   // ESC 키 누르면 축소하기 (열려있는 모달이 없을 때 동작)
@@ -443,6 +535,19 @@
     }
   });
 
+  // 저장된 크게보기 상태 복원 (새로고침 시 유지)
+  try {
+    const rawFs = localStorage.getItem(FS_STORAGE_KEY);
+    if (rawFs) {
+      const fsData = JSON.parse(rawFs);
+      if (fsData && fsData.isFullscreen) {
+        if (fsData.ratio) currentMapRatio = fsData.ratio;
+        setMapFullscreen(true, false);
+      }
+    }
+  } catch (_) {}
+
+  window.applyMapGridRatio = applyMapGridRatio;
   window.setMapFullscreen = setMapFullscreen;
   window.toggleMapFullscreen = toggleMapFullscreen;
 })();
