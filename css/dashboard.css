@@ -581,9 +581,18 @@ img {
   background: currentColor;
   opacity: 0.45;
 }
-.badge.up { color: var(--kpi-up); }
-.badge.down { color: var(--kpi-down); }
-.badge.flat { color: var(--kpi-flat); }
+.badge.up {
+  color: var(--kpi-up);
+  background: var(--kpi-badge-up-bg);
+}
+.badge.down {
+  color: var(--kpi-down);
+  background: var(--kpi-badge-down-bg);
+}
+.badge.flat {
+  color: var(--kpi-flat);
+  background: var(--kpi-badge-bg);
+}
 .badge.up img { transform: rotate(-90deg); }
 .badge.down img { transform: rotate(90deg); }
 

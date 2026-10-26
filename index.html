@@ -47,6 +47,20 @@
           document.head.appendChild(style);
         }
 
+        /* 저장된 테마 모드(dark / light) 즉시 적용 (새로고침 깜빡임 방지) */
+        var savedTheme = localStorage.getItem("jongno-dashboard-theme-mode") || "dark";
+        document.documentElement.setAttribute("data-mode", savedTheme);
+        if (savedTheme === "light") {
+          document.addEventListener("DOMContentLoaded", function () {
+            var bg = document.querySelector(".page-bg");
+            if (bg) bg.src = "assets/light-jongno-dashboard-bg.png";
+            var overviewImg = document.querySelector("#map-overview .map-photo");
+            if (overviewImg) overviewImg.src = "assets/maps/light-map-overview.png";
+            var logos = document.querySelectorAll(".sidebar-logo img, .brand img");
+            logos.forEach(function (img) { img.src = "assets/light-logo-only.png"; });
+          });
+        }
+
         /* 저장된 지도 크게보기 상태 즉시 적용 (새로고침 깜빡임 방지) */
         var rawFs = localStorage.getItem("jongno-dashboard-map-fullscreen-state");
         if (rawFs) {
@@ -67,14 +81,14 @@
 </head>
 <body>
   <div class="app-shell">
-    <img class="page-bg" src="assets/jongno-dashboard-bg.png" alt="">
+    <img class="page-bg" src="assets/dark-jongno-dashboard-bg.png" alt="">
     <aside class="app-sidebar" id="app-sidebar">
       <button type="button" class="sidebar-toggle" title="메뉴 접기" aria-label="메뉴 접기">
         <i class="bi bi-chevron-left"></i>
       </button>
       <div class="sidebar-logo">
         <a href="./index.html">
-          <img alt="종로" class="logo-single logo-animated" src="assets/logo-only.png">
+          <img alt="종로" class="logo-single logo-animated" src="assets/dark-logo-only.png">
           <span class="logo-text-label">종로구 스마트인파 관리</span>
         </a>
       </div>
@@ -124,7 +138,7 @@
   <div id="stage">
     <header class="header">
       <div class="brand">
-        <img src="assets/logo-only.png" alt="종로구" width="65" height="36">
+        <img src="assets/dark-logo-only.png" alt="종로구" width="65" height="36">
         <h1 class="typo-display">종로구 <em>스마트인파</em> 관리</h1>
       </div>
 
@@ -298,9 +312,9 @@
       <article class="widget widget--map map-widget" data-widget-id="map-jongno" data-widget-name="종로 구역 지도" data-widget-category="모니터링" aria-label="종로 구역 지도">
         <div class="map-canvas map-overview" id="map-overview">
           <div class="map-stage" data-map-stage="overview" data-aspect="1920/1080">
-            <img class="map-photo" src="assets/maps/map-overview.png" alt="">
+            <img class="map-photo" src="assets/maps/dark-map-overview.png" alt="">
             <div class="map-regions map-overlay">
-              <button type="button" class="region region-a is-critical" id="region-court" data-region="A" data-detail-img="assets/maps/map-detail-2.png" title="헌법 재판소 일대 상세" aria-label="헌법 재판소 일대 구역 상세 보기">
+              <button type="button" class="region region-a is-critical" id="region-court" data-region="A" data-detail-img="assets/maps/dark-map-detail-2.png" title="헌법 재판소 일대 상세" aria-label="헌법 재판소 일대 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 274.387 381.027" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M0.5 71.8041L39.4252 0.585459L156.777 32.3023L257.118 153.98L273.841 267.295L61.3386 380.322L0.5 225.775V71.8041Z" />
                 </svg>
@@ -311,7 +325,7 @@
                 </div>
               </button>
 
-              <button type="button" class="region region-b is-watch" id="region-gwanghwamun" data-region="B" data-detail-img="assets/maps/map-detail-4.png" title="광화문 광장 접점 상세" aria-label="광화문 광장 접점 구역 상세 보기">
+              <button type="button" class="region region-b is-watch" id="region-gwanghwamun" data-region="B" data-detail-img="assets/maps/dark-map-detail-4.png" title="광화문 광장 접점 상세" aria-label="광화문 광장 접점 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 134.283 142.279" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M0.73565 51.5284L97.8943 0.597832L133.736 30.4537L118.875 105.972L63.8014 141.598L0.73565 51.5284Z" />
                 </svg>
@@ -322,7 +336,7 @@
                 </div>
               </button>
 
-              <button type="button" class="region region-c" id="region-nakwon" data-region="C" data-detail-img="assets/maps/map-detail-3.png" title="낙원동 상세" aria-label="낙원동 구역 상세 보기">
+              <button type="button" class="region region-c" id="region-nakwon" data-region="C" data-detail-img="assets/maps/dark-map-detail-3.png" title="낙원동 상세" aria-label="낙원동 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 90.5421 114.885" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M26.4866 41.5031H47.1874L50.954 56.3672L68.0728 41.5031L58.9706 3.17362L86.156 0.543165L90.035 25.6369L82.6864 64.9684L87.4463 85.9285L70.19 114.352L17.0381 108.416L0.59956 87.4316L26.4866 41.5031Z" />
                 </svg>
@@ -333,7 +347,7 @@
                 </div>
               </button>
 
-              <button type="button" class="region region-d is-warning" id="region-ikseon" data-region="D" data-detail-img="assets/maps/map-detail-1.png" title="익선동 상세" aria-label="익선동 구역 상세 보기">
+              <button type="button" class="region region-d is-warning" id="region-ikseon" data-region="D" data-detail-img="assets/maps/dark-map-detail-1.png" title="익선동 상세" aria-label="익선동 구역 상세 보기">
                 <svg class="region-poly" viewBox="0 0 100.574 121.728" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M12.5357 29.2679L47.1909 0.708642L100.05 66.8458L95.4576 102.085L58.8818 121.208L5.35415 112.774V88.1399L0.510775 67.1798L4.93662 43.7145L12.5357 29.2679Z" />
                 </svg>
@@ -393,7 +407,7 @@
 
         <div class="map-canvas map-detail" id="map-detail" hidden>
           <div class="map-stage" data-map-stage="detail" data-aspect="1920/1080">
-            <img class="map-photo map-photo-detail" src="assets/maps/map-detail-2.png" alt="헌법 재판소 일대 상세">
+            <img class="map-photo map-photo-detail" src="assets/maps/dark-map-detail-2.png" alt="헌법 재판소 일대 상세">
             <div class="map-points map-overlay" id="map-points" data-point-size="sm" aria-label="헌법 재판소 일대 지점"></div>
           </div>
 
@@ -567,13 +581,13 @@
               </div>
             </div>
 
-            <!-- 3. A-05 주의 (헌법 재판소 일대) -->
-            <div class="alert-item is-caution" data-region="A" data-point="A-5">
+            <!-- 3. A-16 주의 (헌법 재판소 일대) -->
+            <div class="alert-item is-caution" data-region="A" data-point="A-16">
               <div class="alert-item-left">
                 <span class="alert-num-badge">3</span>
                 <div class="alert-item-info">
                   <div class="alert-item-top">
-                    <strong class="alert-code">A - 05</strong>
+                    <strong class="alert-code">A - 16</strong>
                     <span class="alert-pill-badge is-caution">주의</span>
                     <span class="alert-location">헌법 재판소 일대</span>
                   </div>
@@ -591,7 +605,7 @@
                 </div>
               </div>
               <div class="alert-item-actions">
-                <button type="button" class="alert-btn-cctv" data-cctv="A-5" title="CCTV 실시간 영상 보기" aria-label="A-05 구역 CCTV 영상 보기">
+                <button type="button" class="alert-btn-cctv" data-cctv="A-16" title="CCTV 실시간 영상 보기" aria-label="A-16 구역 CCTV 영상 보기">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor"/><rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
                 </button>
                 <span class="alert-action-divider" aria-hidden="true"></span>
@@ -866,8 +880,8 @@
       <div class="zone-detail-body">
         <div id="zone-detail-main-chart" class="zone-detail-main-chart"></div>
         <ul class="zone-detail-legend">
-          <li><i class="dot density"></i>혼잡도</li>
           <li><i class="dot people"></i>체류인원</li>
+          <li><i class="dot density"></i>혼잡도</li>
         </ul>
         <div class="zone-detail-brush-wrap" id="zone-detail-brush-wrap">
           <div id="zone-detail-brush-chart" class="zone-detail-brush-chart"></div>
