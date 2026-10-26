@@ -176,11 +176,97 @@ img {
   background: var(--surface-glass-sm);
   backdrop-filter: var(--blur-md);
 }
+.map-top-right-group {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: var(--z-map-ui);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.map-top-right-group .map-status {
+  position: relative;
+  right: auto;
+  top: auto;
+  z-index: auto;
+}
 .map-status {
   position: absolute;
   right: 16px;
   top: 16px;
   z-index: var(--z-map-ui);
+}
+
+/* 지도 전체보기(확대) / 축소하기 버튼 (4개 모서리 꺽쇠 아이콘) */
+.map-view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: clamp(40px, 5.5vh, 48px);
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: var(--surface-glass-sm);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  color: var(--text-color-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px var(--p-black-a20);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.map-view-toggle-btn:hover {
+  background: var(--surface-glass-hover);
+  border-color: var(--p-blue-a50);
+  color: var(--p-white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--p-black-a35), 0 0 10px var(--p-blue-a25);
+}
+
+.map-view-toggle-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.map-view-toggle-btn i {
+  font-size: var(--text-lg);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 상세 맵 내 버튼 높이 동기화 (44px) */
+.map-view-toggle-btn.map-view-toggle-btn--detail {
+  height: 44px;
+}
+
+/* 전체보기(Fullscreen) 활성화 시 축소 모드 스타일 */
+.map-widget.is-fullscreen .map-view-toggle-btn {
+  background: var(--p-blue-800);
+  border-color: var(--p-blue-400);
+  color: var(--p-white);
+  box-shadow: 0 4px 16px var(--p-black-a40), 0 0 16px var(--p-blue-a40);
+}
+
+.map-widget.is-fullscreen .map-view-toggle-btn:hover {
+  background: var(--p-blue-700);
+  border-color: var(--p-blue-300);
+}
+
+@container mapwidget (max-width: 540px) {
+  .map-view-toggle-label {
+    display: none;
+  }
+  .map-view-toggle-btn {
+    padding: 0 12px;
+  }
 }
 .weather {
   display: flex;
@@ -984,6 +1070,91 @@ img {
   border-radius: var(--radius-md);
   overflow: hidden;
 }
+
+/* ==========================================================================
+   지도 위젯 전체보기(Fullscreen Overlay) 모드
+   - 꺽쇠 4개 아이콘 클릭 시 대시보드 화면 전체(100vw × 100vh)로 시원하게 확대
+   - 축소하기 버튼 또는 ESC 키로 원래 대시보드 그리드 위치로 복귀
+   ========================================================================== */
+#stage .board > .map-widget.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  z-index: 1500;
+  margin: 0;
+  border-radius: 0;
+  background: var(--p-neutral-950);
+  padding: 18px;
+  box-shadow: 0 0 48px var(--p-black-a85);
+  animation: mapFullscreenExpand 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+body.has-map-fullscreen {
+  overflow: hidden;
+}
+
+/* 편집 모드 진입 시 전체보기 버튼 숨김 (편집 드래그 핸들과 충돌 방지) */
+#stage.is-editing .map-view-toggle-btn {
+  display: none;
+}
+
+@keyframes mapFullscreenExpand {
+  from {
+    opacity: 0.8;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 전체보기 안내 플로팅 알림 뱃지 */
+.map-fullscreen-toast {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-modal);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-dropdown);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 12px 32px var(--p-black-a60);
+  color: var(--text-color-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  pointer-events: none;
+  animation: mapToastFade 3.2s ease forwards;
+}
+
+.map-fullscreen-toast i {
+  color: var(--color-accent);
+  font-size: var(--text-base);
+}
+
+@keyframes mapToastFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+  12%, 80% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+}
 .map-photo-detail {
   object-fit: fill;
   object-position: center;
@@ -1478,7 +1649,22 @@ img {
   filter: brightness(0) invert(1);
 }
 
-/* 상세 맵 지점 크기 조절 슬라이더 컨트롤러 (Figma 스마일 바) */
+/* 상세 맵 지점 크기 조절 슬라이더 컨트롤러 및 전체보기 컨트롤 그룹 */
+.map-detail-top-right-group {
+  position: absolute;
+  top: clamp(12px, 1.8vh, 20px);
+  right: clamp(12px, 1.8vw, 24px);
+  z-index: var(--z-map-ui, 6);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.map-detail-top-right-group .map-point-size-bar {
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: auto;
+}
 .map-point-size-bar {
   position: absolute;
   top: clamp(12px, 1.8vh, 20px);

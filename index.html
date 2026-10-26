@@ -352,13 +352,19 @@
             <span>마지막 업데이트 <b id="updated-at">16:42:03</b></span>
           </button>
 
-          <div class="status-pill map-status">
-            <div class="weather">
-              <img src="assets/icons/icon-weather.svg" alt="" width="26" height="26">
-              <p><strong>27°</strong><span>맑음</span></p>
+          <div class="map-top-right-group">
+            <button type="button" class="map-view-toggle-btn" id="map-fullscreen-btn" title="지도 전체보기 (확대)" aria-label="지도 전체보기">
+              <i class="bi bi-fullscreen" aria-hidden="true"></i>
+              <span class="map-view-toggle-label">전체보기</span>
+            </button>
+            <div class="status-pill map-status">
+              <div class="weather">
+                <img src="assets/icons/icon-weather.svg" alt="" width="26" height="26">
+                <p><strong>27°</strong><span>맑음</span></p>
+              </div>
+              <span class="vdiv"></span>
+              <p class="clock"><span>2026.10.03(토)</span><span>16:54</span></p>
             </div>
-            <span class="vdiv"></span>
-            <p class="clock"><span>2026.10.03(토)</span><span>16:54</span></p>
           </div>
 
           <aside class="crowd-legend" aria-label="혼잡 단계">
@@ -375,18 +381,24 @@
             <div class="map-points map-overlay" id="map-points" data-point-size="sm" aria-label="헌법 재판소 일대 지점"></div>
           </div>
 
-          <!-- 지점 아이콘 크기 조절 컨트롤러 (SM · MD · LG) -->
-          <div class="map-point-size-bar" id="map-point-size-bar" role="radiogroup" aria-label="지점 아이콘 크기 선택">
-            <div class="point-size-track" aria-hidden="true"></div>
-            <button type="button" class="point-size-btn is-active" data-size="sm" role="radio" aria-checked="true" title="작게 (SM)" aria-label="지점 크기 작게">
-              <span class="point-size-face point-size-face--sm"></span>
+          <!-- 상세 지도 상단 컨트롤: 전체보기 버튼 & 지점 아이콘 크기 조절 바 -->
+          <div class="map-detail-top-right-group">
+            <button type="button" class="map-view-toggle-btn map-view-toggle-btn--detail" id="map-detail-fullscreen-btn" title="지도 전체보기 (확대)" aria-label="지도 전체보기">
+              <i class="bi bi-fullscreen" aria-hidden="true"></i>
+              <span class="map-view-toggle-label">전체보기</span>
             </button>
-            <button type="button" class="point-size-btn" data-size="md" role="radio" aria-checked="false" title="중간 (MD)" aria-label="지점 크기 중간">
-              <span class="point-size-face point-size-face--md"></span>
-            </button>
-            <button type="button" class="point-size-btn" data-size="lg" role="radio" aria-checked="false" title="크게 (LG)" aria-label="지점 크기 크게">
-              <span class="point-size-face point-size-face--lg"></span>
-            </button>
+            <div class="map-point-size-bar" id="map-point-size-bar" role="radiogroup" aria-label="지점 아이콘 크기 선택">
+              <div class="point-size-track" aria-hidden="true"></div>
+              <button type="button" class="point-size-btn is-active" data-size="sm" role="radio" aria-checked="true" title="작게 (SM)" aria-label="지점 크기 작게">
+                <span class="point-size-face point-size-face--sm"></span>
+              </button>
+              <button type="button" class="point-size-btn" data-size="md" role="radio" aria-checked="false" title="중간 (MD)" aria-label="지점 크기 중간">
+                <span class="point-size-face point-size-face--md"></span>
+              </button>
+              <button type="button" class="point-size-btn" data-size="lg" role="radio" aria-checked="false" title="크게 (LG)" aria-label="지점 크기 크게">
+                <span class="point-size-face point-size-face--lg"></span>
+              </button>
+            </div>
           </div>
 
           <button type="button" class="update map-detail-update">

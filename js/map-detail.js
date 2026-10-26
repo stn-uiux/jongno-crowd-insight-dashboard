@@ -312,4 +312,105 @@
 
   window.openMapDetail = openDetail;
   window.closeMapDetail = closeDetail;
+
+  // —— 지도 위젯 전체보기 (확대) 및 축소하기 (원래대로) 기능 ——
+  const fullscreenBtns = document.querySelectorAll(".map-view-toggle-btn");
+  let fsToastTimer = null;
+
+  function showFullscreenToast() {
+    removeFullscreenToast();
+    const toast = document.createElement("div");
+    toast.className = "map-fullscreen-toast";
+    toast.innerHTML = `<i class="bi bi-info-circle"></i><span>ESC 키 또는 [축소하기] 버튼을 누르면 원래 크기로 돌아갑니다.</span>`;
+    mapWidget?.appendChild(toast);
+    fsToastTimer = setTimeout(() => {
+      removeFullscreenToast();
+    }, 3200);
+  }
+
+  function removeFullscreenToast() {
+    if (fsToastTimer) {
+      clearTimeout(fsToastTimer);
+      fsToastTimer = null;
+    }
+    const existing = mapWidget?.querySelector(".map-fullscreen-toast");
+    if (existing) existing.remove();
+  }
+
+  function setMapFullscreen(enable, syncNative = false) {
+    if (!mapWidget) return;
+    const isCurrentlyFs = mapWidget.classList.contains("is-fullscreen");
+    if (enable === isCurrentlyFs) return;
+
+    mapWidget.classList.toggle("is-fullscreen", enable);
+    document.body.classList.toggle("has-map-fullscreen", enable);
+
+    fullscreenBtns.forEach((btn) => {
+      const icon = btn.querySelector("i");
+      const label = btn.querySelector(".map-view-toggle-label");
+      if (enable) {
+        if (icon) icon.className = "bi bi-fullscreen-exit";
+        if (label) label.textContent = "축소하기";
+        btn.setAttribute("title", "원래 크기로 축소 (ESC)");
+        btn.setAttribute("aria-label", "지도 원래 크기로 축소");
+      } else {
+        if (icon) icon.className = "bi bi-fullscreen";
+        if (label) label.textContent = "전체보기";
+        btn.setAttribute("title", "지도 전체보기 (확대)");
+        btn.setAttribute("aria-label", "지도 전체보기");
+      }
+    });
+
+    if (enable) {
+      showFullscreenToast();
+    } else {
+      removeFullscreenToast();
+    }
+
+    if (syncNative) {
+      if (enable) {
+        if (!document.fullscreenElement && mapWidget.requestFullscreen) {
+          mapWidget.requestFullscreen().catch(() => {});
+        }
+      } else {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    // 지도 캔버스 및 스테이지 contain 스케일 재계산
+    requestAnimationFrame(() => {
+      fitAllStages();
+      window.dispatchEvent(new Event("resize"));
+    });
+  }
+
+  function toggleMapFullscreen() {
+    if (!mapWidget) return;
+    const isFs = mapWidget.classList.contains("is-fullscreen");
+    setMapFullscreen(!isFs);
+  }
+
+  fullscreenBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMapFullscreen();
+    });
+  });
+
+  // ESC 키 누르면 축소하기 (열려있는 모달이 없을 때 동작)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mapWidget?.classList.contains("is-fullscreen")) {
+      const cctvModal = document.getElementById("cctv-modal");
+      if (cctvModal && !cctvModal.hidden) return;
+      const disasterModal = document.getElementById("disaster-modal");
+      if (disasterModal && !disasterModal.hidden) return;
+      setMapFullscreen(false);
+    }
+  });
+
+  window.setMapFullscreen = setMapFullscreen;
+  window.toggleMapFullscreen = toggleMapFullscreen;
 })();

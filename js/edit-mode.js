@@ -1125,6 +1125,9 @@
   }
 
   function enterEdit() {
+    if (typeof window.setMapFullscreen === "function") {
+      window.setMapFullscreen(false);
+    }
     editing = true;
     pendingRemove = new Set();
     dirtySizeIds = new Set();
