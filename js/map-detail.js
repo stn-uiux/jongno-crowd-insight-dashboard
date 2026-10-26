@@ -337,14 +337,58 @@
     if (existing) existing.remove();
   }
 
+  let savedGridColumn = "";
+  let savedGridRow = "";
+  let savedInlineZIndex = "";
+
   function setMapFullscreen(enable) {
     if (!mapWidget) return;
     const isCurrentlyFs = mapWidget.classList.contains("is-fullscreen");
     if (enable === isCurrentlyFs) return;
 
-    mapWidget.classList.toggle("is-fullscreen", enable);
+    if (enable) {
+      savedGridColumn = mapWidget.style.gridColumn || "";
+      savedGridRow = mapWidget.style.gridRow || "";
+      savedInlineZIndex = mapWidget.style.zIndex || "";
 
-    fullscreenBtns.forEach((btn) => {
+      mapWidget.style.setProperty("grid-column", "1 / -1", "important");
+      mapWidget.style.setProperty("grid-row", "1 / -1", "important");
+      mapWidget.style.setProperty("position", "absolute", "important");
+      mapWidget.style.setProperty("top", "0", "important");
+      mapWidget.style.setProperty("left", "0", "important");
+      mapWidget.style.setProperty("right", "0", "important");
+      mapWidget.style.setProperty("bottom", "0", "important");
+      mapWidget.style.setProperty("width", "100%", "important");
+      mapWidget.style.setProperty("height", "100%", "important");
+      mapWidget.style.setProperty("z-index", "100", "important");
+      mapWidget.classList.add("is-fullscreen");
+    } else {
+      mapWidget.classList.remove("is-fullscreen");
+      if (savedGridColumn) {
+        mapWidget.style.gridColumn = savedGridColumn;
+      } else {
+        mapWidget.style.removeProperty("grid-column");
+      }
+      if (savedGridRow) {
+        mapWidget.style.gridRow = savedGridRow;
+      } else {
+        mapWidget.style.removeProperty("grid-row");
+      }
+      if (savedInlineZIndex) {
+        mapWidget.style.zIndex = savedInlineZIndex;
+      } else {
+        mapWidget.style.removeProperty("z-index");
+      }
+      mapWidget.style.removeProperty("position");
+      mapWidget.style.removeProperty("top");
+      mapWidget.style.removeProperty("left");
+      mapWidget.style.removeProperty("right");
+      mapWidget.style.removeProperty("bottom");
+      mapWidget.style.removeProperty("width");
+      mapWidget.style.removeProperty("height");
+    }
+
+    document.querySelectorAll(".map-view-toggle-btn").forEach((btn) => {
       const icon = btn.querySelector("i");
       const label = btn.querySelector(".map-view-toggle-label");
       if (enable) {
@@ -379,12 +423,13 @@
     setMapFullscreen(!isFs);
   }
 
-  fullscreenBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleMapFullscreen();
-    });
+  // 버튼 직접 클릭 및 문서 이벤트 위임 이중 바인딩 (100% 클릭 보장)
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".map-view-toggle-btn");
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMapFullscreen();
   });
 
   // ESC 키 누르면 축소하기 (열려있는 모달이 없을 때 동작)
