@@ -8,13 +8,19 @@
   const btnBack = document.getElementById("map-back");
   if (!mapWidget || !overview || !detail || !pointsHost || !regionBtns.length || !btnBack) return;
 
-  /** 구역별 상세 지도 이미지 매핑 */
+  /** 구역별 상세 지도 이미지 파일 매핑 (다크/라이트 모드 대응) */
   const REGION_DETAIL_MAP = {
-    A: { name: "헌법 재판소 일대", src: "assets/maps/map-detail-2.png" },
-    B: { name: "광화문 광장 접점", src: "assets/maps/map-detail-4.png" },
-    C: { name: "낙원동", src: "assets/maps/map-detail-3.png" },
-    D: { name: "익선동", src: "assets/maps/map-detail-1.png" },
+    A: { name: "헌법 재판소 일대", file: "map-detail-2.png" },
+    B: { name: "광화문 광장 접점", file: "map-detail-4.png" },
+    C: { name: "낙원동", file: "map-detail-3.png" },
+    D: { name: "익선동", file: "map-detail-1.png" },
   };
+
+  function getMapSrc(fileName) {
+    const isLight = document.documentElement.getAttribute("data-mode") === "light";
+    const prefix = isLight ? "light-" : "dark-";
+    return `assets/maps/${prefix}${fileName}`;
+  }
 
   /**
    * 개요·상세 공통:
@@ -72,26 +78,26 @@
    * Figma 39:4868 — 헌법 재판소 일대 (Region A / Detail Map 2) Hitmap 원 중심 (프레임 860×950 기준 %)
    */
   const POINTS_A = [
-    { id: "A-1", left: 49.5, top: 91.3, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 48200, density: 1.04 },
-    { id: "A-2", left: 68.0, top: 84.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 35200, density: 0.78 },
-    { id: "A-3", left: 71.1, top: 77.1, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 24100, density: 0.58 },
-    { id: "A-4", left: 68.0, top: 71.4, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 15200, density: 0.38 },
-    { id: "A-5", left: 62.0, top: 72.2, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 21400, density: 0.61 },
-    { id: "A-6", left: 60.0, top: 67.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 33600, density: 0.75 },
-    { id: "A-7", left: 58.0, top: 61.0, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 45600, density: 0.98 },
-    { id: "A-8", left: 66.0, top: 56.0, state: "danger", size: "lg", tipPos: "right", cctvPos: "right", people: 43800, density: 0.94 },
-    { id: "A-9", left: 82.0, top: 54.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 13800, density: 0.34 },
-    { id: "A-10", left: 54.0, top: 53.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 22800, density: 0.54 },
-    { id: "A-11", left: 54.0, top: 48.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 31400, density: 0.71 },
-    { id: "A-12", left: 54.0, top: 42.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 32800, density: 0.73 },
-    { id: "A-13", left: 61.2, top: 40.0, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 20300, density: 0.51 },
-    { id: "A-14", left: 54.4, top: 36.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 19500, density: 0.49 },
-    { id: "A-15", left: 62.0, top: 34.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 14500, density: 0.36 },
-    { id: "A-16", left: 54.0, top: 31.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 7200, density: 0.18 },
-    { id: "A-17", left: 56.0, top: 26.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 12600, density: 0.32 },
-    { id: "A-18", left: 48.0, top: 26.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right", people: 30500, density: 0.69 },
-    { id: "A-19", left: 36.0, top: 19.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 6400, density: 0.16 },
-    { id: "A-20", left: 30.0, top: 12.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 5100, density: 0.12 },
+    { id: "A-1", left: 30.0, top: 12.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 5100, density: 0.12 },
+    { id: "A-2", left: 36.0, top: 19.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 6400, density: 0.16 },
+    { id: "A-3", left: 48.0, top: 26.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right", people: 30500, density: 0.69 },
+    { id: "A-4", left: 56.0, top: 26.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 12600, density: 0.32 },
+    { id: "A-5", left: 54.0, top: 31.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 7200, density: 0.18 },
+    { id: "A-6", left: 62.0, top: 34.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 14500, density: 0.36 },
+    { id: "A-7", left: 54.4, top: 36.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 19500, density: 0.49 },
+    { id: "A-8", left: 61.2, top: 40.0, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 20300, density: 0.51 },
+    { id: "A-9", left: 54.0, top: 42.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 32800, density: 0.73 },
+    { id: "A-10", left: 54.0, top: 48.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 31400, density: 0.71 },
+    { id: "A-11", left: 54.0, top: 53.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 22800, density: 0.54 },
+    { id: "A-12", left: 82.0, top: 54.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 13800, density: 0.34 },
+    { id: "A-13", left: 66.0, top: 56.0, state: "danger", size: "lg", tipPos: "right", cctvPos: "right", people: 43800, density: 0.94 },
+    { id: "A-14", left: 58.0, top: 61.0, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 45600, density: 0.98 },
+    { id: "A-15", left: 60.0, top: 67.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 33600, density: 0.75 },
+    { id: "A-16", left: 62.0, top: 72.2, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 21400, density: 0.61 },
+    { id: "A-17", left: 68.0, top: 71.4, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 15200, density: 0.38 },
+    { id: "A-18", left: 71.1, top: 77.1, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 24100, density: 0.58 },
+    { id: "A-19", left: 68.0, top: 84.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 35200, density: 0.78 },
+    { id: "A-20", left: 49.5, top: 91.3, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 48200, density: 1.04 },
     { id: "A-21", left: 25.3, top: 52.5, state: "attention", size: "lg", tipPos: "top", cctvPos: "right", people: 11200, density: 0.28 },
   ];
 
@@ -246,7 +252,7 @@
     currentRegion = key;
     renderPoints(key);
     const info = REGION_DETAIL_MAP[key] || REGION_DETAIL_MAP.A;
-    const targetSrc = customSrc || info.src;
+    const targetSrc = customSrc || getMapSrc(info.file);
 
     if (detailPhoto && targetSrc) {
       if (detailPhoto.getAttribute("src") !== targetSrc) {
@@ -273,19 +279,38 @@
     requestAnimationFrame(fitAllStages);
   }
 
+  function updateAllMapPhotos() {
+    const overviewImg = overview?.querySelector(".map-photo");
+    if (overviewImg) {
+      const targetOverviewSrc = getMapSrc("map-overview.png");
+      if (overviewImg.getAttribute("src") !== targetOverviewSrc) {
+        overviewImg.setAttribute("src", targetOverviewSrc);
+      }
+    }
+    if (detailPhoto && detail && !detail.hidden && currentRegion) {
+      const info = REGION_DETAIL_MAP[currentRegion] || REGION_DETAIL_MAP.A;
+      const targetDetailSrc = getMapSrc(info.file);
+      if (detailPhoto.getAttribute("src") !== targetDetailSrc) {
+        detailPhoto.setAttribute("src", targetDetailSrc);
+      }
+    }
+    fitAllStages();
+  }
+
   renderPoints();
   watchStage(overview);
   watchStage(detail);
   fitAllStages();
   window.addEventListener("resize", fitAllStages);
+  window.addEventListener("themechange", updateAllMapPhotos);
+  updateAllMapPhotos();
 
   regionBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       const regionKey = btn.dataset.region || "A";
-      const customSrc = btn.dataset.detailImg;
-      openDetail(regionKey, customSrc);
+      openDetail(regionKey);
     });
   });
   btnBack.addEventListener("click", (e) => {
