@@ -1099,7 +1099,7 @@ img {
   height: auto;
   vertical-align: middle;
 }
-.region:is(.is-critical, .is-emergency, .is-danger, .region--critical, .is-warning, .region--warning) .region-warn {
+.region:is(.is-critical, .is-emergency, .is-danger, .region--critical, .region--danger) .region-warn {
   display: inline-block;
 }
 
