@@ -92,6 +92,9 @@
   /** 기본적으로 보드에 노출되지 않고 위젯 추가로만 배치되는 카탈로그 위젯 ID 목록 */
   const DEFAULT_HIDDEN_IDS = new Set(["alert-realtime", "alert-disaster"]);
 
+  /** 위젯 추가 카탈로그에서 임시로 숨길 위젯 ID 목록 (필요 시 Set에서 id 제거하여 즉시 복원 가능) */
+  const HIDDEN_FROM_CATALOG = new Set(["alert-disaster"]);
+
   /** 위젯별 기본 24×20 그리드 좌표 및 규격 (공간 감지 및 자동 슬롯 계산용) */
   const DEFAULT_WIDGET_SPANS = {
     "kpi-current-stay": { colStart: 1, colEnd: 4, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
@@ -1542,9 +1545,10 @@
   function availableCatalog() {
     const placed = placedIds();
     // 보드에 이미 있는 위젯 + 카탈로그 중 미배치만
-    // 삭제 대기 중인 보드 위젯은 다시 추가 가능하도록 카탈로그에 임시 노출
+    // 삭제 대기 중인 보드 위젯은 다시 추가 가능하도록 카탈로그에 임시 노출 (임시 숨김 위젯 제외)
     const fromBoard = widgets()
       .filter((w) => pendingRemove.has(w.dataset.widgetId) || w.hidden || w.classList.contains("is-removed"))
+      .filter((w) => !HIDDEN_FROM_CATALOG.has(w.dataset.widgetId))
       .map((w) => ({
         id: w.dataset.widgetId,
         name: w.dataset.widgetName || w.dataset.widgetId,
@@ -1553,10 +1557,13 @@
         restore: true,
       }));
 
-    const fromCatalog = WIDGET_CATALOG.filter((item) => !placed.has(item.id)).map((item) => ({
-      ...item,
-      restore: false,
-    }));
+    const fromCatalog = WIDGET_CATALOG
+      .filter((item) => !placed.has(item.id))
+      .filter((item) => !HIDDEN_FROM_CATALOG.has(item.id))
+      .map((item) => ({
+        ...item,
+        restore: false,
+      }));
 
     const merged = [...fromBoard, ...fromCatalog];
     const seen = new Set();
