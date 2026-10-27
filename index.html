@@ -241,6 +241,18 @@
       <article class="widget widget--chart chart-widget stay-widget" data-widget-id="chart-stay" data-widget-name="실시간 체류 인원 & 혼잡도" data-widget-category="차트">
         <div class="widget-head chart-head">
           <h2 class="widget-title">실시간 체류 인원 &amp; 혼잡도</h2>
+          <div class="select" data-select>
+            <button type="button" class="select-btn" aria-haspopup="listbox" aria-expanded="false">
+              <span data-select-label>A구역</span>
+              <img src="assets/icons/icon-chevron.svg" alt="" width="12" height="12">
+            </button>
+            <ul class="select-menu" role="listbox" hidden>
+              <li role="option" data-value="A구역" class="is-on">A구역</li>
+              <li role="option" data-value="B구역">B구역</li>
+              <li role="option" data-value="C구역">C구역</li>
+              <li role="option" data-value="D구역">D구역</li>
+            </ul>
+          </div>
         </div>
         <div class="stay-legend">
           <span><i class="swatch line blue"></i>체류인원 <em>(단위: 명)</em></span>

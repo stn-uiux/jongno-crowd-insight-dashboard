@@ -112,7 +112,21 @@
         wrap.classList.remove("is-open");
         menu.hidden = true;
         button.setAttribute("aria-expanded", "false");
+        wrap.dispatchEvent(new CustomEvent("selectchange", { detail: { value: option.dataset.value } }));
       });
+    });
+  });
+
+  // 셀렉트 외부 클릭 시 열린 메뉴 닫기
+  document.addEventListener("click", (e) => {
+    document.querySelectorAll("[data-select].is-open").forEach((wrap) => {
+      if (!wrap.contains(e.target)) {
+        wrap.classList.remove("is-open");
+        const menu = wrap.querySelector(".select-menu");
+        if (menu) menu.hidden = true;
+        const button = wrap.querySelector(".select-btn");
+        button?.setAttribute("aria-expanded", "false");
+      }
     });
   });
 
@@ -304,6 +318,45 @@
     return root;
   }
 
+  const STAY_ZONE_DATA = {
+    "A구역": [
+      { hour: "10시", stay: 280, cong: 32 },
+      { hour: "11시", stay: 210, cong: 48 },
+      { hour: "12시", stay: 360, cong: 58 },
+      { hour: "13시", stay: 190, cong: 42 },
+      { hour: "14시", stay: 120, cong: 28 },
+      { hour: "15시", stay: 250, cong: 72 },
+      { hour: "16시", stay: 210, cong: 68 },
+    ],
+    "B구역": [
+      { hour: "10시", stay: 190, cong: 26 },
+      { hour: "11시", stay: 240, cong: 36 },
+      { hour: "12시", stay: 310, cong: 52 },
+      { hour: "13시", stay: 220, cong: 39 },
+      { hour: "14시", stay: 160, cong: 30 },
+      { hour: "15시", stay: 280, cong: 64 },
+      { hour: "16시", stay: 250, cong: 58 },
+    ],
+    "C구역": [
+      { hour: "10시", stay: 140, cong: 20 },
+      { hour: "11시", stay: 180, cong: 28 },
+      { hour: "12시", stay: 230, cong: 38 },
+      { hour: "13시", stay: 170, cong: 25 },
+      { hour: "14시", stay: 130, cong: 22 },
+      { hour: "15시", stay: 200, cong: 46 },
+      { hour: "16시", stay: 190, cong: 42 },
+    ],
+    "D구역": [
+      { hour: "10시", stay: 320, cong: 42 },
+      { hour: "11시", stay: 350, cong: 56 },
+      { hour: "12시", stay: 390, cong: 72 },
+      { hour: "13시", stay: 300, cong: 52 },
+      { hour: "14시", stay: 230, cong: 39 },
+      { hour: "15시", stay: 340, cong: 82 },
+      { hour: "16시", stay: 310, cong: 76 },
+    ],
+  };
+
   function createStayChart(id) {
     const root = createRoot(id);
     const chart = root.container.children.push(
@@ -372,15 +425,9 @@
     });
     yCong.get("renderer").grid.template.setAll({ strokeOpacity: 0 });
 
-    const data = [
-      { hour: "10\uC2DC", stay: 280, cong: 32 },
-      { hour: "11\uC2DC", stay: 210, cong: 48 },
-      { hour: "12\uC2DC", stay: 360, cong: 58 },
-      { hour: "13\uC2DC", stay: 190, cong: 42 },
-      { hour: "14\uC2DC", stay: 120, cong: 28 },
-      { hour: "15\uC2DC", stay: 250, cong: 72 },
-      { hour: "16\uC2DC", stay: 210, cong: 68 },
-    ];
+    const staySelect = document.querySelector(".stay-widget [data-select]");
+    const initialZone = staySelect?.querySelector("[data-select-label]")?.textContent?.trim() || "A구역";
+    const data = STAY_ZONE_DATA[initialZone] || STAY_ZONE_DATA["A구역"];
     xAxis.data.setAll(data);
 
     const staySeries = chart.series.push(
@@ -440,6 +487,21 @@
     congSeries.data.setAll(data);
 
     attachHoverCursor(chart, root);
+
+    if (staySelect) {
+      const onZoneChange = (e) => {
+        const zone = e.detail?.value;
+        const nextData = STAY_ZONE_DATA[zone] || STAY_ZONE_DATA["A구역"];
+        xAxis.data.setAll(nextData);
+        staySeries.data.setAll(nextData);
+        congSeries.data.setAll(nextData);
+      };
+      staySelect.addEventListener("selectchange", onZoneChange);
+      root.events.on("disposed", () => {
+        staySelect.removeEventListener("selectchange", onZoneChange);
+      });
+    }
+
     staySeries.appear(700);
     congSeries.appear(700);
     chart.appear(700, 80);
