@@ -285,13 +285,10 @@
     );
 
     series.data.setAll([
-      { category: "\uC775\uC120\uB3D9 \uD55C\uC625 \uAC70\uB9AC", value: 8, color: C.zone1() },
-      { category: "\uC778\uC0AC\uB3D9", value: 15, color: C.zone2() },
-      { category: "\uAD11\uD654\uBB38 \uAD11\uC7A5", value: 12, color: C.zone3() },
-      { category: "\uCCAD\uACC4\uCC9C", value: 19, color: C.zone4() },
-      { category: "\uC885\uB85C3\uAC00\uC5ED", value: 22, color: C.zone5() },
-      { category: "\uD0D1\uACE8\uACF5\uC6D0", value: 7, color: C.zone6() },
-      { category: "\uCC3D\uB355\uAD81", value: 17, color: C.zone7() },
+      { category: "헌법 재판소일대", value: 34, color: C.zone1() },
+      { category: "광화문 광장 접점", value: 22, color: C.zone2() },
+      { category: "낙원동", value: 16, color: C.zone3() },
+      { category: "익선동", value: 28, color: C.zone4() },
     ]);
 
     chart.seriesContainer.children.push(
