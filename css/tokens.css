@@ -462,7 +462,7 @@
   --surface-panel-dark: var(--p-neutral-820);
   --surface-card-dark: var(--p-neutral-800);
   --surface-input-dark: var(--p-neutral-900);
-  --surface-table-head: var(--p-black-a10);
+  --surface-table-head: #372E22;
   --surface-row-hover: var(--p-white-a06);
   --surface-row-selected: var(--p-indigo-row-a42);
   --surface-row-selected-hover: var(--p-indigo-row-a50);
@@ -676,7 +676,7 @@
   --surface-panel-dark: rgba(245, 247, 251, 0.95);
   --surface-card-dark: rgba(255, 255, 255, 0.95);
   --surface-input-dark: rgba(240, 243, 249, 0.92);
-  --surface-table-head: rgba(238, 242, 248, 0.95);
+  --surface-table-head: var(--bg-shell);
   --surface-row-hover: rgba(0, 0, 0, 0.035);
   --surface-row-selected: rgba(80, 92, 255, 0.08);
   --surface-row-selected-hover: rgba(80, 92, 255, 0.14);
