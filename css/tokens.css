@@ -411,6 +411,13 @@
   --chart-zone-7-soft: var(--p-pink-300);
   --chart-zone-7-alt: var(--p-pink-550);
 
+  /* Realtime Stay Distribution: 평상시 Neutral 4단계 토큰 (헌법 - 광화문 - 낙원동 - 익선동) */
+  --chart-pie-neutral-1: var(--p-neutral-250); /* 헌법 재판소일대 (#C6D0DE) */
+  --chart-pie-neutral-2: var(--p-neutral-450); /* 광화문 광장 접점 (#8798AF) */
+  --chart-pie-neutral-3: var(--p-neutral-650); /* 낙원동 (#505F74) */
+  --chart-pie-neutral-4: var(--p-neutral-850); /* 익선동 (#151D2A) */
+  --chart-pie-slice-stroke: var(--p-neutral-850); /* 슬라이스 경계 구분선 */
+
   /* Chart Series: 체류·혼잡·비교·상세 */
   --chart-stay: var(--p-blue-400);
   --chart-crowd: var(--p-greenmint-500);
@@ -697,6 +704,11 @@
   --chart-grid-opacity-x: 0.38;
   --chart-grid-opacity-y: 0.42;
   --chart-axis-trend-y: var(--text-color-primary);
+  --chart-pie-neutral-1: var(--p-neutral-850);
+  --chart-pie-neutral-2: var(--p-neutral-650);
+  --chart-pie-neutral-3: var(--p-neutral-450);
+  --chart-pie-neutral-4: var(--p-neutral-250);
+  --chart-pie-slice-stroke: #ffffff;
 
   /* 6) Shadows (라이트 모드 소프트 그림자) */
   --shadow-legend: 0 4px 14px rgba(0, 0, 0, 0.08);

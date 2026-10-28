@@ -81,6 +81,15 @@
     zone7: () => cssHex("--chart-zone-7", "#f42ccd"),
     zone7Alt: () => cssHex("--chart-zone-7-alt", "#f346d4"),
     trend1: () => cssHex("--chart-trend-1", "#df4749"),
+    pieNeutral1: () => cssHex("--chart-pie-neutral-1", "#C6D0DE"),
+    pieNeutral2: () => cssHex("--chart-pie-neutral-2", "#8798AF"),
+    pieNeutral3: () => cssHex("--chart-pie-neutral-3", "#505F74"),
+    pieNeutral4: () => cssHex("--chart-pie-neutral-4", "#151D2A"),
+    pieSliceStroke: () => cssHex("--chart-pie-slice-stroke", "#151D2A"),
+    levelWatch: () => cssHex("--level-watch", "#1890FF"),
+    levelCaution: () => cssHex("--level-caution", "#FAAD14"),
+    levelWarning: () => cssHex("--level-warning", "#FA8C16"),
+    levelDanger: () => cssHex("--level-danger", "#F5222D"),
   };
 
   function resizeCharts() {
@@ -283,6 +292,7 @@
       makeTooltip(root, "{category}: {valuePercentTotal}%", null, { fromSprite: true })
     );
     series.slices.template.setAll({
+      templateField: "sliceSettings",
       strokeOpacity: 0,
       strokeWidth: 0,
       cornerRadius: 2,
@@ -294,15 +304,57 @@
       if (!ctx || pct == null) return "";
       return `${ctx.category}: ${Math.round(pct)}%`;
     });
-    series.slices.template.adapters.add("fill", (fill, target) =>
-      am5.color(target.dataItem?.dataContext?.color || fill)
-    );
+    series.slices.template.adapters.add("fill", (fill, target) => {
+      const c = target.dataItem?.dataContext?.color;
+      return c ? am5.color(c) : fill;
+    });
+
+    // 현재 구역별 상태: 헌법=위험(Red), 광화문=관심(Blue), 낙원동=정상(Neutral-3), 익선동=경계(Orange)
+    const PIE_ZONE_STATUS = {
+      "헌법 재판소일대": "위험",
+      "광화문 광장 접점": "관심",
+      "낙원동": null,
+      "익선동": "경계",
+    };
+
+    function resolveZoneColor(zoneName, defaultNeutralColor) {
+      const status = PIE_ZONE_STATUS[zoneName];
+      if (status === "위험") return C.levelDanger();
+      if (status === "경계") return C.levelWarning();
+      if (status === "주의") return C.levelCaution();
+      if (status === "관심") return C.levelWatch();
+      return defaultNeutralColor;
+    }
+
+    // 범례 닷(dot) 상태 동기화
+    document.querySelectorAll(".pie-legend li").forEach((li) => {
+      const zone = li.dataset.zone;
+      const dot = li.querySelector(".dot");
+      if (!dot || !zone) return;
+      const st = PIE_ZONE_STATUS[zone];
+      dot.className = "dot";
+      if (st === "위험") dot.classList.add("status-danger");
+      else if (st === "경계") dot.classList.add("status-warning");
+      else if (st === "주의") dot.classList.add("status-caution");
+      else if (st === "관심") dot.classList.add("status-watch");
+      else {
+        if (zone === "헌법 재판소일대") dot.classList.add("neutral-1");
+        else if (zone === "광화문 광장 접점") dot.classList.add("neutral-2");
+        else if (zone === "낙원동") dot.classList.add("neutral-3");
+        else if (zone === "익선동") dot.classList.add("neutral-4");
+      }
+    });
+
+    const c1 = resolveZoneColor("헌법 재판소일대", C.pieNeutral1());
+    const c2 = resolveZoneColor("광화문 광장 접점", C.pieNeutral2());
+    const c3 = resolveZoneColor("낙원동",          C.pieNeutral3());
+    const c4 = resolveZoneColor("익선동",          C.pieNeutral4());
 
     series.data.setAll([
-      { category: "헌법 재판소일대", value: 34, color: C.zone1() },
-      { category: "광화문 광장 접점", value: 22, color: C.zone2() },
-      { category: "낙원동", value: 16, color: C.zone3() },
-      { category: "익선동", value: 28, color: C.zone4() },
+      { category: "헌법 재판소일대", value: 40, color: c1, sliceSettings: { fill: am5.color(c1) } },
+      { category: "광화문 광장 접점", value: 16, color: c2, sliceSettings: { fill: am5.color(c2) } },
+      { category: "낙원동",          value: 10, color: c3, sliceSettings: { fill: am5.color(c3) } },
+      { category: "익선동",          value: 34, color: c4, sliceSettings: { fill: am5.color(c4) } },
     ]);
 
     chart.seriesContainer.children.push(
