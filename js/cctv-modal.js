@@ -8,6 +8,8 @@
   const titleEl = document.getElementById("cctv-title");
   const addressEl = document.getElementById("cctv-address");
   const stampEl = document.getElementById("cctv-stamp");
+  const feedImg = document.getElementById("cctv-feed-img");
+  const ptz = document.getElementById("cctv-ptz");
   const iconPlay = btnPlay?.querySelector(".icon-play");
   const iconPause = btnPlay?.querySelector(".icon-pause");
   if (!modal || !panel || !handle || !btnClose || !btnPlay) return;
@@ -77,6 +79,55 @@
   let drag = null;
   let activeTipBtn = null;
 
+  // PTZ 카메라 제어 상태 (상하좌우 팬 & 줌인/줌아웃)
+  let panX = 0;
+  let panY = 0;
+  let zoom = 1;
+  const MIN_ZOOM = 1;
+  const MAX_ZOOM = 3;
+  const STEP_PAN = 18;
+  const STEP_ZOOM = 0.18;
+
+  function updateCameraTransform() {
+    if (!feedImg) return;
+    const maxPanX = Math.round(35 + (zoom - 1) * 150);
+    const maxPanY = Math.round(25 + (zoom - 1) * 110);
+    panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
+    panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
+    feedImg.style.transform = `scale(${zoom.toFixed(2)}) translate(${panX}px, ${panY}px)`;
+  }
+
+  function resetCamera() {
+    panX = 0;
+    panY = 0;
+    zoom = 1;
+    if (feedImg) feedImg.style.transform = "";
+  }
+
+  function stepAction(action) {
+    switch (action) {
+      case "up":
+        panY += STEP_PAN; // 화면을 위로 조작
+        break;
+      case "down":
+        panY -= STEP_PAN; // 화면을 아래로 조작
+        break;
+      case "left":
+        panX += STEP_PAN; // 화면을 왼쪽으로 조작
+        break;
+      case "right":
+        panX -= STEP_PAN; // 화면을 오른쪽으로 조작
+        break;
+      case "zoom-in":
+        zoom = Math.min(MAX_ZOOM, zoom + STEP_ZOOM);
+        break;
+      case "zoom-out":
+        zoom = Math.max(MIN_ZOOM, zoom - STEP_ZOOM);
+        break;
+    }
+    updateCameraTransform();
+  }
+
   function pad(n) {
     return String(n).padStart(2, "0");
   }
@@ -125,6 +176,7 @@
   }
 
   function openCctv(pointId, tipBtn) {
+    resetCamera();
     const id = pointId || "D-11";
     const meta = META[id] || { title: `${id} CCTV`, address: "서울 종로구 일대" };
     const displayId = id === "B-2-alt" ? "B-2" : id;
@@ -141,6 +193,7 @@
   }
 
   function closeCctv() {
+    resetCamera();
     setPlaying(false);
     setTipActive(activeTipBtn, false);
     activeTipBtn = null;
@@ -203,6 +256,125 @@
   };
   handle.addEventListener("pointerup", endDrag);
   handle.addEventListener("pointercancel", endDrag);
+
+  // PTZ 마우스 클릭 & 누르고 있기(Hold) 인터랙션
+  if (ptz) {
+    let activeInterval = null;
+    let initialTimeout = null;
+
+    function stopHolding() {
+      if (initialTimeout) { clearTimeout(initialTimeout); initialTimeout = null; }
+      if (activeInterval) { clearInterval(activeInterval); activeInterval = null; }
+      ptz.querySelectorAll(".cctv-ptz-btn.is-active").forEach((b) => b.classList.remove("is-active"));
+    }
+
+    ptz.addEventListener("pointerdown", (e) => {
+      const btn = e.target.closest(".cctv-ptz-btn");
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      stopHolding();
+      btn.classList.add("is-active");
+      const action = btn.dataset.action;
+      stepAction(action);
+
+      // 250ms 이상 누르고 있으면 연속 조작
+      initialTimeout = setTimeout(() => {
+        activeInterval = setInterval(() => {
+          stepAction(action);
+        }, 70);
+      }, 260);
+    });
+
+    window.addEventListener("pointerup", stopHolding);
+    window.addEventListener("pointercancel", stopHolding);
+    ptz.addEventListener("pointerleave", stopHolding);
+
+    // 더블클릭 시 카메라 1.0x 원위치 리셋
+    ptz.addEventListener("dblclick", (e) => {
+      e.stopPropagation();
+      resetCamera();
+    });
+  }
+
+  // CCTV 패널 리사이즈 (크기 조절)
+  const resizeHandles = panel.querySelectorAll(".cctv-resize-edge, .cctv-resize-corner");
+  let resizing = null;
+  const MIN_W = 420;
+  const MIN_H = 290;
+
+  resizeHandles.forEach((handleEl) => {
+    handleEl.addEventListener("pointerdown", (e) => {
+      if (e.button != null && e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const rect = panel.getBoundingClientRect();
+      resizing = {
+        edge: handleEl.dataset.edge,
+        startX: e.clientX,
+        startY: e.clientY,
+        startW: rect.width,
+        startH: rect.height,
+        startL: rect.left,
+        startT: rect.top,
+      };
+
+      panel.classList.add("is-resizing");
+      try { handleEl.setPointerCapture?.(e.pointerId); } catch (_) {}
+
+      const onPointerMove = (ev) => {
+        if (!resizing) return;
+        const dx = ev.clientX - resizing.startX;
+        const dy = ev.clientY - resizing.startY;
+        const maxW = window.innerWidth - resizing.startL - 12;
+        const maxH = window.innerHeight - resizing.startT - 12;
+
+        if (resizing.edge === "se") {
+          const newW = Math.max(MIN_W, Math.min(maxW, resizing.startW + dx));
+          const newH = Math.max(MIN_H, Math.min(maxH, resizing.startH + dy));
+          panel.style.width = `${Math.round(newW)}px`;
+          panel.style.height = `${Math.round(newH)}px`;
+        } else if (resizing.edge === "e") {
+          const newW = Math.max(MIN_W, Math.min(maxW, resizing.startW + dx));
+          panel.style.width = `${Math.round(newW)}px`;
+        } else if (resizing.edge === "s") {
+          const newH = Math.max(MIN_H, Math.min(maxH, resizing.startH + dy));
+          panel.style.height = `${Math.round(newH)}px`;
+        } else if (resizing.edge === "w") {
+          const maxShift = resizing.startW - MIN_W;
+          const shift = Math.min(maxShift, Math.max(-resizing.startL + 12, dx));
+          const newW = resizing.startW - shift;
+          const newL = resizing.startL + shift;
+          panel.style.width = `${Math.round(newW)}px`;
+          panel.style.left = `${Math.round(newL)}px`;
+        } else if (resizing.edge === "sw") {
+          const maxShift = resizing.startW - MIN_W;
+          const shift = Math.min(maxShift, Math.max(-resizing.startL + 12, dx));
+          const newW = resizing.startW - shift;
+          const newL = resizing.startL + shift;
+          const newH = Math.max(MIN_H, Math.min(maxH, resizing.startH + dy));
+          panel.style.width = `${Math.round(newW)}px`;
+          panel.style.left = `${Math.round(newL)}px`;
+          panel.style.height = `${Math.round(newH)}px`;
+        }
+      };
+
+      const onPointerUp = (ev) => {
+        if (!resizing) return;
+        panel.classList.remove("is-resizing");
+        try { handleEl.releasePointerCapture?.(ev.pointerId); } catch (_) {}
+        handleEl.removeEventListener("pointermove", onPointerMove);
+        handleEl.removeEventListener("pointerup", onPointerUp);
+        handleEl.removeEventListener("pointercancel", onPointerUp);
+        resizing = null;
+      };
+
+      handleEl.addEventListener("pointermove", onPointerMove);
+      handleEl.addEventListener("pointerup", onPointerUp);
+      handleEl.addEventListener("pointercancel", onPointerUp);
+    });
+  });
 
   window.openCctvModal = openCctv;
 })();

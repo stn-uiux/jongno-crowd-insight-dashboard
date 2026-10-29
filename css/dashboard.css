@@ -2113,6 +2113,10 @@ img {
 .cctv-panel {
   position: absolute;
   width: min(772px, calc(100vw - 32px));
+  min-width: 420px;
+  min-height: 290px;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -2126,10 +2130,21 @@ img {
   color: var(--text-color-primary);
   pointer-events: auto;
   user-select: none;
+  box-sizing: border-box;
 }
 .cctv-panel.is-dragging {
   opacity: 0.96;
   cursor: grabbing;
+}
+.cctv-panel.is-resizing {
+  user-select: none;
+}
+.cctv-panel.is-resizing * {
+  pointer-events: none;
+}
+.cctv-panel.is-resizing .cctv-resize-corner,
+.cctv-panel.is-resizing .cctv-resize-edge {
+  pointer-events: auto;
 }
 .cctv-head {
   display: flex;
@@ -2216,7 +2231,9 @@ img {
 .cctv-feed {
   position: relative;
   width: 100%;
+  flex: 1 1 auto;
   aspect-ratio: 1705 / 923;
+  min-height: 180px;
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--p-neutral-920);
@@ -2226,6 +2243,9 @@ img {
   height: 100%;
   object-fit: cover;
   display: block;
+  transform-origin: center center;
+  transition: transform 0.14s ease-out;
+  will-change: transform;
 }
 .cctv-stamp {
   position: absolute;
@@ -2326,6 +2346,141 @@ img {
 .cctv-play.is-playing .cctv-play-icon {
   background: var(--p-green-800);
 }
+
+/* ==========================================================================
+   CCTV PTZ (Pan-Tilt-Zoom) Controller
+   ========================================================================== */
+.cctv-ptz {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: clamp(108px, 18vw, 142px);
+  height: clamp(108px, 18vw, 142px);
+  z-index: 5;
+  user-select: none;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.75));
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.cctv-ptz-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
+}
+.cctv-ptz-btn {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+              background 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+/* 방향키 (원형 버튼 4개) */
+.cctv-ptz-btn.ptz-up,
+.cctv-ptz-btn.ptz-down,
+.cctv-ptz-btn.ptz-left,
+.cctv-ptz-btn.ptz-right {
+  width: 34%;
+  height: 34%;
+  border-radius: 50%;
+}
+.cctv-ptz-btn.ptz-up {
+  top: 7.5%;
+  left: 33%;
+}
+.cctv-ptz-btn.ptz-down {
+  top: 60.1%;
+  left: 33%;
+}
+.cctv-ptz-btn.ptz-left {
+  top: 33%;
+  left: 2.7%;
+}
+.cctv-ptz-btn.ptz-right {
+  top: 33%;
+  left: 63.3%;
+}
+
+/* 줌 조작키 (중앙 반원 2개) */
+.cctv-ptz-btn.ptz-zoom-in,
+.cctv-ptz-btn.ptz-zoom-out {
+  width: 25%;
+  height: 12.5%;
+  left: 37.5%;
+}
+.cctv-ptz-btn.ptz-zoom-in {
+  top: 37.5%;
+  border-radius: 999px 999px 2px 2px;
+}
+.cctv-ptz-btn.ptz-zoom-out {
+  top: 50%;
+  border-radius: 2px 2px 999px 999px;
+}
+
+/* --- Hover: 네온 발광 점등 + 방향 미세 이동 --- */
+.cctv-ptz-btn:hover {
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.38) 0%, rgba(0, 180, 255, 0.18) 55%, transparent 75%);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.75), inset 0 0 8px rgba(0, 229, 255, 0.5);
+}
+.cctv-ptz-btn.ptz-up:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+.cctv-ptz-btn.ptz-down:hover {
+  transform: translateY(2px) scale(1.05);
+}
+.cctv-ptz-btn.ptz-left:hover {
+  transform: translateX(-2px) scale(1.05);
+}
+.cctv-ptz-btn.ptz-right:hover {
+  transform: translateX(2px) scale(1.05);
+}
+.cctv-ptz-btn.ptz-zoom-in:hover {
+  transform: translateY(-1px) scale(1.06);
+}
+.cctv-ptz-btn.ptz-zoom-out:hover {
+  transform: translateY(1px) scale(1.06);
+}
+
+/* --- Clicked / Active: 물리적 눌림(Press) + 강렬한 네온 섬광(Flash) --- */
+.cctv-ptz-btn:active,
+.cctv-ptz-btn.is-active {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(0, 229, 255, 0.75) 45%, rgba(24, 144, 255, 0.4) 75%, transparent 95%);
+  box-shadow: 0 0 22px rgba(0, 229, 255, 1), inset 0 0 12px rgba(255, 255, 255, 0.9);
+}
+.cctv-ptz-btn.ptz-up:active,
+.cctv-ptz-btn.ptz-up.is-active {
+  transform: translateY(1px) scale(0.92);
+}
+.cctv-ptz-btn.ptz-down:active,
+.cctv-ptz-btn.ptz-down.is-active {
+  transform: translateY(-1px) scale(0.92);
+}
+.cctv-ptz-btn.ptz-left:active,
+.cctv-ptz-btn.ptz-left.is-active {
+  transform: translateX(1px) scale(0.92);
+}
+.cctv-ptz-btn.ptz-right:active,
+.cctv-ptz-btn.ptz-right.is-active {
+  transform: translateX(-1px) scale(0.92);
+}
+.cctv-ptz-btn.ptz-zoom-in:active,
+.cctv-ptz-btn.ptz-zoom-in.is-active {
+  transform: scale(0.90);
+}
+.cctv-ptz-btn.ptz-zoom-out:active,
+.cctv-ptz-btn.ptz-zoom-out.is-active {
+  transform: scale(0.90);
+}
+
 .cctv-foot {
   display: flex;
   align-items: center;
@@ -2342,6 +2497,68 @@ img {
   font-size: var(--text-xl);
   font-weight: var(--weight-medium);
   color: var(--text-color-primary);
+}
+
+/* ==========================================================================
+   CCTV Panel Resize Handles
+   ========================================================================== */
+.cctv-resize-edge {
+  position: absolute;
+  z-index: 10;
+  touch-action: none;
+}
+.cctv-resize-edge.edge-e {
+  top: 40px;
+  bottom: 20px;
+  right: -5px;
+  width: 10px;
+  cursor: ew-resize;
+}
+.cctv-resize-edge.edge-s {
+  left: 20px;
+  right: 20px;
+  bottom: -5px;
+  height: 10px;
+  cursor: ns-resize;
+}
+.cctv-resize-edge.edge-w {
+  top: 40px;
+  bottom: 20px;
+  left: -5px;
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.cctv-resize-corner {
+  position: absolute;
+  z-index: 11;
+  touch-action: none;
+}
+.cctv-resize-corner.corner-se {
+  right: 4px;
+  bottom: 4px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  cursor: nwse-resize;
+  color: var(--p-white-a45);
+  border-radius: var(--radius-xs);
+  transition: color 0.15s ease, transform 0.15s ease, background 0.15s ease, filter 0.15s ease;
+}
+.cctv-resize-corner.corner-se:hover,
+.cctv-panel.is-resizing .cctv-resize-corner.corner-se {
+  color: var(--p-cyan-400);
+  background: rgba(0, 229, 255, 0.12);
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.6));
+}
+.cctv-resize-corner.corner-sw {
+  left: -5px;
+  bottom: -5px;
+  width: 14px;
+  height: 14px;
+  cursor: nesw-resize;
 }
 
 /* —— 구역 상세 팝업 (CCTV 패널 구조 재활용) —— */

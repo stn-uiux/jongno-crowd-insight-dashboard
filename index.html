@@ -864,12 +864,36 @@
             <svg class="icon-pause" viewBox="0 0 24 24" width="28" height="28" hidden><path fill="#fff" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
           </span>
         </button>
+
+        <!-- PTZ 컨트롤러 (방향 & 줌 조작) -->
+        <div class="cctv-ptz" id="cctv-ptz" role="group" aria-label="CCTV 카메라 방향 및 줌 조작">
+          <img class="cctv-ptz-bg" src="assets/cctv/ptz-controller.png" alt="" aria-hidden="true">
+          <button type="button" class="cctv-ptz-btn ptz-up" data-action="up" title="상 (위로 이동)" aria-label="상 (위로 이동)"></button>
+          <button type="button" class="cctv-ptz-btn ptz-down" data-action="down" title="하 (아래로 이동)" aria-label="하 (아래로 이동)"></button>
+          <button type="button" class="cctv-ptz-btn ptz-left" data-action="left" title="좌 (왼쪽으로 이동)" aria-label="좌 (왼쪽으로 이동)"></button>
+          <button type="button" class="cctv-ptz-btn ptz-right" data-action="right" title="우 (오른쪽으로 이동)" aria-label="우 (오른쪽으로 이동)"></button>
+          <button type="button" class="cctv-ptz-btn ptz-zoom-in" data-action="zoom-in" title="줌인 (확대)" aria-label="줌인 (확대)"></button>
+          <button type="button" class="cctv-ptz-btn ptz-zoom-out" data-action="zoom-out" title="줌아웃 (축소)" aria-label="줌아웃 (축소)"></button>
+        </div>
       </div>
 
       <footer class="cctv-foot">
         <img src="assets/icons/icon-pin.svg" alt="" width="24" height="24">
         <span id="cctv-address">서울 종로구 종로3가 123</span>
       </footer>
+
+      <!-- CCTV 팝업 리사이즈 핸들 -->
+      <div class="cctv-resize-edge edge-e" data-edge="e" aria-hidden="true"></div>
+      <div class="cctv-resize-edge edge-s" data-edge="s" aria-hidden="true"></div>
+      <div class="cctv-resize-edge edge-w" data-edge="w" aria-hidden="true"></div>
+      <div class="cctv-resize-corner corner-sw" data-edge="sw" aria-hidden="true"></div>
+      <div class="cctv-resize-corner corner-se" data-edge="se" title="창 크기 조절 (드래그)" aria-label="창 크기 조절">
+        <svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="8.5" y1="2.5" x2="2.5" y2="8.5"></line>
+          <line x1="8.5" y1="5.5" x2="5.5" y2="8.5"></line>
+          <line x1="8.5" y1="8.5" x2="8.5" y2="8.5"></line>
+        </svg>
+      </div>
     </div>
   </div>
 
