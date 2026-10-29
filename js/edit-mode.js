@@ -87,10 +87,11 @@
     { id: "zone-list", name: "구역 리스트", category: "모니터링", icon: "bi-list-ul" },
     { id: "alert-realtime", name: "실시간 위험구역 알림", category: "모니터링", icon: "bi-exclamation-triangle" },
     { id: "alert-disaster", name: "재난 안전 알림", category: "모니터링", icon: "bi-shield-exclamation" },
+    { id: "chart-compare-week", name: "지난주 같은 요일 비교", category: "차트", icon: "bi-bar-chart" },
   ];
 
   /** 기본적으로 보드에 노출되지 않고 위젯 추가로만 배치되는 카탈로그 위젯 ID 목록 */
-  const DEFAULT_HIDDEN_IDS = new Set(["alert-realtime", "alert-disaster"]);
+  const DEFAULT_HIDDEN_IDS = new Set(["alert-realtime", "alert-disaster", "chart-compare-week"]);
 
   /** 위젯 추가 카탈로그에서 임시로 숨길 위젯 ID 목록 (필요 시 Set에서 id 제거하여 즉시 복원 가능) */
   const HIDDEN_FROM_CATALOG = new Set(["alert-disaster"]);
@@ -102,7 +103,8 @@
     "kpi-revisit":      { colStart: 7, colEnd: 10, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
     "kpi-avg-stay":     { colStart: 10, colEnd: 13, rowStart: 1, rowEnd: 4, colSpan: 3, rowSpan: 3 },
     "kpi-month-visit":  { colStart: 1, colEnd: 7, rowStart: 4, rowEnd: 7, colSpan: 6, rowSpan: 3 },
-    "chart-compare":    { colStart: 7, colEnd: 13, rowStart: 4, rowEnd: 13, colSpan: 6, rowSpan: 9 },
+    "chart-compare":      { colStart: 7, colEnd: 13, rowStart: 4, rowEnd: 13, colSpan: 6, rowSpan: 9 },
+    "chart-compare-week": { colStart: 7, colEnd: 13, rowStart: 4, rowEnd: 13, colSpan: 6, rowSpan: 9 },
     "chart-pie":        { colStart: 1, colEnd: 7, rowStart: 7, rowEnd: 14, colSpan: 6, rowSpan: 7 },
     "chart-stay":       { colStart: 1, colEnd: 7, rowStart: 14, rowEnd: 21, colSpan: 6, rowSpan: 7 },
     "chart-trend":      { colStart: 7, colEnd: 13, rowStart: 13, rowEnd: 21, colSpan: 6, rowSpan: 8 },

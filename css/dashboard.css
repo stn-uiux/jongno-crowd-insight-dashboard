@@ -425,7 +425,8 @@ img {
 .board > [data-widget-id="kpi-revisit"]      { grid-column: 7 / 10; grid-row: 1 / 4; }
 .board > [data-widget-id="kpi-avg-stay"]     { grid-column: 10 / 13; grid-row: 1 / 4; }
 .board > [data-widget-id="kpi-month-visit"]  { grid-column: 1 / 7; grid-row: 4 / 7; }
-.board > [data-widget-id="chart-compare"]    { grid-column: 7 / 13; grid-row: 4 / 13; }
+.board > [data-widget-id="chart-compare"]      { grid-column: 7 / 13; grid-row: 4 / 13; }
+.board > [data-widget-id="chart-compare-week"] { grid-column: 7 / 13; grid-row: 4 / 13; }
 .board > [data-widget-id="chart-pie"]        { grid-column: 1 / 7; grid-row: 7 / 14; }
 .board > [data-widget-id="chart-stay"]       { grid-column: 1 / 7; grid-row: 14 / 21; }
 .board > [data-widget-id="chart-trend"]      { grid-column: 7 / 13; grid-row: 13 / 21; }

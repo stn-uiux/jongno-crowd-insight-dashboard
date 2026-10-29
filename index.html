@@ -346,9 +346,9 @@
         </p>
       </article>
 
-      <article class="widget widget--chart widget--accent chart-widget accent compare-widget" data-widget-id="chart-compare" data-widget-name="전일 이 시간과 비교" data-widget-category="차트">
+      <article class="widget widget--chart widget--accent chart-widget accent compare-widget" data-widget-id="chart-compare" data-widget-name="전일 동시간 비교" data-widget-category="차트">
         <div class="widget-head chart-head">
-          <h2 class="widget-title">전일 이 시간과 비교</h2>
+          <h2 class="widget-title">전일 동시간 비교</h2>
         </div>
         <div class="compare-legend">
           <div>
@@ -361,6 +361,24 @@
           </div>
         </div>
         <div id="chart-compare" class="am-host compare-host"></div>
+      </article>
+
+      <!-- 지난주 같은 요일 비교 위젯 (초기에는 숨김, 위젯 추가 모달에서 추가 가능) -->
+      <article class="widget widget--chart widget--accent chart-widget accent compare-widget is-removed" data-widget-id="chart-compare-week" data-widget-name="지난주 같은 요일 비교" data-widget-category="차트" hidden>
+        <div class="widget-head chart-head">
+          <h2 class="widget-title">지난주 같은 요일 비교</h2>
+        </div>
+        <div class="compare-legend">
+          <div>
+            <span>체류인원 <em>(단위: 명)</em></span>
+            <span class="keys"><i class="sq pale-blue"></i>지난주 <i class="sq deep-blue"></i>오늘</span>
+          </div>
+          <div>
+            <span>혼잡도 <em>(단위: 명/㎡)</em></span>
+            <span class="keys"><i class="sq pale-green"></i>지난주 <i class="sq deep-green"></i>오늘</span>
+          </div>
+        </div>
+        <div id="chart-compare-week" class="am-host compare-host"></div>
       </article>
 
       <article class="widget widget--chart chart-widget trend-widget" data-widget-id="chart-trend" data-widget-name="실시간 구역별 방문인원 추이" data-widget-category="차트">
