@@ -674,9 +674,9 @@
       return series;
     }
 
-    makeColumn("\uC9C0\uB09C\uC8FC \uBC29\uBB38", yLeft, C.visitPast(), [{ category: "\uBC29\uBB38\uC778\uC6D0", value: 220 }], null, -DX);
+    makeColumn("\uC5B4\uC81C \uBC29\uBB38", yLeft, C.visitPast(), [{ category: "\uBC29\uBB38\uC778\uC6D0", value: 220 }], null, -DX);
     makeColumn("\uC624\uB298 \uBC29\uBB38", yLeft, C.visitToday(), [{ category: "\uBC29\uBB38\uC778\uC6D0", value: 300 }], C.visitTodayEnd(), DX);
-    makeColumn("\uC9C0\uB09C\uC8FC \uD63C\uC7A1", yRight, C.congPast(), [{ category: "\uD63C\uC7A1\uB3C4", value: 18 }], null, -DX);
+    makeColumn("\uC5B4\uC81C \uD63C\uC7A1", yRight, C.congPast(), [{ category: "\uD63C\uC7A1\uB3C4", value: 18 }], null, -DX);
     makeColumn("\uC624\uB298 \uD63C\uC7A1", yRight, C.congToday(), [{ category: "\uD63C\uC7A1\uB3C4", value: 28 }], C.congTodayEnd(), DX);
 
     chart.series.each((series) => series.appear(700));
