@@ -324,7 +324,7 @@ img {
   font-weight: var(--weight-medium);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px var(--p-black-a20);
+  box-shadow: none;
   user-select: none;
   white-space: nowrap;
 }
@@ -333,7 +333,7 @@ img {
   background: var(--surface-glass-hover);
   border-color: var(--p-blue-a50);
   color: var(--p-white);
-  box-shadow: 0 4px 14px var(--p-black-a35), 0 0 10px var(--p-blue-a25);
+  box-shadow: none;
 }
 
 .map-view-toggle-btn:active {
@@ -362,7 +362,7 @@ img {
   color: var(--p-white);
   backdrop-filter: var(--blur-md);
   -webkit-backdrop-filter: var(--blur-md);
-  box-shadow: 0 4px 16px var(--p-black-a35), inset 0 0 12px var(--p-blue-a35);
+  box-shadow: none;
 }
 
 .map-widget.is-fullscreen .map-view-toggle-btn:active {
@@ -1317,8 +1317,9 @@ img {
 }
 .map-point {
   /* 기본 단계: 관심(attention), 기본 사이즈: lg(100%) */
-  --mp-scale: var(--mp-scale-lg, 1);
+  --mp-scale: var(--mp-scale-lg);
   --mp-level-color: var(--level-attention);
+  --mp-level-border-color: var(--level-attention-lighter);
   --mp-badge-label: "관심";
   --mp-emoji-bg: url("../assets/map-detail/emoji-attention.png");
   --mp-glow-bg: url("../assets/map-detail/glow-attention.svg");
@@ -1327,6 +1328,15 @@ img {
   height: 0;
   pointer-events: auto;
   z-index: var(--z-base);
+}
+
+/* 마커/툴팁 래퍼: 지점 아이콘 크기(SM/MD/LG) 조절 시 이 영역만 스케일되며, 실제 경계선(.mp-boundary)은 지도 고정 반경 유지 */
+.mp-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
   transform: scale(var(--mp-scale));
   transform-origin: 0 0;
   transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
@@ -1335,55 +1345,60 @@ img {
    - .map-point 또는 내부 .mp-tip 어디에 붙여도 mp-core + 툴팁 + 이모지 + 배지 + CCTV 카메라 버튼이 정비율로 함께 조절됨 */
 .map-point:is(.map-point--lg, .is-lg, .lg),
 .map-point:has(.mp-tip--lg, .mp-tip.is-lg) {
-  --mp-scale: var(--mp-scale-lg, 1);
+  --mp-scale: var(--mp-scale-lg);
 }
 .map-point:is(.map-point--md, .is-md, .md),
 .map-point:has(.mp-tip--md, .mp-tip.is-md) {
-  --mp-scale: var(--mp-scale-md, 0.8);
+  --mp-scale: var(--mp-scale-md);
 }
 .map-point:is(.map-point--sm, .is-sm, .sm),
 .map-point:has(.mp-tip--sm, .mp-tip.is-sm) {
-  --mp-scale: var(--mp-scale-sm, 0.65);
+  --mp-scale: var(--mp-scale-sm);
 }
 
 /* 컨트롤러 일괄 사이즈 전환 */
 #map-points[data-point-size="sm"] .map-point {
-  --mp-scale: var(--mp-scale-sm, 0.65);
+  --mp-scale: var(--mp-scale-sm);
 }
 #map-points[data-point-size="md"] .map-point {
-  --mp-scale: var(--mp-scale-md, 0.8);
+  --mp-scale: var(--mp-scale-md);
 }
 #map-points[data-point-size="lg"] .map-point {
-  --mp-scale: var(--mp-scale-lg, 1);
+  --mp-scale: var(--mp-scale-lg);
 }
 /* 5단계 상태 클래스 (정상 · 관심 · 주의 · 경계 · 위험)
-   - .map-point 또는 .mp-tip, .mp-emo 어디에 클래스를 붙여도 이모지/배지색/배지문구/광원이 자동 변경됨 */
+   - .map-point 또는 .mp-tip, .mp-emo 어디에 클래스를 붙여도 이모지/배지색/배지문구/광원/경계선색이 자동 변경됨 */
 :is(.map-point, .mp-tip, .mp-emo):is(.is-normal, .mp-state--normal) {
   --mp-level-color: var(--level-normal);
+  --mp-level-border-color: var(--level-normal-lighter);
   --mp-badge-label: "정상";
   --mp-emoji-bg: url("../assets/map-detail/emoji-normal.png");
   --mp-glow-bg: url("../assets/map-detail/glow-normal.svg");
 }
 :is(.map-point, .mp-tip, .mp-emo):is(.is-attention, .is-watch, .mp-state--attention, .mp-state--watch) {
   --mp-level-color: var(--level-attention);
+  --mp-level-border-color: var(--level-attention-lighter);
   --mp-badge-label: "관심";
   --mp-emoji-bg: url("../assets/map-detail/emoji-attention.png");
   --mp-glow-bg: url("../assets/map-detail/glow-attention.svg");
 }
 :is(.map-point, .mp-tip, .mp-emo):is(.is-caution, .mp-state--caution) {
   --mp-level-color: var(--level-caution);
+  --mp-level-border-color: var(--level-caution-lighter);
   --mp-badge-label: "주의";
   --mp-emoji-bg: url("../assets/map-detail/emoji-caution.png");
   --mp-glow-bg: url("../assets/map-detail/glow-caution.svg");
 }
 :is(.map-point, .mp-tip, .mp-emo):is(.is-warning, .mp-state--warning) {
   --mp-level-color: var(--level-warning);
+  --mp-level-border-color: var(--level-warning-lighter);
   --mp-badge-label: "경계";
   --mp-emoji-bg: url("../assets/map-detail/emoji-warning.png");
   --mp-glow-bg: url("../assets/map-detail/glow-warning.svg");
 }
 :is(.map-point, .mp-tip, .mp-emo):is(.is-emergency, .is-critical, .is-danger, .mp-state--emergency, .mp-state--critical, .mp-state--danger) {
   --mp-level-color: var(--level-danger);
+  --mp-level-border-color: var(--level-danger-lighter);
   --mp-badge-label: "위험";
   --mp-emoji-bg: url("../assets/map-detail/emoji-emergency.png");
   --mp-glow-bg: url("../assets/map-detail/glow-emergency.svg");
@@ -1414,14 +1429,58 @@ img {
   object-fit: contain;
   pointer-events: none;
 }
+
+/* 지점 경계(반경) 표시 원형 테두리 — 지점 아이콘 크기(SM/MD/LG)와 무관하게 지도 실제 축척(--map-stage-scale)에 고정된 일정 반경 */
+.mp-boundary {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--mp-boundary-size) * var(--map-stage-scale));
+  height: calc(var(--mp-boundary-size) * var(--map-stage-scale));
+  border-radius: 50%;
+  border: 1.8px dashed var(--mp-level-border-color);
+  background: color-mix(in srgb, var(--mp-level-border-color) 10%, transparent);
+  box-shadow: none;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.88);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease;
+}
+
+/* 상세 맵 구역별 경계 원 반경 (B·C·D 기본: 160px / A구역 헌법재판소 일대: 100px — tokens.css 시멘틱 토큰 연동) */
+#map-detail {
+  --mp-boundary-size: var(--mp-boundary-size-default);
+}
+
+#map-detail[data-active-region="A"] {
+  --mp-boundary-size: var(--mp-boundary-size-region-a);
+}
+
+#map-points:not([data-show-boundary="false"]) .mp-boundary {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#map-points:not([data-show-boundary="false"]) .map-point:hover .mp-boundary,
+#map-points:not([data-show-boundary="false"]) .map-point.is-tip-open .mp-boundary {
+  border-style: solid;
+  border-width: 2px;
+  background: color-mix(in srgb, var(--mp-level-border-color) 16%, transparent);
+  box-shadow: none;
+}
 .mp-id {
   position: absolute;
   left: 50%;
-  top: 54%;
+  top: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   font-size: clamp(14px, 1.4vw, 22px);
   font-weight: var(--weight-semibold);
+  line-height: 1;
   color: var(--text-color-primary);
   text-shadow: 0 4px 4px var(--p-black-a25);
   white-space: nowrap;
@@ -1430,7 +1489,7 @@ img {
 .mp-warn {
   position: absolute;
   left: 50%;
-  top: 24%;
+  top: 18%;
   transform: translateX(-50%);
   z-index: 3;
   width: clamp(14px, 1.2vw, 20px);
@@ -1446,9 +1505,9 @@ img {
    - 왼쪽    : .mp-tip--left
    - 오른쪽  : .mp-tip--right */
 .mp-tip {
-  --mp-tip-gap-y: calc(clamp(18px, 2vw, 28px) - 2px);
-  --mp-tip-gap-bottom: clamp(22px, 2.4vw, 32px);
-  --mp-tip-gap-x: clamp(28px, 3vw, 42px);
+  --mp-tip-gap-y: var(--mp-tip-gap);
+  --mp-tip-gap-bottom: var(--mp-tip-gap);
+  --mp-tip-gap-x: var(--mp-tip-gap);
   position: absolute;
   left: 0;
   right: auto;
@@ -1839,7 +1898,7 @@ img {
   filter: brightness(0) invert(1);
 }
 
-/* 상세 맵 지점 크기 조절 슬라이더 컨트롤러 및 전체보기 컨트롤 그룹 */
+/* 상세 맵 지점 크기 조절 슬라이더 컨트롤러, 경계선 ON/OFF 버튼 및 전체보기 컨트롤 그룹 */
 .map-detail-top-right-group {
   position: absolute;
   top: clamp(12px, 1.8vh, 20px);
@@ -1848,6 +1907,79 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* 상세 맵 지점 경계선(테두리) ON/OFF 스위치 토글 버튼 */
+.map-boundary-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 14px 0 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: var(--surface-glass-sm);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  color: var(--text-color-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.map-boundary-toggle-btn:hover {
+  background: var(--surface-glass-hover);
+  border-color: var(--p-blue-a50);
+  color: var(--p-white);
+  box-shadow: none;
+}
+
+.map-boundary-toggle-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.map-boundary-toggle-btn.is-active {
+  border-color: var(--p-blue-400);
+  color: var(--p-white);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  box-shadow: none;
+}
+
+.map-boundary-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 36px;
+  height: 20px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--switch-track-bg);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex: 0 0 auto;
+}
+
+.map-boundary-switch-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--switch-thumb-bg);
+  transform: translateX(0);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-boundary-toggle-btn.is-active .map-boundary-switch {
+  background: var(--switch-track-active-bg);
+}
+
+.map-boundary-toggle-btn.is-active .map-boundary-switch-thumb {
+  transform: translateX(16px);
 }
 .map-detail-top-right-group .map-point-size-bar {
   position: relative;

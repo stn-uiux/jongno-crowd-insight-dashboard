@@ -475,13 +475,13 @@
           </aside>
         </div>
 
-        <div class="map-canvas map-detail" id="map-detail" hidden>
+        <div class="map-canvas map-detail" id="map-detail" data-active-region="A" hidden>
           <div class="map-stage" data-map-stage="detail" data-aspect="1920/1080">
             <img class="map-photo map-photo-detail" src="assets/maps/dark-map-detail-2.png" alt="헌법 재판소 일대 상세">
-            <div class="map-points map-overlay" id="map-points" data-point-size="sm" aria-label="헌법 재판소 일대 지점"></div>
+            <div class="map-points map-overlay" id="map-points" data-point-size="sm" data-show-boundary="true" aria-label="헌법 재판소 일대 지점"></div>
           </div>
 
-          <!-- 상세 지도 상단 컨트롤: 크게보기 비율 선택기, 크게보기/축소하기 버튼 & 지점 아이콘 크기 조절 바 -->
+          <!-- 상세 지도 상단 컨트롤: 크게보기 비율 선택기, 크게보기/축소하기 버튼, 경계선 ON/OFF 버튼 & 지점 아이콘 크기 조절 바 -->
           <div class="map-detail-top-right-group">
             <div class="map-ratio-selector" id="map-detail-ratio-selector" role="radiogroup" aria-label="지도 화면 비율 선택" hidden>
               <label class="map-ratio-option is-active">
@@ -503,6 +503,12 @@
             <button type="button" class="map-view-toggle-btn map-view-toggle-btn--detail" id="map-detail-fullscreen-btn" title="지도 크게보기 (확대)" aria-label="지도 크게보기">
               <i class="bi bi-fullscreen" aria-hidden="true"></i>
               <span class="map-view-toggle-label">크게보기</span>
+            </button>
+            <button type="button" class="map-boundary-toggle-btn is-active" id="map-boundary-toggle-btn" role="switch" aria-checked="true" title="지점 경계선 표시 ON/OFF" aria-label="지점 경계선 표시 전환">
+              <span class="map-boundary-toggle-label">경계선</span>
+              <span class="map-boundary-switch" aria-hidden="true">
+                <span class="map-boundary-switch-thumb"></span>
+              </span>
             </button>
             <div class="map-point-size-bar" id="map-point-size-bar" role="radiogroup" aria-label="지점 아이콘 크기 선택">
               <div class="point-size-track" aria-hidden="true"></div>

@@ -681,10 +681,18 @@
   --font-region-a-title: clamp(14px, 1.2vw, 18px);
   --font-region-a-code: clamp(18px, 1.6vw, 24px);
 
-  /* Map Point Size Scale (lg: 현재 기본 크기 100% / md: 80% / sm: 65%) */
+  /* Map Point Size & Boundary Scale (lg: 현재 기본 크기 100% / md: 80% / sm: 65%) */
   --mp-scale-lg: 1;
   --mp-scale-md: 0.8;
   --mp-scale-sm: 0.65;
+  --map-stage-scale: 0.55;
+  --mp-boundary-size-default: 160px;
+  --mp-boundary-size-region-a: 100px;
+  --mp-boundary-size: var(--mp-boundary-size-default);
+  --mp-tip-gap: clamp(28px, 3vw, 42px);
+  --switch-track-bg: var(--p-white-a20);
+  --switch-track-active-bg: var(--color-accent);
+  --switch-thumb-bg: var(--p-white);
 }
 
 /* ==========================================================================
@@ -952,22 +960,27 @@
   color: var(--text-color-primary);
 }
 
-[data-mode="light"] .map-view-toggle-btn {
+[data-mode="light"] .map-view-toggle-btn,
+[data-mode="light"] .map-boundary-toggle-btn {
   color: var(--text-color-primary);
 }
-[data-mode="light"] .map-view-toggle-btn:hover {
+[data-mode="light"] .map-view-toggle-btn:hover,
+[data-mode="light"] .map-boundary-toggle-btn:hover {
   background: var(--surface-modal);
   color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
-/* 크게보기 활성화 상태(축소하기) 라이트 모드 스타일 */
-[data-mode="light"] .map-widget.is-fullscreen .map-view-toggle-btn {
+/* 크게보기 활성화 상태(축소하기) 및 경계선 활성화 상태 라이트 모드 스타일 */
+[data-mode="light"] .map-widget.is-fullscreen .map-view-toggle-btn,
+[data-mode="light"] .map-boundary-toggle-btn.is-active {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: var(--surface-glass-lg);
-  box-shadow: var(--shadow-btn-pill);
+  box-shadow: none;
 }
-[data-mode="light"] .map-widget.is-fullscreen .map-view-toggle-btn:hover {
+[data-mode="light"] .map-widget.is-fullscreen .map-view-toggle-btn:hover,
+[data-mode="light"] .map-boundary-toggle-btn.is-active:hover {
   background: var(--surface-dropdown);
   color: var(--p-indigo-600);
   border-color: var(--p-indigo-600);

@@ -55,6 +55,7 @@
     const scale = Math.max(cw / base.w, ch / base.h) * MAP_ZOOM;
     stage.style.width = `${Math.round(base.w * scale)}px`;
     stage.style.height = `${Math.round(base.h * scale)}px`;
+    stage.style.setProperty("--map-stage-scale", scale.toFixed(4));
   }
 
   function fitAllStages() {
@@ -90,7 +91,7 @@
     { id: "A-10", left: 54.0, top: 48.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 31400, density: 0.71 },
     { id: "A-11", left: 54.0, top: 53.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 22800, density: 0.54 },
     { id: "A-12", left: 82.0, top: 54.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 13800, density: 0.34 },
-    { id: "A-13", left: 66.0, top: 56.0, state: "danger", size: "lg", tipPos: "right", cctvPos: "right", people: 43800, density: 0.94 },
+    { id: "A-13", left: 66.0, top: 56.0, state: "danger", size: "lg", tipPos: "top", cctvPos: "right", people: 43800, density: 0.94 },
     { id: "A-14", left: 58.0, top: 61.0, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 45600, density: 0.98 },
     { id: "A-15", left: 60.0, top: 67.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 33600, density: 0.75 },
     { id: "A-16", left: 62.0, top: 72.2, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 21400, density: 0.61 },
@@ -214,27 +215,30 @@
     const densityStr = Number(densityVal).toFixed(2);
     return `
       <div class="map-point map-point--${size} is-${stateKey}" style="left:${p.left}%;top:${p.top}%;" data-id="${p.id}">
-        <div class="mp-tip mp-tip--${tipPos} mp-tip--cctv-${cctvPos}">
-          <div class="mp-tip-card">
-            <div class="mp-emo">
-              <span class="mp-emo-icon" role="img" aria-label="${meta.label}"></span>
-              <span class="mp-badge"></span>
+        <span class="mp-boundary" aria-hidden="true"></span>
+        <div class="mp-marker">
+          <div class="mp-tip mp-tip--${tipPos} mp-tip--cctv-${cctvPos}">
+            <div class="mp-tip-card">
+              <div class="mp-emo">
+                <span class="mp-emo-icon" role="img" aria-label="${meta.label}"></span>
+                <span class="mp-badge"></span>
+              </div>
+              <div class="mp-stats">
+                <p><span>인원</span><strong>${peopleStr}<small>명</small></strong></p>
+                <p><span>밀집</span><strong>${densityStr}<small>명/m²</small></strong></p>
+              </div>
+              <button type="button" class="mp-cctv" title="CCTV" aria-label="${displayText} CCTV" aria-pressed="false">
+                <img class="mp-cctv-cam" src="assets/map-detail/icon-cctv.svg" alt="" width="22" height="22">
+                <img class="mp-cctv-pause" src="assets/map-detail/icon-cctv-pause.svg" alt="" width="22" height="22" hidden>
+              </button>
             </div>
-            <div class="mp-stats">
-              <p><span>인원</span><strong>${peopleStr}<small>명</small></strong></p>
-              <p><span>밀집</span><strong>${densityStr}<small>명/m²</small></strong></p>
-            </div>
-            <button type="button" class="mp-cctv" title="CCTV" aria-label="${displayText} CCTV" aria-pressed="false">
-              <img class="mp-cctv-cam" src="assets/map-detail/icon-cctv.svg" alt="" width="22" height="22">
-              <img class="mp-cctv-pause" src="assets/map-detail/icon-cctv-pause.svg" alt="" width="22" height="22" hidden>
-            </button>
+            <i class="mp-tip-arrow" aria-hidden="true"></i>
           </div>
-          <i class="mp-tip-arrow" aria-hidden="true"></i>
-        </div>
-        <div class="mp-core">
-          <span class="mp-glow" aria-hidden="true"></span>
-          <img class="mp-warn" src="assets/icons/icon-warn.svg" alt="" width="18" height="16">
-          <strong class="mp-id">${displayText.replace("-", " - ")}</strong>
+          <div class="mp-core">
+            <span class="mp-glow" aria-hidden="true"></span>
+            <img class="mp-warn" src="assets/icons/icon-warn.svg" alt="" width="18" height="16">
+            <strong class="mp-id">${displayText.replace("-", " - ")}</strong>
+          </div>
         </div>
       </div>`;
   }
@@ -268,7 +272,7 @@
         const timer = setTimeout(() => {
           point.classList.remove("is-tip-open");
           tipTimers.delete(point);
-        }, 3000);
+        }, 2000);
         tipTimers.set(point, timer);
       });
     });
@@ -370,6 +374,41 @@
         });
         pointsHost.setAttribute("data-point-size", nextSize);
       });
+    });
+  }
+
+  // —— 상세 맵 지점 경계선(테두리) ON/OFF 토글 ——
+  const BOUNDARY_STORAGE_KEY = "jongno-dashboard-map-boundary";
+  const boundaryBtn = document.getElementById("map-boundary-toggle-btn");
+
+  function setMapBoundaryVisible(visible, save = true) {
+    const isOn = Boolean(visible);
+    if (pointsHost) {
+      pointsHost.setAttribute("data-show-boundary", isOn ? "true" : "false");
+    }
+    if (boundaryBtn) {
+      boundaryBtn.classList.toggle("is-active", isOn);
+      boundaryBtn.setAttribute("aria-checked", isOn ? "true" : "false");
+    }
+    if (save) {
+      try {
+        localStorage.setItem(BOUNDARY_STORAGE_KEY, isOn ? "true" : "false");
+      } catch (_) {}
+    }
+  }
+
+  if (boundaryBtn) {
+    let initialBoundary = true;
+    try {
+      const saved = localStorage.getItem(BOUNDARY_STORAGE_KEY);
+      if (saved === "false") initialBoundary = false;
+    } catch (_) {}
+    setMapBoundaryVisible(initialBoundary, false);
+
+    boundaryBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const currentlyOn = pointsHost?.getAttribute("data-show-boundary") !== "false";
+      setMapBoundaryVisible(!currentlyOn, true);
     });
   }
 
