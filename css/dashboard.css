@@ -2553,52 +2553,57 @@ img {
               box-shadow 0.15s ease;
 }
 
-/* 방향키 (원형 버튼 4개) */
+/* 방향키 (삼각형 버튼 4개) */
 .cctv-ptz-btn.ptz-up,
-.cctv-ptz-btn.ptz-down,
+.cctv-ptz-btn.ptz-down {
+  width: 24.5%;
+  height: 17.6%;
+  left: 37.75%;
+}
 .cctv-ptz-btn.ptz-left,
 .cctv-ptz-btn.ptz-right {
-  width: 34%;
-  height: 34%;
-  border-radius: 50%;
+  width: 16.7%;
+  height: 24.5%;
+  top: 37.75%;
 }
 .cctv-ptz-btn.ptz-up {
-  top: 7.5%;
-  left: 33%;
+  top: 3.2%;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 .cctv-ptz-btn.ptz-down {
-  top: 60.1%;
-  left: 33%;
+  top: 79.3%;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
 .cctv-ptz-btn.ptz-left {
-  top: 33%;
-  left: 2.7%;
+  left: 5.1%;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
 }
 .cctv-ptz-btn.ptz-right {
-  top: 33%;
-  left: 63.3%;
+  left: 78.2%;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
-/* 줌 조작키 (중앙 반원 2개) */
+/* 줌 조작키 (중앙 원 상/하 반원) */
 .cctv-ptz-btn.ptz-zoom-in,
 .cctv-ptz-btn.ptz-zoom-out {
-  width: 25%;
-  height: 12.5%;
-  left: 37.5%;
+  width: 47.2%;
+  left: 26.4%;
 }
 .cctv-ptz-btn.ptz-zoom-in {
-  top: 37.5%;
-  border-radius: 999px 999px 2px 2px;
+  top: 24.7%;
+  height: 25.3%;
+  clip-path: ellipse(50% 100% at 50% 100%);
 }
 .cctv-ptz-btn.ptz-zoom-out {
-  top: 50%;
-  border-radius: 2px 2px 999px 999px;
+  top: 50.1%;
+  height: 25.3%;
+  clip-path: ellipse(50% 100% at 50% 0);
 }
 
 /* --- Hover: 네온 발광 점등 + 방향 미세 이동 --- */
 .cctv-ptz-btn:hover {
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.38) 0%, rgba(0, 180, 255, 0.18) 55%, transparent 75%);
-  box-shadow: 0 0 14px rgba(0, 229, 255, 0.75), inset 0 0 8px rgba(0, 229, 255, 0.5);
+  background: radial-gradient(closest-side, rgba(0, 229, 255, 0.45) 0%, rgba(0, 180, 255, 0.2) 60%, transparent 100%);
+  box-shadow: none;
 }
 .cctv-ptz-btn.ptz-up:hover {
   transform: translateY(-2px) scale(1.05);
@@ -2622,8 +2627,8 @@ img {
 /* --- Clicked / Active: 물리적 눌림(Press) + 강렬한 네온 섬광(Flash) --- */
 .cctv-ptz-btn:active,
 .cctv-ptz-btn.is-active {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(0, 229, 255, 0.75) 45%, rgba(24, 144, 255, 0.4) 75%, transparent 95%);
-  box-shadow: 0 0 22px rgba(0, 229, 255, 1), inset 0 0 12px rgba(255, 255, 255, 0.9);
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.55) 0%, rgba(0, 229, 255, 0.6) 50%, transparent 100%);
+  box-shadow: none;
 }
 .cctv-ptz-btn.ptz-up:active,
 .cctv-ptz-btn.ptz-up.is-active {
