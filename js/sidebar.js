@@ -31,6 +31,12 @@
     });
   });
 
+  sidebar.querySelectorAll(".menu-link[href='#']").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+    });
+  });
+
   // 테마 모드 전환 (다크 / 라이트: data-mode="dark" | "light")
   const themeToggle = sidebar.querySelector(".theme-toggle-btn");
   const THEME_KEY = "jongno-dashboard-theme-mode";
