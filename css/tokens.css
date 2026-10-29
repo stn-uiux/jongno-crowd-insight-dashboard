@@ -50,6 +50,7 @@
   --p-orange-a16: rgba(249, 115, 22, 0.16);
   --p-orange-a35: rgba(249, 115, 22, 0.35);
   --p-orange-a45: rgba(249, 115, 22, 0.45);
+  --p-orange-a50: rgba(255, 141, 69, 0.50);
 
   /* 3) Yellow (노랑: 100 ~ 900) */
   --p-yellow-100: #FFF9D6;
@@ -62,6 +63,7 @@
   --p-yellow-800: #926700;
   --p-yellow-900: #704D00;
   --p-yellow-a45: rgba(242, 188, 0, 0.45);
+  --p-yellow-a50: rgba(242, 188, 0, 0.50);
 
   /* 4) Green / Emerald (초록: 100 ~ 900) */
   --p-green-100: #E3F8E9;
@@ -101,7 +103,8 @@
   --p-blue-a25: rgba(59, 130, 246, 0.25);
   --p-blue-a35: rgba(59, 130, 246, 0.35);
   --p-blue-a45: rgba(73, 146, 255, 0.45);
-  --p-blue-a50: rgba(0, 94, 255, 0.50);
+  --p-blue-a50: rgba(48, 131, 255, 0.50);
+  --p-blue-250-a50: rgba(92, 197, 255, 0.50);
   --p-blue-a55: rgba(59, 130, 246, 0.55);
   --p-blue-tint-a10: rgba(147, 197, 253, 0.12);
   --p-blue-tint-light: rgb(94 139 238 / 10%);
@@ -327,6 +330,14 @@
   --level-caution: var(--p-yellow-500);
   --level-warning: var(--p-orange-400);
   --level-danger: var(--p-red-600);
+
+  /* Crowd Status Border Tokens (지점 경계선용 opacity 50% 토큰) */
+  --level-normal-lighter: var(--p-blue-250-a50);
+  --level-watch-lighter: var(--p-blue-a50);
+  --level-attention-lighter: var(--p-blue-a50);
+  --level-caution-lighter: var(--p-yellow-a50);
+  --level-warning-lighter: var(--p-orange-a50);
+  --level-danger-lighter: var(--p-red-a50);
   --level-danger-bg: var(--p-red-a18);
   --level-danger-soft: var(--p-red-a10);
   --level-warning-bg: var(--p-orange-a16);
@@ -448,7 +459,7 @@
   /* Surface & Glass Semantic Colors (배경·위젯·모달·테이블) */
   --bg-app: var(--p-neutral-950);
   --bg-shell: var(--p-neutral-980);
-  --surface-widget: var(--p-white-a10);
+  --surface-widget: var(--p-white-a05);
   --surface-glass-xs: var(--p-white-a03);
   --surface-glass-sm: var(--p-white-a05);
   --surface-glass-md: var(--p-white-a08);
@@ -475,6 +486,7 @@
   --border-default: var(--p-white-a24);
   --border-strong: var(--p-white-a30);
   --border-accent: var(--p-indigo-400);
+  --border-accent-hover: var(--p-indigo-300);
   --border-tab-active: rgba(255, 70, 110, 0.45);
   --border-map-back: rgba(218, 231, 246, 0.5);
   --border-selected-bar: var(--p-indigo-300);
@@ -492,6 +504,47 @@
   --sidebar-accent: var(--color-primary);
   --sidebar-accent-soft: var(--color-primary-soft);
 
+  /* Statistics View Semantic Tokens (통계 화면 다크/라이트 대응 시멘틱 토큰 — 전부 --p-* 및 기초 토큰 참조) */
+  --stats-board-bg: var(--p-neutral-950);
+  --stats-board-border: var(--p-white-a08);
+  --stats-board-gap: var(--widget-gap);
+  --stats-card-bg: var(--p-neutral-850);
+  --stats-card-border: var(--p-white-a10);
+  --stats-card-radius: var(--radius-none);
+  --stats-title-color: var(--p-white);
+  --stats-subtitle-color: var(--p-neutral-200);
+  --stats-legend-text: var(--p-neutral-200);
+  --stats-legend-unit: var(--p-neutral-450);
+  --stats-table-bg: var(--p-neutral-850);
+  --stats-table-border: var(--p-white-a12);
+  --stats-table-cell-border: var(--p-white-a08);
+  --stats-table-head-bg: var(--p-neutral-800);
+  --stats-table-head-text: var(--p-white);
+  --stats-table-row-bg: var(--p-neutral-850);
+  --stats-table-row-alt-bg: var(--p-neutral-820);
+  --stats-table-cell-text: var(--p-neutral-150);
+  --stats-table-value-text: var(--p-white);
+  --stats-scrollbar-thumb: var(--p-white-a20);
+  --stats-scrollbar-thumb-hover: var(--p-white-a35);
+  --stats-chip-bg: var(--p-indigo-a18);
+  --stats-chip-border: var(--p-indigo-400);
+  --stats-chip-text: var(--p-indigo-200);
+  --stats-range-btn-bg: var(--surface-glass-sm);
+  --stats-range-btn-border: transparent;
+  --stats-range-btn-text: var(--text-color-inactive);
+  --stats-range-btn-hover-bg: var(--surface-control-hover);
+  --stats-range-btn-hover-text: var(--text-color-primary);
+  --stats-range-btn-active-bg: var(--surface-control);
+  --stats-range-btn-active-border: var(--border-accent);
+  --stats-range-btn-active-text: var(--text-color-primary);
+  --stats-range-btn-check: var(--border-accent);
+  --stats-series-visit: var(--p-blue-500);
+  --stats-series-crowd: var(--p-greenmint-500);
+  --stats-series-zone-a: var(--p-greenmint-400);
+  --stats-series-zone-b: var(--p-yellow-400);
+  --stats-series-zone-c: var(--p-orange-400);
+  --stats-series-zone-d: var(--p-red-400);
+
   /* ------------------------------------------------------------------------
      03. FOUNDATION SCALES (Layout, Radius, Blur, Shadow, Z-Index, Typography)
      ------------------------------------------------------------------------ */
@@ -507,6 +560,7 @@
   --kpi-row-h: clamp(96px, 14vh, 150px);
 
   /* Border Radius Scale */
+  --radius-none: 0px;
   --radius-2xs: 1px;
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -649,7 +703,7 @@
   --text-color-dark: var(--p-neutral-800);
   --text-color-dark-strong: var(--p-neutral-900);
   --region-color-default: var(--p-neutral-600);
-  --region-glow-default: rgba(0, 0, 0, 0.20);
+  --region-glow-default: var(--p-black-a20);
 
   /* 1-1) KPI Trend Status (라이트 모드 상승 · 하락 · 변동없음) */
   --kpi-up: var(--p-red-600);
@@ -660,43 +714,79 @@
   --kpi-badge-bg: var(--p-neutral-tint-light);
 
   /* 2) Surface & Glass Semantic Colors (라이트 모드 글래스모피즘) */
-  --bg-app: #f4f6fa;
-  --bg-shell: #eef2f8;
-  --surface-widget: rgba(255, 255, 255, 0.80);
-  --surface-glass-xs: rgba(255, 255, 255, 0.40);
-  --surface-glass-sm: rgba(255, 255, 255, 0.60);
-  --surface-glass-md: rgba(255, 255, 255, 0.75);
-  --surface-glass-lg: rgba(255, 255, 255, 0.88);
-  --surface-glass-hover: rgba(255, 255, 255, 0.96);
-  --surface-control: rgba(0, 0, 0, 0.05);
-  --surface-control-hover: rgba(0, 0, 0, 0.09);
-  --surface-canvas-dark: rgba(0, 0, 0, 0.04);
-  --surface-dropdown: rgba(255, 255, 255, 0.98);
-  --surface-modal: rgba(255, 255, 255, 0.95);
+  --bg-app: var(--p-neutral-100);
+  --bg-shell: var(--p-neutral-120);
+  --surface-widget: var(--p-white-a80);
+  --surface-glass-xs: var(--p-white-a40);
+  --surface-glass-sm: var(--p-white-a60);
+  --surface-glass-md: var(--p-white-a75);
+  --surface-glass-lg: var(--p-white-a90);
+  --surface-glass-hover: var(--p-white-a95);
+  --surface-control: var(--p-black-a05);
+  --surface-control-hover: var(--p-black-a08);
+  --surface-canvas-dark: var(--p-black-a04);
+  --surface-dropdown: var(--p-white-a95);
+  --surface-modal: var(--p-white-a95);
   --surface-panel-dark: rgba(245, 247, 251, 0.95);
-  --surface-card-dark: rgba(255, 255, 255, 0.95);
+  --surface-card-dark: var(--p-white-a95);
   --surface-input-dark: rgba(240, 243, 249, 0.92);
   --surface-table-head: var(--bg-shell);
-  --surface-row-hover: rgba(0, 0, 0, 0.035);
+  --surface-row-hover: var(--p-black-a03);
   --surface-row-selected: rgba(80, 92, 255, 0.08);
   --surface-row-selected-hover: rgba(80, 92, 255, 0.14);
   --surface-brush-mask: rgba(230, 235, 245, 0.55);
 
   /* 3) Border & Divider Semantic Colors (라이트 모드 구분선/테두리) */
-  --border-subtle: rgba(0, 0, 0, 0.04);
-  --border-muted: rgba(0, 0, 0, 0.06);
-  --border-light: rgba(0, 0, 0, 0.09);
-  --border-default: rgba(0, 0, 0, 0.12);
-  --border-strong: rgba(0, 0, 0, 0.18);
-  --divider-color: rgba(0, 0, 0, 0.12);
+  --border-subtle: var(--p-black-a04);
+  --border-muted: var(--p-black-a06);
+  --border-light: var(--p-black-a08);
+  --border-default: var(--p-black-a12);
+  --border-strong: var(--p-black-a18);
+  --divider-color: var(--p-black-a12);
 
   /* 4) Sidebar Semantic Tokens (라이트 모드 사이드바) */
-  --sidebar-bg: rgba(255, 255, 255, 0.75);
+  --sidebar-bg: var(--p-white-a75);
   --sidebar-surface: rgba(240, 243, 249, 0.80);
   --sidebar-surface-2: rgba(228, 235, 245, 0.92);
-  --sidebar-line: rgba(0, 0, 0, 0.08);
+  --sidebar-line: var(--p-black-a08);
   --sidebar-text: var(--p-neutral-800);
   --sidebar-muted: var(--p-neutral-600);
+
+  /* 4-1) Statistics View Semantic Tokens (라이트 모드 통계 화면 시멘틱 토큰 — 전부 --p-* 및 기초 토큰 참조) */
+  --stats-board-bg: var(--p-white);
+  --stats-board-border: var(--p-neutral-180);
+  --stats-card-bg: var(--p-white);
+  --stats-card-border: var(--p-neutral-180);
+  --stats-title-color: var(--p-neutral-800);
+  --stats-subtitle-color: var(--p-neutral-600);
+  --stats-legend-text: var(--p-neutral-750);
+  --stats-legend-unit: var(--p-neutral-500);
+  --stats-table-bg: var(--p-white);
+  --stats-table-border: var(--p-neutral-180);
+  --stats-table-cell-border: var(--p-neutral-150);
+  --stats-table-head-bg: var(--p-neutral-100);
+  --stats-table-head-text: var(--p-neutral-600);
+  --stats-table-row-bg: var(--p-white);
+  --stats-table-row-alt-bg: var(--p-neutral-100);
+  --stats-table-cell-text: var(--p-neutral-750);
+  --stats-table-value-text: var(--p-neutral-800);
+  --stats-scrollbar-thumb: var(--p-neutral-300);
+  --stats-scrollbar-thumb-hover: var(--p-neutral-450);
+  --stats-chip-bg: var(--p-indigo-100);
+  --stats-chip-border: var(--p-indigo-300);
+  --stats-chip-text: var(--p-indigo-700);
+  --stats-range-btn-bg: var(--p-black-a04);
+  --stats-range-btn-border: var(--p-black-a06);
+  --stats-range-btn-text: var(--text-color-inactive);
+  --stats-range-btn-hover-bg: var(--p-black-a08);
+  --stats-range-btn-hover-text: var(--text-color-primary);
+  --stats-range-btn-active-bg: var(--p-black-a08);
+  --stats-range-btn-active-border: var(--border-accent);
+  --stats-range-btn-active-text: var(--text-color-primary);
+  --stats-range-btn-check: var(--border-accent);
+  --switch-track-bg: var(--p-black-a18);
+  --switch-track-active-bg: var(--color-primary);
+  --switch-thumb-bg: var(--p-white);
 
   /* 5) Chart Series & Axis (라이트 모드 차트 축/그리드) */
   --chart-axis: var(--p-neutral-700);
@@ -708,14 +798,14 @@
   --chart-pie-neutral-2: var(--p-neutral-650);
   --chart-pie-neutral-3: var(--p-neutral-450);
   --chart-pie-neutral-4: var(--p-neutral-250);
-  --chart-pie-slice-stroke: #ffffff;
+  --chart-pie-slice-stroke: var(--p-white);
 
   /* 6) Shadows (라이트 모드 소프트 그림자) */
-  --shadow-legend: 0 4px 14px rgba(0, 0, 0, 0.08);
-  --shadow-tooltip: 0 10px 25px rgba(0, 0, 0, 0.12);
-  --shadow-floating-modal: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-dialog-modal: 0 24px 64px rgba(0, 0, 0, 0.16);
-  --shadow-edit-resizing: 0 16px 36px rgba(0, 0, 0, 0.18);
+  --shadow-legend: 0 4px 14px var(--p-black-a08);
+  --shadow-tooltip: 0 10px 25px var(--p-black-a12);
+  --shadow-floating-modal: 0 8px 24px var(--p-black-a12);
+  --shadow-dialog-modal: 0 24px 64px var(--p-black-a16);
+  --shadow-edit-resizing: 0 16px 36px var(--p-black-a18);
 
   /* 7) Disaster & Realtime Alert Semantics (라이트 모드 재난 안전 및 배지 토큰) */
   --disaster-icon-critical-bg: rgba(239, 68, 68, 0.12);
@@ -1401,6 +1491,17 @@
 }
 [data-mode="light"] .settings-btn.save:hover {
   background: var(--p-indigo-600);
+}
+
+/* ==========================================================================
+   라이트 모드 통계 기간 설정 & 보고서 출력 바 (.stats-filter-bar) 보정
+   ========================================================================== */
+[data-mode="light"] .stats-filter-bar {
+  box-shadow: var(--shadow-widget);
+}
+[data-mode="light"] .stats-date-input {
+  color: var(--text-color-primary);
+  color-scheme: light;
 }
 
 /* 짧은 화면 반응형 토큰 보정 */

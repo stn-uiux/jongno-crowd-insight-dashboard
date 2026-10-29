@@ -379,6 +379,7 @@
   }
 
   function applyPersistedSizes() {
+    if (document.body.classList.contains("is-stats-view")) return;
     const sizes = loadSizes();
     const board = getBoardSize();
     Object.entries(sizes).forEach(([id, size]) => {

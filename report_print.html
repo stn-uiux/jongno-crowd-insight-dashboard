@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>종로구 스마트인파 관리 — 통계 분석 보고서 (A4 가로)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+      :root {
+        --page-w: 297mm;
+        --page-h: 210mm;
+        --pad: 5mm 10mm;
+        --header-h: 16mm;
+        --footer-h: 13mm;
+        --rule: 0.25mm solid #64748b;
+        --ico-state-occur-border: #e3373f;
+        --ico-state-notice-border: #2563eb;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+        background: #e5e7eb;
+        color: #111827;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* 우측 하단 플로팅 액션 바 (인쇄 시 숨김) */
+      .no-print-bar {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 99999;
+      }
+
+      .no-print-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 18px;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #1e293b;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+      }
+      .no-print-btn:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.2);
+      }
+      .no-print-btn.is-primary {
+        background: #1e293b;
+        border-color: #1e293b;
+        color: #ffffff;
+      }
+      .no-print-btn.is-primary:hover {
+        background: #0f172a;
+      }
+      .no-print-btn.is-pdf {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #ffffff;
+      }
+      .no-print-btn.is-pdf:hover {
+        background: #1d4ed8;
+      }
+      .no-print-btn:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+
+      #pages {
+        padding: 12mm 0;
+      }
+
+      .page {
+        width: var(--page-w);
+        height: var(--page-h);
+        margin: 0 auto 12mm;
+        background: #fff;
+        box-shadow: 0 2mm 8mm rgba(0, 0, 0, 0.12);
+        box-sizing: border-box;
+        padding: var(--pad);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        break-after: page;
+        page-break-after: always;
+      }
+      .page:last-child {
+        break-after: auto;
+        page-break-after: auto;
+      }
+
+      .page-header {
+        height: var(--header-h);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border-bottom: var(--rule);
+        box-sizing: border-box;
+        padding: 2mm 0 3mm;
+        flex: 0 0 auto;
+      }
+      .meta-left {
+        display: flex;
+        flex-direction: column;
+        gap: 1mm;
+      }
+      .meta-title {
+        font-weight: 800;
+        font-size: 11.5pt;
+        color: #0f172a;
+      }
+      .meta-sub {
+        font-size: 9.5pt;
+        color: #475569;
+      }
+      .meta-right {
+        text-align: right;
+        font-size: 9.5pt;
+        color: #334155;
+        line-height: 1.35;
+      }
+      .meta-right b {
+        color: #0f172a;
+      }
+
+      .page-body {
+        flex: 1 1 auto;
+        padding: 4mm 3mm 3mm;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .block {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100%;
+      }
+
+      .page-footer {
+        height: var(--footer-h);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: var(--rule);
+        box-sizing: border-box;
+        padding: 3mm 0 0;
+        font-size: 9.5pt;
+        color: #475569;
+        flex: 0 0 auto;
+      }
+
+      h4 {
+        font-size: 14pt;
+        font-weight: 800;
+        margin: 4mm 0 3mm;
+        color: #0f172a;
+      }
+      .page-body > h4:first-child,
+      .block > h4:first-child {
+        margin-top: 1mm;
+      }
+      h5 {
+        font-size: 11pt;
+        font-weight: 700;
+        margin: 3.5mm 0 2.5mm 2mm;
+        color: #1e293b;
+      }
+      p {
+        margin: 0 0 3mm;
+        line-height: 1.5;
+        color: #334155;
+      }
+
+      .txt_up {
+        font-weight: 700;
+        color: var(--ico-state-occur-border);
+      }
+      .txt_down {
+        font-weight: 700;
+        color: var(--ico-state-notice-border);
+      }
+
+      table.tbl {
+        width: calc(100% - 4mm);
+        border-collapse: collapse;
+        font-size: 9.5pt;
+        margin: 0 2mm 3mm;
+        table-layout: fixed;
+      }
+      .tbl th,
+      .tbl td {
+        border: 1px solid #cbd5e1;
+        padding: 2.2mm 2mm;
+        word-break: break-word;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .tbl th {
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 700;
+        font-size: 9.5pt;
+      }
+      .tbl tbody tr:nth-child(even) td {
+        background: #f8fafc;
+      }
+      .tbl td {
+        color: #1e293b;
+        font-weight: 600;
+      }
+
+      /* 4대 핵심 지표 KPI 카드 그리드 (A4 인쇄용 단정한 화이트 카드) */
+      .report-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 3mm;
+        margin: 0 2mm 3.5mm;
+      }
+      .report-kpi-card {
+        border: 1px solid #cbd5e1;
+        border-radius: 0;
+        background: #ffffff;
+        padding: 2.8mm 3.2mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 22mm;
+        box-sizing: border-box;
+      }
+      .report-kpi-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        font-size: 8.5pt;
+        font-weight: 700;
+        color: #475569;
+      }
+      .report-kpi-top i,
+      .report-kpi-top svg {
+        font-size: 11pt;
+        color: #334155;
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+      }
+      .report-kpi-val {
+        font-size: 14.5pt;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.3px;
+        margin: 1.5mm 0 2mm;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .report-kpi-val em {
+        font-style: normal;
+        font-size: 7.5pt;
+        font-weight: 700;
+        color: #64748b;
+        border: 1px solid #cbd5e1;
+        border-radius: 3px;
+        padding: 0.3mm 1.2mm;
+      }
+      .report-kpi-badge {
+        align-self: flex-end;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0.8mm 2.2mm;
+        border-radius: 999px;
+        font-size: 7.5pt;
+        font-weight: 700;
+      }
+      .report-kpi-badge.is-up {
+        background: #fef2f2;
+        color: #e3373f;
+      }
+      .report-kpi-badge.is-down {
+        background: #eff6ff;
+        color: #2563eb;
+      }
+      .report-kpi-badge.is-flat {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+      .report-kpi-badge .sep {
+        color: #cbd5e1;
+      }
+
+      /* 차트 박스 (A4 인쇄용 단정한 테두리, 그림자 없음) */
+      .report-chart-box {
+        margin: 0 2mm 3mm;
+        padding: 3.5mm 4.5mm 3mm;
+        border: 1px solid #cbd5e1;
+        border-radius: 0;
+        background: #ffffff;
+        box-sizing: border-box;
+      }
+      .report-chart-box.is-fill {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        margin-bottom: 0;
+      }
+      .report-chart-box.is-fill svg {
+        flex: 1 1 auto;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+      }
+      .report-chart-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2.5mm;
+        flex: 0 0 auto;
+      }
+      .report-chart-title {
+        font-size: 10.5pt;
+        font-weight: 800;
+        color: #0f172a;
+        white-space: nowrap;
+      }
+      .report-chart-legend {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 8.5pt;
+        font-weight: 700;
+        color: #334155;
+        white-space: nowrap;
+      }
+      .report-chart-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .report-compare-legend {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4mm;
+        margin-bottom: 2mm;
+        font-size: 8pt;
+        font-weight: 700;
+        color: #334155;
+        flex: 0 0 auto;
+      }
+      .report-compare-legend-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1mm;
+        white-space: nowrap;
+      }
+      .report-compare-legend-label {
+        font-size: 8pt;
+        font-weight: 700;
+        color: #1e293b;
+      }
+      .report-compare-legend-label em {
+        font-style: normal;
+        font-weight: 600;
+        color: #64748b;
+      }
+      .report-compare-legend-keys {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 8pt;
+        font-weight: 700;
+        color: #334155;
+      }
+      .report-compare-legend-keys span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .lg-sq {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        flex: 0 0 auto;
+      }
+      .report-chart-legend em {
+        font-style: normal;
+        font-weight: 500;
+        color: #64748b;
+      }
+      .lg-bar {
+        display: inline-block;
+        width: 11px;
+        height: 3px;
+        border-radius: 2px;
+      }
+
+      .flex_row {
+        display: flex;
+        flex-direction: row;
+        gap: 5mm;
+        margin: 0 2mm;
+      }
+      .flex_row.is-fill {
+        flex: 1 1 auto;
+        min-height: 0;
+        margin-bottom: 0;
+      }
+      .flex_row .item_box {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .flex_row .report-chart-box {
+        margin: 0;
+      }
+
+      /* 2x2 구역별 체류인원 & 혼잡도 통합 박스 (A4 1페이지 꽉 채움) */
+      .report-zone-stay-box {
+        margin: 0 2mm;
+        padding: 4mm 5mm 3.5mm;
+        border: 1px solid #cbd5e1;
+        border-radius: 0;
+        background: #ffffff;
+        box-sizing: border-box;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .report-zone-stay-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 3mm;
+        flex: 0 0 auto;
+      }
+      .report-zone-stay-grid {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 4mm 6mm;
+        min-height: 0;
+      }
+      .report-zone-stay-item {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+      }
+      .report-zone-stay-sub {
+        margin: 0 0 1.5mm;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.8mm;
+        text-align: center;
+        font-size: 9.8pt;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.2px;
+        flex: 0 0 auto;
+      }
+      .report-zone-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 5.2mm;
+        padding: 0 2.2mm;
+        border-radius: 999px;
+        border: 0.3mm solid #a0aaff;
+        background: #e6e9ff;
+        color: #333bb8;
+        font-size: 8.2pt;
+        font-weight: 800;
+        line-height: 1;
+        flex: 0 0 auto;
+      }
+      .report-zone-stay-item svg {
+        flex: 1 1 auto;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: block;
+      }
+
+      /* ===== Cover page (표지 — report_print.html 양식 동일) ===== */
+      .page.page-cover {
+        padding: 0;
+      }
+      .cover {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 12mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .cover::before {
+        content: "";
+        position: absolute;
+        inset: 6mm;
+        border: 0.6mm solid #111;
+        pointer-events: none;
+      }
+      .cover::after {
+        content: "";
+        position: absolute;
+        left: 12mm;
+        right: 12mm;
+        top: 18mm;
+        height: 0.3mm;
+        background: #111;
+        pointer-events: none;
+      }
+      .cover-bottom-rule {
+        position: absolute;
+        left: 12mm;
+        right: 12mm;
+        bottom: 20mm;
+        height: 0.3mm;
+        background: #111;
+        pointer-events: none;
+      }
+      .cover-topbar {
+        position: absolute;
+        left: 12mm;
+        right: 12mm;
+        top: 10mm;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12pt;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+      }
+      .cover-topbar .right {
+        font-weight: 700;
+      }
+      .cover-title {
+        font-size: 32pt;
+        font-weight: 900;
+        letter-spacing: -0.6px;
+        margin-top: 6mm;
+        margin-bottom: 10mm;
+      }
+      .cover-toc-title {
+        font-size: 20pt;
+        font-weight: 900;
+        letter-spacing: 10px;
+        margin: 0 0 10mm;
+      }
+      .cover-toc {
+        width: 60%;
+        min-width: 280px;
+        font-size: 17pt;
+        font-weight: 800;
+        line-height: 2.15;
+      }
+      .cover-toc .item {
+        display: flex;
+        gap: 10mm;
+        justify-content: flex-start;
+      }
+      .cover-toc .no {
+        width: 18mm;
+        text-align: right;
+      }
+      .cover-org {
+        position: absolute;
+        right: 14mm;
+        bottom: 10mm;
+        font-size: 18pt;
+        font-weight: 900;
+        letter-spacing: -0.4px;
+      }
+
+      body.is-generating-pdf {
+        background: #fff !important;
+      }
+      body.is-generating-pdf #pages {
+        padding: 0 !important;
+      }
+      body.is-generating-pdf .page {
+        margin: 0 !important;
+        box-shadow: none !important;
+      }
+
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 0;
+        }
+        body {
+          background: #fff;
+        }
+        #pages {
+          padding: 0;
+        }
+        .page {
+          margin: 0;
+          box-shadow: none;
+        }
+        .no-print-bar {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="no-print-bar">
+      <button type="button" class="no-print-btn is-pdf" id="btn-download-pdf">
+        <i class="bi bi-file-earmark-pdf"></i>
+        <span>PDF로 다운로드</span>
+      </button>
+      <button type="button" class="no-print-btn is-primary" onclick="window.print()">
+        <i class="bi bi-printer"></i>
+        <span>인쇄하기 (Print)</span>
+      </button>
+      <button type="button" class="no-print-btn" onclick="window.close()">
+        <i class="bi bi-x-lg"></i>
+        <span>닫기</span>
+      </button>
+    </div>
+
+    <!-- 원본 리포트 블록 소스 (#source -> JS 페이지네이션을 통해 A4 .page 들로 자동 분할) -->
+    <div id="source" style="display: none">
+      <!-- Page 1 분량: 1. 주요 지표 요약 및 구역별 체류 분포·비교 분석 -->
+      <div class="block">
+        <h4>1. 주요 지표 요약 및 구역별 체류 분포·비교 분석</h4>
+        <h5>가. 핵심 지표 총괄 현황</h5>
+        <div class="report-kpi-grid">
+          <div class="report-kpi-card">
+            <div class="report-kpi-top">
+              <span>총 방문인원</span>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 7C5 8.06087 5.42143 9.07828 6.17157 9.82843C6.92172 10.5786 7.93913 11 9 11C10.0609 11 11.0783 10.5786 11.8284 9.82843C12.5786 9.07828 13 8.06087 13 7C13 5.93913 12.5786 4.92172 11.8284 4.17157C11.0783 3.42143 10.0609 3 9 3C7.93913 3 6.92172 3.42143 6.17157 4.17157C5.42143 4.92172 5 5.93913 5 7Z" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 21V19C3 17.9391 3.42143 16.9217 4.17157 16.1716C4.92172 15.4214 5.93913 15 7 15H11C12.0609 15 13.0783 15.4214 13.8284 16.1716C14.5786 16.9217 15 17.9391 15 19V21" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 21V19C20.9949 18.1172 20.6979 17.2608 20.1553 16.5644C19.6126 15.868 18.8548 15.3707 18 15.15" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="report-kpi-val">80,007명</div>
+            <div class="report-kpi-badge is-up">
+              <span>▲ 21명</span>
+              <span class="sep">|</span>
+              <span data-report-compare-label>지난달 대비</span>
+            </div>
+          </div>
+          <div class="report-kpi-card">
+            <div class="report-kpi-top">
+              <span data-report-accum-title>이번달 누적 방문 인원</span>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 7C8 8.06087 8.42143 9.07828 9.17157 9.82843C9.92172 10.5786 10.9391 11 12 11C13.0609 11 14.0783 10.5786 14.8284 9.82843C15.5786 9.07828 16 8.06087 16 7C16 5.93913 15.5786 4.92172 14.8284 4.17157C14.0783 3.42143 13.0609 3 12 3C10.9391 3 9.92172 3.42143 9.17157 4.17157C8.42143 4.92172 8 5.93913 8 7Z" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 19H22" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19 16V22" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 21V19C6 17.9391 6.42143 16.9217 7.17157 16.1716C7.92172 15.4214 8.93913 15 10 15H14" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="report-kpi-val">3,222,187명</div>
+            <div class="report-kpi-badge is-up">
+              <span>▲ 21명</span>
+              <span class="sep">|</span>
+              <span data-report-compare-label>지난달 대비</span>
+            </div>
+          </div>
+          <div class="report-kpi-card">
+            <div class="report-kpi-top">
+              <span>90일 이내 재방문률</span>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 7C8 8.06087 8.42143 9.07828 9.17157 9.82843C9.92172 10.5786 10.9391 11 12 11C13.0609 11 14.0783 10.5786 14.8284 9.82843C15.5786 9.07828 16 8.06087 16 7C16 5.93913 15.5786 4.92172 14.8284 4.17157C14.0783 3.42143 13.0609 3 12 3C10.9391 3 9.92172 3.42143 9.17157 4.17157C8.42143 4.92172 8 5.93913 8 7Z" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 21V19C6 17.9391 6.42143 16.9217 7.17157 16.1716C7.92172 15.4214 8.93913 15 10 15H10.5" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17.8 20.817L15.628 21.955C15.5635 21.9885 15.491 22.0035 15.4186 21.9982C15.3461 21.993 15.2765 21.9677 15.2176 21.9251C15.1587 21.8826 15.1127 21.8245 15.0849 21.7574C15.0571 21.6903 15.0485 21.6167 15.06 21.545L15.475 19.134L13.718 17.427C13.6656 17.3763 13.6284 17.3119 13.6108 17.2411C13.5933 17.1703 13.5959 17.096 13.6186 17.0266C13.6412 16.9573 13.6829 16.8957 13.7388 16.8489C13.7948 16.8021 13.8627 16.772 13.935 16.762L16.363 16.41L17.449 14.217C17.4815 14.1517 17.5315 14.0967 17.5935 14.0583C17.6556 14.0199 17.7271 13.9995 17.8 13.9995C17.8729 13.9995 17.9444 14.0199 18.0065 14.0583C18.0685 14.0967 18.1185 14.1517 18.151 14.217L19.237 16.41L21.665 16.762C21.737 16.7724 21.8047 16.8027 21.8605 16.8495C21.9162 16.8964 21.9577 16.9579 21.9802 17.027C22.0028 17.0962 22.0056 17.1704 21.9882 17.241C21.9709 17.3117 21.9341 17.3761 21.882 17.427L20.125 19.134L20.539 21.544C20.5514 21.6159 20.5434 21.6898 20.516 21.7573C20.4885 21.8249 20.4426 21.8834 20.3836 21.9262C20.3245 21.969 20.2547 21.9944 20.1819 21.9995C20.1092 22.0046 20.0364 21.9892 19.972 21.955L17.8 20.817Z" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="report-kpi-val">23%</div>
+            <div class="report-kpi-badge is-flat">
+              <span>- 변동없음</span>
+              <span class="sep">|</span>
+              <span data-report-compare-label>지난달 대비</span>
+            </div>
+          </div>
+          <div class="report-kpi-card">
+            <div class="report-kpi-top">
+              <span>평균 체류 시간</span>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 7V12L15 15" stroke="#334155" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="report-kpi-val">109분</div>
+            <div class="report-kpi-badge is-down">
+              <span>▼ 30분</span>
+              <span class="sep">|</span>
+              <span data-report-compare-label>지난달 대비</span>
+            </div>
+          </div>
+        </div>
+
+        <h5>나. 구역별 총 체류인원 분포 &amp; 방문인원·혼잡도 비교</h5>
+        <div class="flex_row is-fill">
+          <!-- 좌측: 구역별 총 체류인원 분포 -->
+          <div class="item_box">
+            <div class="report-chart-box is-fill">
+              <div class="report-chart-head">
+                <span class="report-chart-title">구역별 총 체류인원 분포</span>
+              </div>
+              <svg viewBox="0 0 430 220" width="100%" height="100%" style="display:block">
+                <!-- 도넛 차트 (중심 110, 112, r=62, stroke-width=22, 둘레=389.56) -->
+                <g transform="rotate(-90 110 112)">
+                  <!-- 헌법 재판소일대 40% (155.82) -->
+                  <circle cx="110" cy="112" r="62" fill="none" stroke="#d92d20" stroke-width="22" stroke-dasharray="155.82 389.56" stroke-dashoffset="0"/>
+                  <!-- 광화문 광장 접점 16% (62.33) -->
+                  <circle cx="110" cy="112" r="62" fill="none" stroke="#3b82f6" stroke-width="22" stroke-dasharray="62.33 389.56" stroke-dashoffset="-155.82"/>
+                  <!-- 낙원동 10% (38.96) -->
+                  <circle cx="110" cy="112" r="62" fill="none" stroke="#7c8ba1" stroke-width="22" stroke-dasharray="38.96 389.56" stroke-dashoffset="-218.15"/>
+                  <!-- 익선동 34% (132.45) -->
+                  <circle cx="110" cy="112" r="62" fill="none" stroke="#f97316" stroke-width="22" stroke-dasharray="132.45 389.56" stroke-dashoffset="-257.11"/>
+                </g>
+                <!-- 도넛 바깥 % 라벨 -->
+                <g font-size="10" font-weight="800" fill="#1e293b">
+                  <text x="188" y="95" text-anchor="start">40%</text>
+                  <text x="114" y="198" text-anchor="middle">16%</text>
+                  <text x="46" y="182" text-anchor="end">10%</text>
+                  <text x="40" y="72" text-anchor="end">34%</text>
+                </g>
+                <text x="110" y="109" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a">80,007</text>
+                <text x="110" y="124" text-anchor="middle" font-size="9.5" font-weight="600" fill="#64748b">체류 인원(명)</text>
+
+                <!-- 우측 구역별 체류인원 표 -->
+                <g transform="translate(212, 32)">
+                  <rect x="0" y="0" width="210" height="155" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+                  <rect x="0" y="0" width="210" height="31" rx="0" fill="#f1f5f9"/>
+                  <line x1="0" y1="31" x2="210" y2="31" stroke="#cbd5e1" stroke-width="1"/>
+                  <line x1="0" y1="62" x2="210" y2="62" stroke="#e2e8f0" stroke-width="1"/>
+                  <rect x="1" y="62.5" width="208" height="30" fill="#f8fafc"/>
+                  <line x1="0" y1="93" x2="210" y2="93" stroke="#e2e8f0" stroke-width="1"/>
+                  <line x1="0" y1="124" x2="210" y2="124" stroke="#e2e8f0" stroke-width="1"/>
+                  <rect x="1" y="124.5" width="208" height="29.5" fill="#f8fafc"/>
+                  <line x1="142" y1="0" x2="142" y2="155" stroke="#e2e8f0" stroke-width="1"/>
+
+                  <g font-size="9.5" font-weight="700" fill="#475569">
+                    <text x="11" y="19">구역</text>
+                    <text x="199" y="19" text-anchor="end">체류인원</text>
+                  </g>
+
+                  <!-- Row 1: A구역 헌법 재판소 일대 -->
+                  <circle cx="13" cy="46.5" r="3.5" fill="#d92d20"/>
+                  <text x="21" y="50" font-size="9" font-weight="600" fill="#334155">A구역 헌법 재판소 일대</text>
+                  <text x="199" y="50" text-anchor="end" font-size="9.5" font-weight="700" fill="#0f172a">32,003명</text>
+
+                  <!-- Row 2: B구역 광화문 광장 접점 -->
+                  <circle cx="13" cy="77.5" r="3.5" fill="#3b82f6"/>
+                  <text x="21" y="81" font-size="9" font-weight="600" fill="#334155">B구역 광화문 광장 접점</text>
+                  <text x="199" y="81" text-anchor="end" font-size="9.5" font-weight="700" fill="#0f172a">12,801명</text>
+
+                  <!-- Row 3: C구역 낙원동 -->
+                  <circle cx="13" cy="108.5" r="3.5" fill="#7c8ba1"/>
+                  <text x="21" y="112" font-size="9" font-weight="600" fill="#334155">C구역 낙원동</text>
+                  <text x="199" y="112" text-anchor="end" font-size="9.5" font-weight="700" fill="#0f172a">8,001명</text>
+
+                  <!-- Row 4: D구역 익선동 -->
+                  <circle cx="13" cy="139.5" r="3.5" fill="#f97316"/>
+                  <text x="21" y="143" font-size="9" font-weight="600" fill="#334155">D구역 익선동</text>
+                  <text x="199" y="143" text-anchor="end" font-size="9.5" font-weight="700" fill="#0f172a">27,202명</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 우측: 방문인원 & 혼잡도 비교 (7일: 주간/지난주·이번주, 30일: 월간/지난달·이번달, 90일: 분기별/지난분기·이번분기) -->
+          <div class="item_box">
+            <div class="report-chart-box is-fill">
+              <div class="report-chart-head" style="margin-bottom: 1.5mm">
+                <span class="report-chart-title" data-report-compare-title>월간 방문인원 &amp; 혼잡도 비교</span>
+              </div>
+              <div class="report-compare-legend">
+                <div class="report-compare-legend-group">
+                  <div class="report-compare-legend-label">방문인원 <em>(단위: 명)</em></div>
+                  <div class="report-compare-legend-keys">
+                    <span><i class="lg-sq" style="background:#cbe2ff"></i><b data-report-past-label style="font-weight:700">지난달</b></span>
+                    <span><i class="lg-sq" style="background:#0b60c6"></i><b data-report-curr-label style="font-weight:700">이번달</b></span>
+                  </div>
+                </div>
+                <div class="report-compare-legend-group">
+                  <div class="report-compare-legend-label">혼잡도 <em>(단위: 명/㎡)</em></div>
+                  <div class="report-compare-legend-keys">
+                    <span><i class="lg-sq" style="background:#b9f2dc"></i><b data-report-past-label style="font-weight:700">지난달</b></span>
+                    <span><i class="lg-sq" style="background:#0fa96e"></i><b data-report-curr-label style="font-weight:700">이번달</b></span>
+                  </div>
+                </div>
+              </div>
+              <svg viewBox="0 0 430 190" width="100%" height="100%" style="display:block">
+                <g stroke="#e2e8f0" stroke-width="1">
+                  <line x1="36" y1="14"  x2="394" y2="14"/>
+                  <line x1="36" y1="51"  x2="394" y2="51"/>
+                  <line x1="36" y1="88"  x2="394" y2="88"/>
+                  <line x1="36" y1="125" x2="394" y2="125"/>
+                  <line x1="36" y1="162" x2="394" y2="162"/>
+                </g>
+                <!-- 좌측 Y축 (방문인원 0~400) -->
+                <g fill="#4992ff" font-size="9.5" font-weight="700" text-anchor="end">
+                  <text x="30" y="18">400</text>
+                  <text x="30" y="55">300</text>
+                  <text x="30" y="92">200</text>
+                  <text x="30" y="129">100</text>
+                  <text x="30" y="166">0</text>
+                </g>
+                <!-- 우측 Y축 (혼잡도 0~100) -->
+                <g fill="#25c789" font-size="9.5" font-weight="700" text-anchor="start">
+                  <text x="400" y="18">100</text>
+                  <text x="400" y="55">75</text>
+                  <text x="400" y="92">50</text>
+                  <text x="400" y="129">25</text>
+                  <text x="400" y="166">0</text>
+                </g>
+                <!-- 방문인원 막대: 지난(220 -> y=80.6, h=81.4), 이번(300 -> y=51, h=111) -->
+                <rect x="104" y="81" width="30" height="81" rx="4" fill="#cbe2ff"/>
+                <rect x="142" y="51" width="30" height="111" rx="4" fill="#0b60c6"/>
+                <!-- 혼잡도 막대: 지난(18 -> y=135.4, h=26.6), 이번(28 -> y=120.6, h=41.4) -->
+                <rect x="258" y="135" width="30" height="27" rx="4" fill="#b9f2dc"/>
+                <rect x="296" y="121" width="30" height="41" rx="4" fill="#0fa96e"/>
+                <g fill="#334155" font-size="10.5" font-weight="700" text-anchor="middle">
+                  <text x="138" y="182">방문인원</text>
+                  <text x="292" y="182">혼잡도</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 2 분량: 2. 구역별 체류인원 & 혼잡도 (구역별 A~D 2x2 배열로 한 페이지 가득 배치) -->
+      <div class="block">
+        <h4>2. 구역별 체류인원 &amp; 혼잡도 분석</h4>
+        <h5>가. 구역별 체류인원 &amp; 혼잡도</h5>
+        <div class="report-zone-stay-box">
+          <div class="report-zone-stay-head">
+            <span class="report-chart-title">구역별 체류인원 &amp; 혼잡도</span>
+            <div class="report-chart-legend">
+              <span><i class="lg-bar" style="background:#4992ff"></i>체류인원 <em>(단위: 명)</em></span>
+              <span><i class="lg-bar" style="background:#25c789"></i>혼잡도 <em>(단위: 명/㎡)</em></span>
+            </div>
+          </div>
+          <div class="report-zone-stay-grid">
+            <!-- 1) A구역 체류인원 & 혼잡도 -->
+            <div class="report-zone-stay-item">
+              <div class="report-zone-stay-sub"><span class="report-zone-chip">A구역</span><span>헌법 재판소 일대 체류인원 &amp; 혼잡도</span></div>
+              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="A구역">
+                <g stroke="#e2e8f0" stroke-width="1">
+                  <line x1="36" y1="14"  x2="396" y2="14"/>
+                  <line x1="36" y1="49"  x2="396" y2="49"/>
+                  <line x1="36" y1="84"  x2="396" y2="84"/>
+                  <line x1="36" y1="119" x2="396" y2="119"/>
+                  <line x1="36" y1="154" x2="396" y2="154"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 2) B구역 체류인원 & 혼잡도 -->
+            <div class="report-zone-stay-item">
+              <div class="report-zone-stay-sub"><span class="report-zone-chip">B구역</span><span>광화문 광장 접점 체류인원 &amp; 혼잡도</span></div>
+              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="B구역">
+                <g stroke="#e2e8f0" stroke-width="1">
+                  <line x1="36" y1="14"  x2="396" y2="14"/>
+                  <line x1="36" y1="49"  x2="396" y2="49"/>
+                  <line x1="36" y1="84"  x2="396" y2="84"/>
+                  <line x1="36" y1="119" x2="396" y2="119"/>
+                  <line x1="36" y1="154" x2="396" y2="154"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 3) C구역 체류인원 & 혼잡도 -->
+            <div class="report-zone-stay-item">
+              <div class="report-zone-stay-sub"><span class="report-zone-chip">C구역</span><span>낙원동 체류인원 &amp; 혼잡도</span></div>
+              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="C구역">
+                <g stroke="#e2e8f0" stroke-width="1">
+                  <line x1="36" y1="14"  x2="396" y2="14"/>
+                  <line x1="36" y1="49"  x2="396" y2="49"/>
+                  <line x1="36" y1="84"  x2="396" y2="84"/>
+                  <line x1="36" y1="119" x2="396" y2="119"/>
+                  <line x1="36" y1="154" x2="396" y2="154"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 4) D구역 체류인원 & 혼잡도 -->
+            <div class="report-zone-stay-item">
+              <div class="report-zone-stay-sub"><span class="report-zone-chip">D구역</span><span>익선동 체류인원 &amp; 혼잡도</span></div>
+              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="D구역">
+                <g stroke="#e2e8f0" stroke-width="1">
+                  <line x1="36" y1="14"  x2="396" y2="14"/>
+                  <line x1="36" y1="49"  x2="396" y2="49"/>
+                  <line x1="36" y1="84"  x2="396" y2="84"/>
+                  <line x1="36" y1="119" x2="396" y2="119"/>
+                  <line x1="36" y1="154" x2="396" y2="154"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 3 분량: 3. 구역별 통계 표 -->
+      <div class="block" style="flex: 0 0 auto">
+        <h4>3. 구역별 통계 표</h4>
+        <table class="tbl" style="margin-bottom: 0">
+          <thead>
+            <tr>
+              <th scope="col">구분</th>
+              <th scope="col">총 방문인원</th>
+              <th scope="col">재방문인원</th>
+              <th scope="col">평균 혼잡도</th>
+              <th scope="col">평균 체류시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>헌법 재판소 일대</td>
+              <td>267</td>
+              <td>82명</td>
+              <td>0.023명/㎡</td>
+              <td>4시간</td>
+            </tr>
+            <tr>
+              <td>광화문 광장 접점</td>
+              <td>512</td>
+              <td>82명</td>
+              <td>0.023명/㎡</td>
+              <td>1시간</td>
+            </tr>
+            <tr>
+              <td>낙원동</td>
+              <td>789</td>
+              <td>82명</td>
+              <td>0.023명/㎡</td>
+              <td>0.5시간</td>
+            </tr>
+            <tr>
+              <td>익선동</td>
+              <td>321</td>
+              <td>82명</td>
+              <td>0.023명/㎡</td>
+              <td>0.2시간</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- A4 가로 페이지들이 렌더링되는 영역 -->
+    <div id="pages"></div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const startParam = params.get("start") || "2026-09-04";
+      const endParam = params.get("end") || "2026-10-03";
+      const daysParam = parseInt(params.get("days") || "30", 10);
+      const compareLabelText =
+        daysParam === 7 ? "저번주 대비" : daysParam === 90 ? "지난 분기 대비" : "지난달 대비";
+      const accumTitleText =
+        daysParam === 7
+          ? "이번주 누적 방문 인원"
+          : daysParam === 90
+            ? "이번분기 누적 방문 인원"
+            : "이번달 누적 방문 인원";
+      const compareTitleText =
+        daysParam === 7
+          ? "주간 방문인원 & 혼잡도 비교"
+          : daysParam === 90
+            ? "분기별 방문인원 & 혼잡도 비교"
+            : "월간 방문인원 & 혼잡도 비교";
+      const pastLabelText =
+        daysParam === 7 ? "지난주" : daysParam === 90 ? "지난분기" : "지난달";
+      const currLabelText =
+        daysParam === 7 ? "이번주" : daysParam === 90 ? "이번분기" : "이번달";
+      const periodText = `${startParam} ~ ${endParam}`;
+
+      document.querySelectorAll("[data-report-compare-label]").forEach((el) => {
+        el.textContent = compareLabelText;
+      });
+      document.querySelectorAll("[data-report-accum-title]").forEach((el) => {
+        el.textContent = accumTitleText;
+      });
+      document.querySelectorAll("[data-report-compare-title]").forEach((el) => {
+        el.textContent = compareTitleText;
+      });
+      document.querySelectorAll("[data-report-past-label]").forEach((el) => {
+        el.textContent = pastLabelText;
+      });
+      document.querySelectorAll("[data-report-curr-label]").forEach((el) => {
+        el.textContent = currLabelText;
+      });
+
+      const REPORT_STAY_ZONE_DATA = {
+        7: {
+          "A구역": [
+            { hour: "월", stay: 280, cong: 32 },
+            { hour: "화", stay: 210, cong: 48 },
+            { hour: "수", stay: 360, cong: 58 },
+            { hour: "목", stay: 190, cong: 42 },
+            { hour: "금", stay: 120, cong: 28 },
+            { hour: "토", stay: 250, cong: 72 },
+            { hour: "일", stay: 210, cong: 68 },
+          ],
+          "B구역": [
+            { hour: "월", stay: 190, cong: 26 },
+            { hour: "화", stay: 240, cong: 36 },
+            { hour: "수", stay: 310, cong: 52 },
+            { hour: "목", stay: 220, cong: 39 },
+            { hour: "금", stay: 160, cong: 30 },
+            { hour: "토", stay: 280, cong: 64 },
+            { hour: "일", stay: 250, cong: 58 },
+          ],
+          "C구역": [
+            { hour: "월", stay: 140, cong: 20 },
+            { hour: "화", stay: 180, cong: 28 },
+            { hour: "수", stay: 230, cong: 38 },
+            { hour: "목", stay: 170, cong: 25 },
+            { hour: "금", stay: 130, cong: 22 },
+            { hour: "토", stay: 200, cong: 46 },
+            { hour: "일", stay: 190, cong: 42 },
+          ],
+          "D구역": [
+            { hour: "월", stay: 320, cong: 42 },
+            { hour: "화", stay: 350, cong: 56 },
+            { hour: "수", stay: 390, cong: 72 },
+            { hour: "목", stay: 300, cong: 52 },
+            { hour: "금", stay: 230, cong: 39 },
+            { hour: "토", stay: 340, cong: 82 },
+            { hour: "일", stay: 310, cong: 76 },
+          ],
+        },
+        30: {
+          "A구역": [
+            { hour: "5일",  stay: 260, cong: 35 },
+            { hour: "10일", stay: 220, cong: 46 },
+            { hour: "15일", stay: 350, cong: 60 },
+            { hour: "20일", stay: 180, cong: 38 },
+            { hour: "25일", stay: 290, cong: 68 },
+            { hour: "30일", stay: 230, cong: 62 },
+          ],
+          "B구역": [
+            { hour: "5일",  stay: 185, cong: 28 },
+            { hour: "10일", stay: 250, cong: 40 },
+            { hour: "15일", stay: 305, cong: 54 },
+            { hour: "20일", stay: 195, cong: 34 },
+            { hour: "25일", stay: 275, cong: 62 },
+            { hour: "30일", stay: 245, cong: 55 },
+          ],
+          "C구역": [
+            { hour: "5일",  stay: 135, cong: 22 },
+            { hour: "10일", stay: 175, cong: 30 },
+            { hour: "15일", stay: 225, cong: 40 },
+            { hour: "20일", stay: 150, cong: 24 },
+            { hour: "25일", stay: 210, cong: 48 },
+            { hour: "30일", stay: 185, cong: 41 },
+          ],
+          "D구역": [
+            { hour: "5일",  stay: 310, cong: 44 },
+            { hour: "10일", stay: 345, cong: 58 },
+            { hour: "15일", stay: 385, cong: 74 },
+            { hour: "20일", stay: 270, cong: 45 },
+            { hour: "25일", stay: 350, cong: 80 },
+            { hour: "30일", stay: 320, cong: 72 },
+          ],
+        },
+        90: {
+          "A구역": [
+            { hour: "10일", stay: 250, cong: 34 },
+            { hour: "20일", stay: 290, cong: 45 },
+            { hour: "30일", stay: 220, cong: 38 },
+            { hour: "40일", stay: 340, cong: 62 },
+            { hour: "50일", stay: 190, cong: 40 },
+            { hour: "60일", stay: 150, cong: 30 },
+            { hour: "70일", stay: 280, cong: 66 },
+            { hour: "80일", stay: 320, cong: 74 },
+            { hour: "90일", stay: 240, cong: 60 },
+          ],
+          "B구역": [
+            { hour: "10일", stay: 180, cong: 25 },
+            { hour: "20일", stay: 230, cong: 35 },
+            { hour: "30일", stay: 270, cong: 48 },
+            { hour: "40일", stay: 310, cong: 55 },
+            { hour: "50일", stay: 210, cong: 38 },
+            { hour: "60일", stay: 170, cong: 32 },
+            { hour: "70일", stay: 260, cong: 58 },
+            { hour: "80일", stay: 290, cong: 65 },
+            { hour: "90일", stay: 250, cong: 56 },
+          ],
+          "C구역": [
+            { hour: "10일", stay: 130, cong: 19 },
+            { hour: "20일", stay: 165, cong: 26 },
+            { hour: "30일", stay: 205, cong: 34 },
+            { hour: "40일", stay: 235, cong: 42 },
+            { hour: "50일", stay: 175, cong: 28 },
+            { hour: "60일", stay: 140, cong: 22 },
+            { hour: "70일", stay: 195, cong: 44 },
+            { hour: "80일", stay: 215, cong: 48 },
+            { hour: "90일", stay: 185, cong: 40 },
+          ],
+          "D구역": [
+            { hour: "10일", stay: 300, cong: 40 },
+            { hour: "20일", stay: 335, cong: 52 },
+            { hour: "30일", stay: 370, cong: 66 },
+            { hour: "40일", stay: 390, cong: 75 },
+            { hour: "50일", stay: 310, cong: 54 },
+            { hour: "60일", stay: 245, cong: 42 },
+            { hour: "70일", stay: 330, cong: 76 },
+            { hour: "80일", stay: 360, cong: 84 },
+            { hour: "90일", stay: 315, cong: 74 },
+          ],
+        },
+      };
+
+      function renderReportZoneStaySvgs() {
+        const periodMap = REPORT_STAY_ZONE_DATA[daysParam] || REPORT_STAY_ZONE_DATA[30];
+        document.querySelectorAll("svg[data-report-zone-stay]").forEach((svg) => {
+          const zone = svg.getAttribute("data-report-zone-stay");
+          const rows = periodMap[zone] || periodMap["A구역"];
+          const n = rows.length;
+          const xCoords = rows.map((_, i) => Math.round(36 + (360 * i) / Math.max(1, n - 1)));
+          const stayPts = rows.map((r, i) => ({ x: xCoords[i], y: Math.round(154 - (r.stay / 400) * 140) }));
+          const congPts = rows.map((r, i) => ({ x: xCoords[i], y: Math.round(154 - (r.cong / 100) * 140) }));
+
+          const vLines = xCoords.map((x) => `<line x1="${x}" y1="14" x2="${x}" y2="154"/>`).join("");
+          const stayPoly = stayPts.map((p) => `${p.x},${p.y}`).join(" ");
+          const stayCircles = stayPts.map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3.5"/>`).join("");
+          const congPoly = congPts.map((p) => `${p.x},${p.y}`).join(" ");
+          const congCircles = congPts.map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3.5"/>`).join("");
+          const xLabels = rows.map((r, i) => `<text x="${xCoords[i]}" y="172">${r.hour}</text>`).join("");
+
+          svg.innerHTML = `
+            <g stroke="#e2e8f0" stroke-width="1">
+              <line x1="36" y1="14"  x2="396" y2="14"/>
+              <line x1="36" y1="49"  x2="396" y2="49"/>
+              <line x1="36" y1="84"  x2="396" y2="84"/>
+              <line x1="36" y1="119" x2="396" y2="119"/>
+              <line x1="36" y1="154" x2="396" y2="154"/>
+            </g>
+            <g stroke="#f1f5f9" stroke-width="1">${vLines}</g>
+            <g fill="#4992ff" font-size="9" font-weight="700" text-anchor="end">
+              <text x="30" y="17">400</text>
+              <text x="30" y="52">300</text>
+              <text x="30" y="87">200</text>
+              <text x="30" y="122">100</text>
+              <text x="30" y="157">0</text>
+            </g>
+            <g fill="#25c789" font-size="9" font-weight="700" text-anchor="start">
+              <text x="402" y="17">100</text>
+              <text x="402" y="52">75</text>
+              <text x="402" y="87">50</text>
+              <text x="402" y="122">25</text>
+              <text x="402" y="157">0</text>
+            </g>
+            <polyline fill="none" stroke="#4992ff" stroke-width="2" points="${stayPoly}"/>
+            <g fill="#ffffff" stroke="#4992ff" stroke-width="2">${stayCircles}</g>
+            <polyline fill="none" stroke="#25c789" stroke-width="2" points="${congPoly}"/>
+            <g fill="#ffffff" stroke="#25c789" stroke-width="2">${congCircles}</g>
+            <g fill="#475569" font-size="9" font-weight="700" text-anchor="middle">${xLabels}</g>
+          `;
+        });
+      }
+      renderReportZoneStaySvgs();
+
+      function makeCoverPage() {
+        const page = document.createElement("section");
+        page.className = "page page-cover";
+        page.innerHTML = `
+          <div class="cover">
+            <div class="cover-topbar">
+              <div class="left">종로구 스마트인파 관리 시스템</div>
+              <div class="right">조회기간: ${periodText}</div>
+            </div>
+
+            <div class="cover-title">종로구 스마트인파 통계 보고서</div>
+
+            <div class="cover-toc-title">목&nbsp;&nbsp;차</div>
+
+            <div class="cover-toc">
+              <div class="item"><div class="no">1.</div><div>주요 지표 요약 및 구역별 체류 분포·비교 분석</div></div>
+              <div class="item"><div class="no">2.</div><div>구역별 체류인원 &amp; 혼잡도 분석</div></div>
+              <div class="item"><div class="no">3.</div><div>구역별 통계 표</div></div>
+            </div>
+
+            <div class="cover-bottom-rule"></div>
+            <div class="cover-org">종로구청</div>
+          </div>
+        `;
+        return page;
+      }
+
+      function makePage(pageNo) {
+        const page = document.createElement("section");
+        page.className = "page";
+        page.innerHTML = `
+          <div class="page-header">
+            <div class="meta-left">
+              <div class="meta-title">종로구 스마트인파 관리</div>
+              <div class="meta-sub">종로구청 스마트도시과</div>
+            </div>
+            <div class="meta-right">
+              <b>스마트인파 관리 통계 분석 보고서</b><br/>
+              조회기간: <b>${periodText}</b>
+            </div>
+          </div>
+          <div class="page-body"></div>
+          <div class="page-footer">
+            <div>Confidential · 외부 배포 금지</div>
+            <div>Page <b class="pno">${pageNo}</b></div>
+          </div>
+        `;
+        return page;
+      }
+
+      function buildPagedReport() {
+        const pagesEl = document.getElementById("pages");
+        const src = document.getElementById("source");
+        const items = Array.from(src.children);
+
+        pagesEl.innerHTML = "";
+
+        // 0) 표지(첫 페이지) 추가
+        pagesEl.appendChild(makeCoverPage());
+
+        // 1) 본문 페이지는 각 .block 단위로 Page 1 ~ Page 3에 꽉 차게 배치
+        items.forEach((srcBlock, idx) => {
+          const page = makePage(idx + 1);
+          pagesEl.appendChild(page);
+          const body = page.querySelector(".page-body");
+          body.appendChild(srcBlock.cloneNode(true));
+        });
+      }
+
+      async function downloadAsPdf() {
+        const btn = document.getElementById("btn-download-pdf");
+        const labelEl = btn?.querySelector("span");
+        const prevText = labelEl ? labelEl.textContent : "PDF로 다운로드";
+        if (btn) btn.disabled = true;
+        if (labelEl) labelEl.textContent = "PDF 생성 중...";
+        document.body.classList.add("is-generating-pdf");
+
+        try {
+          const pageEls = Array.from(document.querySelectorAll("#pages > .page"));
+          const opt = {
+            margin: 0,
+            filename: `종로구_스마트인파_통계보고서_${startParam}_${endParam}.pdf`,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: "#ffffff",
+              scrollY: 0,
+            },
+            jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+          };
+
+          if (pageEls.length > 0) {
+            let worker = html2pdf().set(opt).from(pageEls[0]).toPdf();
+            for (let i = 1; i < pageEls.length; i++) {
+              worker = worker
+                .get("pdf")
+                .then((pdf) => {
+                  pdf.addPage();
+                })
+                .from(pageEls[i])
+                .toContainer()
+                .toCanvas()
+                .toPdf();
+            }
+            await worker.save();
+          }
+        } finally {
+          document.body.classList.remove("is-generating-pdf");
+          if (btn) btn.disabled = false;
+          if (labelEl) labelEl.textContent = prevText;
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: "report-pdf-done" }, "*");
+          }
+        }
+      }
+
+      document.getElementById("btn-download-pdf")?.addEventListener("click", downloadAsPdf);
+
+      window.addEventListener("load", () => {
+        buildPagedReport();
+        if (params.get("auto") === "pdf") {
+          setTimeout(() => {
+            downloadAsPdf();
+          }, 300);
+        } else if (params.get("auto") === "print") {
+          setTimeout(() => {
+            window.print();
+          }, 300);
+        }
+      });
+
+      window.addEventListener("beforeprint", buildPagedReport);
+    </script>
+  </body>
+</html>

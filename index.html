@@ -25,7 +25,7 @@
         var css = "";
         if (Array.isArray(removed) && removed.length > 0) {
           removed.forEach(function (id) {
-            css += '.board > [data-widget-id="' + id + '"] { display: none !important; }\n';
+            css += 'body:not(.is-stats-view) .board > [data-widget-id="' + id + '"] { display: none !important; }\n';
           });
         }
         if (sizes && typeof sizes === "object") {
@@ -35,7 +35,7 @@
             if (s && s.colStart && s.colEnd && s.rowStart && s.rowEnd) {
               var isRemoved = removed && removed.indexOf(id) !== -1;
               if (!isRemoved) {
-                css += '.board > [data-widget-id="' + id + '"] { display: flex !important; grid-column: ' + s.colStart + ' / ' + s.colEnd + ' !important; grid-row: ' + s.rowStart + ' / ' + s.rowEnd + ' !important; }\n';
+                css += 'body:not(.is-stats-view) .board > [data-widget-id="' + id + '"] { display: flex !important; grid-column: ' + s.colStart + ' / ' + s.colEnd + ' !important; grid-row: ' + s.rowStart + ' / ' + s.rowEnd + ' !important; }\n';
               }
             }
           });
@@ -94,28 +94,28 @@
       </div>
       <nav class="sidebar-menu">
         <ul>
-          <li class="menu-item c-blue has-children child-active is-open">
-            <div class="menu-link active" title="대시보드">
+          <li class="menu-item c-blue has-children child-active is-open" id="menu-item-dashboard">
+            <div class="menu-link active" title="대시보드" data-nav-view="dashboard">
               <div class="icon-box"><i class="bi bi-speedometer2"></i></div>
               <span>대시보드</span>
               <i class="bi bi-chevron-down submenu-arrow"></i>
             </div>
             <ul class="submenu">
               <li>
-                <a href="./index.html" class="submenu-link active">
+                <a href="./index.html" class="submenu-link active" data-nav-view="dashboard">
                   <i class="bi bi-grid-1x2"></i><span>종합현황</span>
                 </a>
               </li>
             </ul>
           </li>
-          <li class="menu-item c-amber">
-            <a href="#" class="menu-link" title="장비리스트">
+          <li class="menu-item c-amber" id="menu-item-equipment">
+            <a href="#" class="menu-link" title="장비리스트" data-nav-view="equipment">
               <div class="icon-box"><i class="bi bi-hdd-rack"></i></div>
               <span>장비리스트</span>
             </a>
           </li>
-          <li class="menu-item c-emerald">
-            <a href="#" class="menu-link" title="통계">
+          <li class="menu-item c-emerald" id="menu-item-stats">
+            <a href="#statistics" class="menu-link" title="통계" data-nav-view="stats">
               <div class="icon-box"><i class="bi bi-bar-chart-line"></i></div>
               <span>통계</span>
             </a>
@@ -167,6 +167,39 @@
         </div>
       </div>
     </header>
+
+    <!-- 통계 메뉴 전용 상단 기간 설정 & 보고서 출력 컨트롤 바 -->
+    <section class="stats-filter-bar" id="stats-filter-bar" aria-label="통계 기간 설정 및 보고서 출력" hidden>
+      <div class="stats-filter-left">
+        <div class="stats-range-group" role="group" aria-label="기간 빠른 선택">
+          <button type="button" class="stats-range-btn" data-days="7"><i class="bi bi-check-lg" aria-hidden="true"></i><span>7일</span></button>
+          <button type="button" class="stats-range-btn is-active" data-days="30"><i class="bi bi-check-lg" aria-hidden="true"></i><span>30일</span></button>
+          <button type="button" class="stats-range-btn" data-days="90"><i class="bi bi-check-lg" aria-hidden="true"></i><span>90일</span></button>
+        </div>
+        <div class="stats-date-range" hidden>
+          <label class="stats-date-field">
+            <input type="date" id="stats-date-start" class="stats-date-input" value="2026-09-04" aria-label="조회 시작일">
+            <i class="bi bi-calendar4" aria-hidden="true"></i>
+          </label>
+          <span class="stats-date-sep">~</span>
+          <label class="stats-date-field">
+            <input type="date" id="stats-date-end" class="stats-date-input" value="2026-10-03" aria-label="조회 종료일">
+            <i class="bi bi-calendar4" aria-hidden="true"></i>
+          </label>
+        </div>
+        <button type="button" class="stats-query-btn" id="btn-stats-query" hidden>조회</button>
+      </div>
+      <div class="stats-filter-right">
+        <button type="button" class="report-print-btn report-pdf-btn" id="btn-report-pdf" aria-label="PDF로 다운로드">
+          <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
+          <span>PDF로 다운로드</span>
+        </button>
+        <button type="button" class="report-print-btn" id="btn-report-print" aria-label="프린트 (A4 미리보기 및 인쇄)">
+          <i class="bi bi-printer" aria-hidden="true"></i>
+          <span>프린트</span>
+        </button>
+      </div>
+    </section>
 
     <!-- 섹션(col) 없음 — 보드 위 위젯만. 배치는 CSS grid -->
     <main class="board">
@@ -233,6 +266,34 @@
             <li data-zone="낙원동"><i class="dot neutral-3"></i>낙원동</li>
             <li data-zone="익선동"><i class="dot status-warning"></i>익선동</li>
           </ul>
+          <div class="pie-stats-table-wrap">
+            <table class="pie-stats-table" aria-label="구역별 총 체류인원 분포">
+              <thead>
+                <tr>
+                  <th scope="col">구역</th>
+                  <th scope="col">체류인원</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-zone="헌법 재판소일대">
+                  <td class="pie-td-zone"><i class="dot status-danger"></i><span>A구역 헌법 재판소 일대</span></td>
+                  <td class="pie-td-count">32,003명</td>
+                </tr>
+                <tr data-zone="광화문 광장 접점">
+                  <td class="pie-td-zone"><i class="dot status-watch"></i><span>B구역 광화문 광장 접점</span></td>
+                  <td class="pie-td-count">12,801명</td>
+                </tr>
+                <tr data-zone="낙원동">
+                  <td class="pie-td-zone"><i class="dot neutral-3"></i><span>C구역 낙원동</span></td>
+                  <td class="pie-td-count">8,001명</td>
+                </tr>
+                <tr data-zone="익선동">
+                  <td class="pie-td-zone"><i class="dot status-warning"></i><span>D구역 익선동</span></td>
+                  <td class="pie-td-count">27,202명</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </article>
 
@@ -764,6 +825,90 @@
           </div>
         </div>
       </article>
+
+      <!-- ==================================================================
+           통계(보고서 양식) 전용 섹션 — body.is-stats-view 시에만 노출
+           ================================================================== -->
+      <!-- 1. 구역별 체류인원 & 혼잡도 (구역별 A~D 2x2 배열) -->
+      <section class="stats-report-section stats-sec-zone-stay" id="stats-sec-zone-stay" aria-label="구역별 체류인원 및 혼잡도">
+        <div class="stats-sec-head">
+          <h2 class="stats-sec-title">구역별 체류인원 &amp; 혼잡도</h2>
+          <div class="stats-sec-legend">
+            <span><i class="stats-swatch-bar is-visit"></i>체류인원 <em>(단위: 명)</em></span>
+            <span><i class="stats-swatch-bar is-crowd"></i>혼잡도 <em>(단위: 명/㎡)</em></span>
+          </div>
+        </div>
+        <div class="stats-zone-stay-box">
+          <div class="stats-zone-stay-grid">
+            <div class="stats-zone-stay-item">
+              <h3 class="stats-zone-stay-sub"><span class="stats-zone-chip">A구역</span><span>헌법 재판소 일대 체류인원 &amp; 혼잡도</span></h3>
+              <div id="stats-chart-stay-a" class="stats-am-host stats-host-zone-stay"></div>
+            </div>
+            <div class="stats-zone-stay-item">
+              <h3 class="stats-zone-stay-sub"><span class="stats-zone-chip">B구역</span><span>광화문 광장 접점 체류인원 &amp; 혼잡도</span></h3>
+              <div id="stats-chart-stay-b" class="stats-am-host stats-host-zone-stay"></div>
+            </div>
+            <div class="stats-zone-stay-item">
+              <h3 class="stats-zone-stay-sub"><span class="stats-zone-chip">C구역</span><span>낙원동 체류인원 &amp; 혼잡도</span></h3>
+              <div id="stats-chart-stay-c" class="stats-am-host stats-host-zone-stay"></div>
+            </div>
+            <div class="stats-zone-stay-item">
+              <h3 class="stats-zone-stay-sub"><span class="stats-zone-chip">D구역</span><span>익선동 체류인원 &amp; 혼잡도</span></h3>
+              <div id="stats-chart-stay-d" class="stats-am-host stats-host-zone-stay"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 구역별 통계 테이블 (최하단 배치) -->
+      <section class="stats-report-section stats-sec-table" id="stats-sec-table" aria-label="구역별 통계 표">
+        <div class="stats-sec-head">
+          <h2 class="stats-sec-title">구역별 통계 표</h2>
+        </div>
+        <div class="stats-table-wrap">
+          <table class="stats-detail-table">
+            <thead>
+              <tr>
+                <th scope="col">구분</th>
+                <th scope="col">총 방문인원</th>
+                <th scope="col">재방문인원</th>
+                <th scope="col">평균 혼잡도</th>
+                <th scope="col">평균 체류시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>헌법 재판소 일대</td>
+                <td>267</td>
+                <td>82명</td>
+                <td>0.023명/㎡</td>
+                <td>4시간</td>
+              </tr>
+              <tr>
+                <td>광화문 광장 접점</td>
+                <td>512</td>
+                <td>82명</td>
+                <td>0.023명/㎡</td>
+                <td>1시간</td>
+              </tr>
+              <tr>
+                <td>낙원동</td>
+                <td>789</td>
+                <td>82명</td>
+                <td>0.023명/㎡</td>
+                <td>0.5시간</td>
+              </tr>
+              <tr>
+                <td>익선동</td>
+                <td>321</td>
+                <td>82명</td>
+                <td>0.023명/㎡</td>
+                <td>0.2시간</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
   </div>

@@ -438,6 +438,7 @@ img {
    05. WIDGET BASE & COMMON SLOTS (.widget, .widget--*, .widget-head, .widget-title)
    ========================================================================== */
 .widget {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -562,14 +563,16 @@ img {
   margin: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: clamp(4px, 0.5vw, 8px);
-  min-height: clamp(22px, 3.2vh, 39px);
-  padding: clamp(2px, 0.4vh, 4px) clamp(8px, 0.8vw, 12px) clamp(2px, 0.4vh, 4px) clamp(6px, 0.6vw, 8px);
+  min-height: clamp(24px, 2.8vh, 32px);
+  padding: clamp(2px, 0.4vh, 4px) clamp(10px, 0.8vw, 14px);
   border-radius: var(--radius-pill);
   background: var(--kpi-badge-bg);
   font-size: var(--font-meta);
   line-height: var(--leading-none);
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 .badge strong {
   font-family: var(--font-sans);
@@ -3720,4 +3723,716 @@ img {
     transform: scale(1) translateY(0);
   }
 }
+
+/* ============================================================================
+   통계 (보고서 미리보기 뷰 — body.is-stats-view)
+   - 전체 앱(사이드바·상단 헤더·배경)은 사용자의 다크/라이트 테마를 그대로 유지
+   - 상단에 기간 설정 바(7일/30일/90일, 날짜 선택, 조회) 및 우측 끝 '보고서 출력' 버튼 배치
+   - 하단 보고서 미리보기 컨테이너(.board[data-mode="light"]) 내부만 라이트 모드로 표시
+   ============================================================================ */
+
+/* 통계 상단 기간 설정 & 보고서 출력 바 (상단 고정, 스크롤되지 않음) */
+.stats-filter-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 0 var(--page-pad-x) 14px;
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-widget);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.stats-filter-bar[hidden] {
+  display: none;
+}
+
+.stats-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stats-range-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 기간 프리셋 버튼 — 고정 너비(체크 아이콘 토글 시 가로 흔들림 방지) + 시멘틱 토큰 연동 */
+.stats-range-btn {
+  width: 84px;
+  min-width: 84px;
+  height: 34px;
+  padding: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--stats-range-btn-border);
+  background: var(--stats-range-btn-bg);
+  color: var(--stats-range-btn-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.stats-range-btn i {
+  display: none;
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  color: var(--stats-range-btn-check);
+  flex: 0 0 auto;
+}
+
+.stats-range-btn.is-active i {
+  display: inline-flex;
+}
+
+.stats-range-btn:hover {
+  background: var(--stats-range-btn-hover-bg);
+  color: var(--stats-range-btn-hover-text);
+}
+
+.stats-range-btn.is-active {
+  border: 1px solid var(--stats-range-btn-active-border);
+  background: var(--stats-range-btn-active-bg);
+  color: var(--stats-range-btn-active-text);
+}
+
+.stats-date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 6px;
+}
+
+/* 날짜 선택 필드 — 종합현황 차트 드롭다운 필드(.select-btn)와 100% 동일 스타일 */
+.stats-date-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 156px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-color-primary);
+  cursor: pointer;
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.stats-date-field:focus-within,
+.stats-date-field:hover {
+  background: var(--surface-glass-sm);
+  border-color: var(--border-accent);
+}
+
+.stats-date-input {
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-color-primary);
+  color-scheme: dark;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  width: 100%;
+  cursor: pointer;
+}
+
+.stats-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 36px;
+  height: 100%;
+  cursor: pointer;
+}
+
+.stats-date-field i {
+  color: var(--text-color-secondary);
+  font-size: var(--font-size-sm);
+  pointer-events: none;
+  flex: 0 0 auto;
+}
+
+.stats-date-sep {
+  color: var(--text-color-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  padding: 0 2px;
+}
+
+/* 조회 버튼 — 종합현황 상단 액션 버튼(.edit-action.save / .edit-btn)과 동일 필 스타일 */
+.stats-query-btn {
+  min-width: 68px;
+  height: 34px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-accent);
+  background: var(--surface-control);
+  color: var(--text-color-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.15s ease;
+}
+
+.stats-query-btn:hover {
+  background: var(--surface-control-hover);
+  border-color: var(--border-accent-hover);
+}
+
+.stats-query-btn:active {
+  transform: scale(0.98);
+}
+
+.stats-date-range[hidden],
+.stats-query-btn[hidden] {
+  display: none;
+}
+
+.stats-filter-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* 우측 끝 보고서 출력 버튼 — 종합현황 헤더 대시보드 편집 버튼(.edit-btn)과 동일 필 스타일 */
+.report-print-btn {
+  height: 38px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: var(--surface-control);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-color-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
+
+.report-print-btn[hidden] {
+  display: none;
+}
+
+.report-print-btn i {
+  font-size: var(--text-base);
+  line-height: var(--leading-none);
+  color: var(--text-color-primary);
+}
+
+.report-print-btn:hover {
+  background: var(--surface-control-hover);
+  border-color: var(--border-accent);
+}
+
+.report-print-btn:active {
+  transform: scale(0.98);
+}
+
+/* 통계 뷰 활성 시 상단 헤더의 편집 버튼 및 위젯 편집 크롬(이동/설정/삭제/리사이즈 핸들) 완전 숨김 */
+body.is-stats-view #btn-edit,
+body.is-stats-view #stage #edit-toolbar,
+body.is-stats-view #stage .widget-chrome {
+  display: none;
+}
+
+body.is-stats-view #stage.is-editing .widget {
+  outline: none;
+}
+
+/* 기본 대시보드(종합현황)에서는 통계 보고서 전용 섹션 숨김 */
+.stats-report-section {
+  display: none;
+}
+
+/* 내부 보고서 미리보기 컨테이너 (.board만 단독 스크롤 및 다크/라이트 시멘틱 토큰 연동) */
+body.is-stats-view #stage > .board {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  grid-template-rows: none;
+  grid-auto-rows: max-content;
+  gap: var(--stats-board-gap);
+  margin: 0 var(--page-pad-x) var(--page-pad-y);
+  padding: 24px 28px;
+  border-radius: var(--stats-card-radius);
+  background: var(--stats-board-bg);
+  border: 0;
+  box-shadow: none;
+  color: var(--stats-title-color);
+  align-content: start;
+}
+
+/* 통계 보드 커스텀 슬림 스크롤바 (흰색 트랙/화살표 제거 및 라운드 썸 적용) */
+body.is-stats-view #stage > .board::-webkit-scrollbar {
+  width: 6px;
+}
+
+body.is-stats-view #stage > .board::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body.is-stats-view #stage > .board::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+body.is-stats-view #stage > .board::-webkit-scrollbar-thumb {
+  background: var(--stats-scrollbar-thumb);
+  border-radius: var(--radius-pill);
+}
+
+body.is-stats-view #stage > .board::-webkit-scrollbar-thumb:hover {
+  background: var(--stats-scrollbar-thumb-hover);
+}
+
+/* 통계 위젯 공통 카드 스타일 (다크/라이트 --stats-card-* 시멘틱 토큰 연동) */
+body.is-stats-view #stage > .board > .widget,
+body.is-stats-view #stage > .board > .widget.accent,
+body.is-stats-view #stage > .board > .widget.widget--accent {
+  background: var(--stats-card-bg);
+  background-image: none;
+  border: 1px solid var(--stats-card-border);
+  border-radius: var(--stats-card-radius);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 20px 22px;
+}
+
+body.is-stats-view #stage > .board > .widget.accent::before,
+body.is-stats-view #stage > .board > .widget.widget--accent::before {
+  display: none;
+  content: none;
+}
+
+/* 상단 KPI 카드 내부 여백·간격·높이 균형 보정 */
+body.is-stats-view #stage > .board > .widget--kpi {
+  padding: 20px 22px;
+  gap: 10px;
+  justify-content: space-between;
+  height: auto;
+  min-height: 136px;
+}
+
+body.is-stats-view #stage > .board > .widget--kpi .kpi-head {
+  flex: 0 0 24px;
+  min-height: 24px;
+}
+
+body.is-stats-view #stage > .board > .widget--kpi .widget-title {
+  font-size: var(--font-widget-title);
+  color: var(--stats-subtitle-color);
+}
+
+body.is-stats-view #stage > .board > .widget--kpi .kpi-value {
+  flex: 0 0 26px;
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+}
+
+body.is-stats-view #stage > .board > .widget--kpi .kpi-period {
+  display: none;
+}
+
+body.is-stats-view #stage > .board > .widget--kpi .badge {
+  flex: 0 0 28px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 12px;
+  margin-top: auto;
+}
+
+/* Row 1: 상단 KPI 4종 (kpi-today-visit 숨김, 20컬럼 중 각 5컬럼씩 4등분 배치) */
+body.is-stats-view #stage > .board > [data-widget-id="kpi-current-stay"] {
+  grid-column: 1 / span 5;
+  grid-row: 1;
+  display: flex;
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="kpi-today-visit"] {
+  display: none;
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="kpi-month-visit"] {
+  grid-column: 6 / span 5;
+  grid-row: 1;
+  display: flex;
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="kpi-revisit"] {
+  grid-column: 11 / span 5;
+  grid-row: 1;
+  display: flex;
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="kpi-avg-stay"] {
+  grid-column: 16 / span 5;
+  grid-row: 1;
+  display: flex;
+}
+
+/* Row 2: 구역별 체류인원 분포 + 방문인원 & 혼잡도 비교 (20컬럼 중 10+10컬럼 2단 배치) */
+body.is-stats-view #stage > .board > [data-widget-id="chart-pie"] {
+  grid-column: 1 / span 10;
+  grid-row: 2;
+  display: flex;
+  height: 320px;
+  min-height: 320px;
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="chart-compare"] {
+  grid-column: 11 / span 10;
+  grid-row: 2;
+  display: flex;
+  height: 320px;
+  min-height: 320px;
+}
+
+body.is-stats-view #stage > .board > .widget--chart .widget-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-bold);
+  color: var(--stats-title-color);
+}
+
+/* 기본 종합현황 뷰에서는 통계용 도넛 범례 표 숨김 */
+.pie-stats-table-wrap {
+  display: none;
+}
+
+/* 구역별 체류인원 분포에서는 상단 기간 필터바와 중복되는 Today/Yesterday 드롭다운 및 기본 리스트형 범례 숨김 */
+body.is-stats-view #stage > .board > [data-widget-id="chart-pie"] .select,
+body.is-stats-view #stage > .board > [data-widget-id="chart-pie"] .pie-legend {
+  display: none;
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="chart-pie"] .pie-body {
+  justify-content: center;
+  gap: clamp(20px, 2.4vw, 36px);
+}
+
+body.is-stats-view #stage > .board > [data-widget-id="chart-pie"] .pie-stats-table-wrap {
+  display: block;
+  flex: 0 1 290px;
+  min-width: 245px;
+  border: 1px solid var(--stats-table-border);
+  border-radius: var(--stats-card-radius);
+  overflow: hidden;
+  background: var(--stats-table-bg);
+}
+
+.pie-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+}
+
+.pie-stats-table th,
+.pie-stats-table td {
+  padding: 9px 14px;
+  font-size: var(--font-size-xs);
+  border-bottom: 1px solid var(--stats-table-cell-border);
+  vertical-align: middle;
+}
+
+.pie-stats-table th:first-child,
+.pie-stats-table td:first-child {
+  border-right: 1px solid var(--stats-table-cell-border);
+  text-align: left;
+}
+
+.pie-stats-table th:last-child,
+.pie-stats-table td:last-child {
+  text-align: right;
+}
+
+.pie-stats-table thead th {
+  background: var(--stats-table-head-bg);
+  color: var(--stats-table-head-text);
+  font-weight: var(--weight-semibold);
+}
+
+.pie-stats-table tbody tr td {
+  background: var(--stats-table-row-bg);
+}
+
+.pie-stats-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.pie-stats-table tbody tr:nth-child(even) td {
+  background: var(--stats-table-row-alt-bg);
+}
+
+.pie-stats-table .pie-td-zone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--stats-table-cell-text);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.pie-stats-table .pie-td-count {
+  color: var(--stats-table-value-text);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 보고서 뷰에서는 종합현황 전용 실시간 위젯(지도·구역리스트·알림·단일구역체류차트·실시간구간추이·위젯추가용주간비교) 숨김 */
+body.is-stats-view #stage > .board > [data-widget-id="map-jongno"],
+body.is-stats-view #stage > .board > [data-widget-id="zone-list"],
+body.is-stats-view #stage > .board > [data-widget-id="alert-realtime"],
+body.is-stats-view #stage > .board > [data-widget-id="alert-disaster"],
+body.is-stats-view #stage > .board > [data-widget-id="chart-stay"],
+body.is-stats-view #stage > .board > [data-widget-id="chart-compare-week"],
+body.is-stats-view #stage > .board > [data-widget-id="chart-trend"] {
+  display: none;
+}
+
+/* 통계 전용 섹션 배치 및 카드 스타일 (다크/라이트 --stats-card-* 시멘틱 토큰 연동) */
+body.is-stats-view #stage > .board > .stats-report-section {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 22px 24px;
+  border: 1px solid var(--stats-card-border);
+  border-radius: var(--stats-card-radius);
+  background: var(--stats-card-bg);
+  box-shadow: none;
+}
+
+body.is-stats-view #stage > .board > #stats-sec-zone-stay {
+  grid-row: 3;
+}
+
+body.is-stats-view #stage > .board > #stats-sec-table {
+  grid-row: 4;
+}
+
+/* 구역별 체류인원 & 혼잡도 (A~D구역 2x2 그리드 컨테이너) */
+.stats-zone-stay-box {
+  padding: 4px 0 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.stats-zone-stay-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 32px;
+}
+
+.stats-zone-stay-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stats-zone-stay-sub {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-bold);
+  color: var(--stats-title-color);
+  letter-spacing: -0.01em;
+}
+
+.stats-zone-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--stats-chip-border);
+  background: var(--stats-chip-bg);
+  color: var(--stats-chip-text);
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  letter-spacing: 0;
+  flex: 0 0 auto;
+}
+
+.stats-host-zone-stay {
+  height: 230px;
+}
+
+.stats-sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stats-sec-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-bold);
+  color: var(--stats-title-color);
+  letter-spacing: -0.01em;
+}
+
+.stats-sec-legend {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--stats-legend-text);
+}
+
+.stats-sec-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-sec-legend em {
+  font-style: normal;
+  font-weight: var(--weight-regular);
+  color: var(--stats-legend-unit);
+}
+
+.stats-swatch-bar {
+  display: inline-block;
+  width: 12px;
+  height: 3.5px;
+  border-radius: var(--radius-pill);
+  flex: none;
+}
+
+.stats-swatch-bar.is-visit  { background: var(--stats-series-visit); }
+.stats-swatch-bar.is-crowd  { background: var(--stats-series-crowd); }
+.stats-swatch-bar.is-zone-a { background: var(--stats-series-zone-a); }
+.stats-swatch-bar.is-zone-b { background: var(--stats-series-zone-b); }
+.stats-swatch-bar.is-zone-c { background: var(--stats-series-zone-c); }
+.stats-swatch-bar.is-zone-d { background: var(--stats-series-zone-d); }
+
+/* 차트 래퍼 및 높이 */
+.stats-am-host {
+  width: 100%;
+  min-width: 0;
+}
+
+.stats-host-overall {
+  height: 340px;
+}
+
+.stats-host-bar {
+  height: 290px;
+}
+
+.stats-host-zone-visit {
+  height: 320px;
+}
+
+/* 2단 카드형 섹션 (요일별 평균 체류시간 / 시간대별 평균 혼잡도) */
+.stats-card-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 24px 18px;
+  border: 1px solid var(--stats-card-border);
+  border-radius: var(--stats-card-radius);
+  background: var(--stats-card-bg);
+  box-shadow: none;
+  min-width: 0;
+}
+
+/* 구역별 통계 테이블 (다크/라이트 --stats-table-* 시멘틱 토큰 연동) */
+.stats-table-wrap {
+  width: 100%;
+  border: 1px solid var(--stats-table-border);
+  border-radius: var(--stats-card-radius);
+  overflow: hidden;
+  background: var(--stats-table-bg);
+}
+
+.stats-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--font-sans);
+}
+
+.stats-detail-table th,
+.stats-detail-table td {
+  padding: 15px 16px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: var(--font-size-xs);
+  border-right: 1px solid var(--stats-table-cell-border);
+  border-bottom: 1px solid var(--stats-table-cell-border);
+}
+
+.stats-detail-table th:last-child,
+.stats-detail-table td:last-child {
+  border-right: 0;
+}
+
+.stats-detail-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.stats-detail-table thead th {
+  background: var(--stats-table-head-bg);
+  color: var(--stats-table-head-text);
+  font-weight: var(--weight-semibold);
+}
+
+.stats-detail-table tbody td {
+  color: var(--stats-table-cell-text);
+  font-weight: var(--weight-semibold);
+  background: var(--stats-table-row-bg);
+}
+
+.stats-detail-table tbody tr:nth-child(even) td {
+  background: var(--stats-table-row-alt-bg);
+}
+
 
