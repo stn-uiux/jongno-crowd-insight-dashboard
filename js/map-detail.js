@@ -240,11 +240,45 @@
   }
 
   let currentRegion = "A";
+  const tipTimers = new Map();
+
+  function clearPointTipTimer(pt) {
+    if (tipTimers.has(pt)) {
+      clearTimeout(tipTimers.get(pt));
+      tipTimers.delete(pt);
+    }
+  }
+
+  function clearAllTipTimers() {
+    tipTimers.forEach((timer) => clearTimeout(timer));
+    tipTimers.clear();
+  }
+
+  function attachPointHoverLinger() {
+    clearAllTipTimers();
+    const points = pointsHost.querySelectorAll(".map-point");
+    points.forEach((point) => {
+      point.addEventListener("pointerenter", () => {
+        clearPointTipTimer(point);
+        point.classList.add("is-tip-open");
+      });
+
+      point.addEventListener("pointerleave", () => {
+        clearPointTipTimer(point);
+        const timer = setTimeout(() => {
+          point.classList.remove("is-tip-open");
+          tipTimers.delete(point);
+        }, 3000);
+        tipTimers.set(point, timer);
+      });
+    });
+  }
 
   function renderPoints(regionKey) {
     if (regionKey) currentRegion = String(regionKey).toUpperCase();
     const list = REGION_POINTS[currentRegion] || REGION_POINTS.A;
     pointsHost.innerHTML = list.map(pointHtml).join("");
+    attachPointHoverLinger();
   }
 
   function openDetail(regionKey = "A", customSrc) {
@@ -272,6 +306,10 @@
   }
 
   function closeDetail() {
+    clearAllTipTimers();
+    pointsHost.querySelectorAll(".map-point.is-tip-open").forEach((p) => {
+      p.classList.remove("is-tip-open");
+    });
     mapWidget.classList.remove("is-detail");
     detail.hidden = true;
     overview.setAttribute("aria-hidden", "false");

@@ -1385,7 +1385,11 @@ img {
   --mp-emoji-bg: url("../assets/map-detail/emoji-emergency.png");
   --mp-glow-bg: url("../assets/map-detail/glow-emergency.svg");
 }
+.map-point:is(.is-emergency, .is-critical, .is-danger, .mp-state--emergency, .mp-state--critical, .mp-state--danger) {
+  z-index: 10;
+}
 .map-point:hover,
+.map-point.is-tip-open,
 .map-point:focus-within,
 .map-point:has(.mp-cctv.is-active) {
   z-index: var(--z-map-point-active);
@@ -1454,6 +1458,36 @@ img {
   width: auto;
   transform: translateX(-50%);
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 툴팁-포인트 마커 및 CCTV 버튼 간 호버 끊김 방지 브릿지 */
+.mp-tip::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  pointer-events: auto;
+  z-index: -1;
+}
+
+/* 1) 위험(danger / emergency / critical) 상태 지점: 툴팁 항상 상시 표출 */
+.map-point:is(.is-emergency, .is-critical, .is-danger, .mp-state--emergency, .mp-state--critical, .mp-state--danger) .mp-tip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* 2) 그 외 지점: 마우스 호버(hover), 호버 지연 열림 유지(.is-tip-open), 포커스, 또는 CCTV 재생 활성 시 표출 */
+.map-point:hover .mp-tip,
+.map-point.is-tip-open .mp-tip,
+.map-point:focus-within .mp-tip,
+.map-point:has(.mp-cctv.is-active) .mp-tip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 .mp-tip-card {
   position: relative;
