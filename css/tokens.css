@@ -493,7 +493,7 @@
   --divider-color: var(--p-white-a35);
 
   /* Sidebar Semantic Tokens */
-  --sidebar-w: 260px;
+  --sidebar-w: 200px;
   --sidebar-w-collapsed: 76px;
   --sidebar-bg: rgba(12, 13, 16, 0.40);
   --sidebar-surface: rgba(22, 23, 28, 0.55);
