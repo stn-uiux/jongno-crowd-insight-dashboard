@@ -740,7 +740,7 @@
               <div class="report-chart-head">
                 <span class="report-chart-title">구역별 총 체류인원 분포</span>
               </div>
-              <svg viewBox="0 0 430 220" width="100%" height="100%" style="display:block">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 220" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:100%">
                 <!-- 도넛 차트 (중심 110, 112, r=62, stroke-width=22, 둘레=389.56) -->
                 <g transform="rotate(-90 110 112)">
                   <!-- 헌법 재판소일대 40% (155.82) -->
@@ -825,7 +825,7 @@
                   </div>
                 </div>
               </div>
-              <svg viewBox="0 0 430 190" width="100%" height="100%" style="display:block">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 190" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:100%">
                 <g stroke="#e2e8f0" stroke-width="1">
                   <line x1="36" y1="14"  x2="394" y2="14"/>
                   <line x1="36" y1="51"  x2="394" y2="51"/>
@@ -881,7 +881,7 @@
             <!-- 1) A구역 체류인원 & 혼잡도 -->
             <div class="report-zone-stay-item">
               <div class="report-zone-stay-sub"><span class="report-zone-chip">A구역</span><span>헌법 재판소 일대 체류인원 &amp; 혼잡도</span></div>
-              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="A구역">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 185" preserveAspectRatio="xMidYMid meet" data-report-zone-stay="A구역">
                 <g stroke="#e2e8f0" stroke-width="1">
                   <line x1="36" y1="14"  x2="396" y2="14"/>
                   <line x1="36" y1="49"  x2="396" y2="49"/>
@@ -895,7 +895,7 @@
             <!-- 2) B구역 체류인원 & 혼잡도 -->
             <div class="report-zone-stay-item">
               <div class="report-zone-stay-sub"><span class="report-zone-chip">B구역</span><span>광화문 광장 접점 체류인원 &amp; 혼잡도</span></div>
-              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="B구역">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 185" preserveAspectRatio="xMidYMid meet" data-report-zone-stay="B구역">
                 <g stroke="#e2e8f0" stroke-width="1">
                   <line x1="36" y1="14"  x2="396" y2="14"/>
                   <line x1="36" y1="49"  x2="396" y2="49"/>
@@ -909,7 +909,7 @@
             <!-- 3) C구역 체류인원 & 혼잡도 -->
             <div class="report-zone-stay-item">
               <div class="report-zone-stay-sub"><span class="report-zone-chip">C구역</span><span>낙원동 체류인원 &amp; 혼잡도</span></div>
-              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="C구역">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 185" preserveAspectRatio="xMidYMid meet" data-report-zone-stay="C구역">
                 <g stroke="#e2e8f0" stroke-width="1">
                   <line x1="36" y1="14"  x2="396" y2="14"/>
                   <line x1="36" y1="49"  x2="396" y2="49"/>
@@ -923,7 +923,7 @@
             <!-- 4) D구역 체류인원 & 혼잡도 -->
             <div class="report-zone-stay-item">
               <div class="report-zone-stay-sub"><span class="report-zone-chip">D구역</span><span>익선동 체류인원 &amp; 혼잡도</span></div>
-              <svg viewBox="0 0 430 185" width="100%" height="100%" data-report-zone-stay="D구역">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 185" preserveAspectRatio="xMidYMid meet" data-report-zone-stay="D구역">
                 <g stroke="#e2e8f0" stroke-width="1">
                   <line x1="36" y1="14"  x2="396" y2="14"/>
                   <line x1="36" y1="49"  x2="396" y2="49"/>
@@ -1268,6 +1268,70 @@
         });
       }
 
+      async function rasterizeSvgsForPdf(rootEl) {
+        const svgs = Array.from(rootEl.querySelectorAll("svg"));
+        const restores = [];
+        const scale = 3;
+
+        for (const svg of svgs) {
+          const rect = svg.getBoundingClientRect();
+          const w = Math.max(1, Math.round(rect.width));
+          const h = Math.max(1, Math.round(rect.height));
+          const targetW = w * scale;
+          const targetH = h * scale;
+
+          const clone = svg.cloneNode(true);
+          clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+          clone.setAttribute("width", String(targetW));
+          clone.setAttribute("height", String(targetH));
+          if (!clone.getAttribute("preserveAspectRatio")) {
+            clone.setAttribute("preserveAspectRatio", "xMidYMid meet");
+          }
+          clone.removeAttribute("style");
+          clone.style.fontFamily = '"Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif';
+
+          const xml = new XMLSerializer().serializeToString(clone);
+          const svgDataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(xml);
+
+          const pngUrl = await new Promise((resolve) => {
+            const img = new Image();
+            img.decoding = "sync";
+            img.onload = () => {
+              try {
+                const canvas = document.createElement("canvas");
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, targetW, targetH);
+                resolve(canvas.toDataURL("image/png"));
+              } catch (_) {
+                resolve(null);
+              }
+            };
+            img.onerror = () => resolve(null);
+            img.src = svgDataUrl;
+          });
+
+          if (pngUrl && svg.parentNode) {
+            const replacement = document.createElement("img");
+            replacement.src = pngUrl;
+            replacement.alt = "";
+            replacement.style.cssText = `width:${w}px;height:${h}px;display:block;flex:0 0 auto;object-fit:contain;`;
+            const parent = svg.parentNode;
+            parent.replaceChild(replacement, svg);
+            restores.push(() => {
+              if (replacement.parentNode === parent) {
+                parent.replaceChild(svg, replacement);
+              }
+            });
+          }
+        }
+
+        return () => {
+          restores.forEach((fn) => fn());
+        };
+      }
+
       async function downloadAsPdf() {
         const btn = document.getElementById("btn-download-pdf");
         const labelEl = btn?.querySelector("span");
@@ -1276,7 +1340,13 @@
         if (labelEl) labelEl.textContent = "PDF 생성 중...";
         document.body.classList.add("is-generating-pdf");
 
+        let restoreSvgs = null;
         try {
+          const pagesEl = document.getElementById("pages");
+          if (pagesEl) {
+            restoreSvgs = await rasterizeSvgsForPdf(pagesEl);
+          }
+
           const pageEls = Array.from(document.querySelectorAll("#pages > .page"));
           const opt = {
             margin: 0,
@@ -1307,6 +1377,9 @@
             await worker.save();
           }
         } finally {
+          if (typeof restoreSvgs === "function") {
+            restoreSvgs();
+          }
           document.body.classList.remove("is-generating-pdf");
           if (btn) btn.disabled = false;
           if (labelEl) labelEl.textContent = prevText;
