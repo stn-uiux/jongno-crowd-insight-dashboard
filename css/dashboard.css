@@ -415,7 +415,7 @@ img {
   flex: 1 1 auto;
   min-height: 0;
   /* width:100% 금지 — margin과 합쳐 오른쪽으로 넘침 */
-  margin: 0 var(--page-pad-x) var(--page-pad-y);
+  margin: var(--page-pad-x) var(--page-pad-y);
   display: grid;
   grid-template-columns: repeat(24, minmax(0, 1fr));
   grid-template-rows: repeat(20, minmax(0, 1fr));
