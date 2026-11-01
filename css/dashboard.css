@@ -1564,7 +1564,6 @@ img {
   font-weight: var(--weight-semibold);
   line-height: 1;
   color: var(--text-color-primary);
-  text-shadow: 0 4px 4px var(--p-black-a25);
   white-space: nowrap;
   pointer-events: none;
 }
