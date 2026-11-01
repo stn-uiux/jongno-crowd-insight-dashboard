@@ -1142,6 +1142,7 @@
       visibilitySnapshot.set(w.dataset.widgetId, !w.hidden);
     });
     stage.classList.add("is-editing");
+    document.body.classList.add("is-editing");
     toolbar.hidden = false;
     // 툴바 표시 후 보드 크기 확정 → 보기와 같은 잠금 적용
     applyPersistedSizes();
@@ -1159,6 +1160,7 @@
   function exitEdit() {
     editing = false;
     stage.classList.remove("is-editing");
+    document.body.classList.remove("is-editing");
     toolbar.hidden = true;
     closeModal();
     closeSettings();

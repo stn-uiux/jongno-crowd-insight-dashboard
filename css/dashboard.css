@@ -27,6 +27,7 @@ body {
   width: 100%;
   height: 100%;
   background: var(--bg-app);
+  color: var(--text-color-primary);
   overflow: auto;
   font-family: var(--font-sans);
 }
@@ -82,12 +83,14 @@ img {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--page-pad-x);
+  color: var(--text-color-primary);
 }
 .brand {
   display: flex;
   align-items: center;
   gap: clamp(8px, 0.8vw, 12px);
   min-width: 0;
+  cursor: pointer;
 }
 .brand img {
   height: clamp(30px, 2.2vw, 36px);
@@ -96,6 +99,7 @@ img {
 }
 .brand h1 {
   margin: 0;
+  color: var(--text-color-primary);
   font-size: var(--font-title);
   font-weight: var(--font-weight-title);
   line-height: var(--leading-none);
@@ -4095,7 +4099,7 @@ img {
 
 /* 통계 뷰 활성 시 상단 헤더의 편집 버튼 및 위젯 편집 크롬(이동/설정/삭제/리사이즈 핸들) 완전 숨김 */
 body.is-stats-view #btn-edit,
-body.is-stats-view #stage #edit-toolbar,
+body.is-stats-view #edit-toolbar,
 body.is-stats-view #stage .widget-chrome {
   display: none;
 }

@@ -1543,6 +1543,7 @@
   font-weight: var(--font-weight-title);
   line-height: var(--leading-none);
   letter-spacing: 0;
+  color: var(--text-color-primary);
 }
 /* Modal / 대형 팝업 타이틀 */
 .typo-title-lg {

@@ -16,8 +16,10 @@
   gap: 8px;
 }
 .edit-toolbar[hidden] { display: none; }
-#stage.is-editing .edit-btn { display: none; }
-#stage:not(.is-editing) .edit-toolbar { display: none; }
+#stage.is-editing .edit-btn,
+body.is-editing .edit-btn { display: none; }
+#stage:not(.is-editing) .edit-toolbar,
+body:not(.is-editing) .edit-toolbar { display: none; }
 
 .edit-action {
   height: 44px;

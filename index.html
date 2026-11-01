@@ -82,60 +82,6 @@
 <body>
   <div class="app-shell">
     <img class="page-bg" src="assets/dark-jongno-dashboard-bg.png" alt="">
-    <aside class="app-sidebar" id="app-sidebar">
-      <button type="button" class="sidebar-toggle" title="메뉴 접기" aria-label="메뉴 접기">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <div class="sidebar-logo">
-        <a href="./index.html">
-          <img alt="종로" class="logo-single logo-animated" src="assets/dark-logo-only.png">
-          <span class="logo-text-label">종로구 스마트인파 관리</span>
-        </a>
-      </div>
-      <nav class="sidebar-menu">
-        <ul>
-          <li class="menu-item c-blue has-children child-active is-open" id="menu-item-dashboard">
-            <div class="menu-link active" title="대시보드" data-nav-view="dashboard">
-              <div class="icon-box"><i class="bi bi-speedometer2"></i></div>
-              <span>대시보드</span>
-              <i class="bi bi-chevron-down submenu-arrow"></i>
-            </div>
-            <ul class="submenu">
-              <li>
-                <a href="./index.html" class="submenu-link active" data-nav-view="dashboard">
-                  <i class="bi bi-grid-1x2"></i><span>종합현황</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="menu-item c-amber" id="menu-item-equipment">
-            <a href="#" class="menu-link" title="장비리스트" data-nav-view="equipment">
-              <div class="icon-box"><i class="bi bi-hdd-rack"></i></div>
-              <span>장비리스트</span>
-            </a>
-          </li>
-          <li class="menu-item c-emerald" id="menu-item-stats">
-            <a href="#statistics" class="menu-link" title="통계" data-nav-view="stats">
-              <div class="icon-box"><i class="bi bi-bar-chart-line"></i></div>
-              <span>통계</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div class="sidebar-toolbar">
-        <div class="font-selector inline">
-          <button type="button" class="font-selector-btn" title="폰트 / 크기" aria-label="폰트 변경">
-            <i class="bi bi-type"></i>
-          </button>
-        </div>
-        <button type="button" class="theme-toggle-btn inline" title="테마 전환" aria-label="테마 전환">
-          <i class="bi bi-sun-fill"></i>
-        </button>
-      </div>
-    </aside>
-
-    <div class="app-main">
-  <div id="stage">
     <header class="header">
       <div class="brand">
         <img src="assets/dark-logo-only.png" alt="종로구" width="65" height="36">
@@ -167,6 +113,56 @@
         </div>
       </div>
     </header>
+
+    <div class="app-body">
+      <aside class="app-sidebar" id="app-sidebar">
+        <button type="button" class="sidebar-toggle" title="메뉴 접기" aria-label="메뉴 접기">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <nav class="sidebar-menu">
+          <ul>
+            <li class="menu-item c-blue has-children child-active is-open" id="menu-item-dashboard">
+              <div class="menu-link active" title="대시보드" data-nav-view="dashboard">
+                <div class="icon-box"><i class="bi bi-speedometer2"></i></div>
+                <span>대시보드</span>
+                <i class="bi bi-chevron-down submenu-arrow"></i>
+              </div>
+              <ul class="submenu">
+                <li>
+                  <a href="./index.html" class="submenu-link active" data-nav-view="dashboard">
+                    <i class="bi bi-grid-1x2"></i><span>종합현황</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="menu-item c-amber" id="menu-item-equipment">
+              <a href="#" class="menu-link" title="장비리스트" data-nav-view="equipment">
+                <div class="icon-box"><i class="bi bi-hdd-rack"></i></div>
+                <span>장비리스트</span>
+              </a>
+            </li>
+            <li class="menu-item c-emerald" id="menu-item-stats">
+              <a href="#statistics" class="menu-link" title="통계" data-nav-view="stats">
+                <div class="icon-box"><i class="bi bi-bar-chart-line"></i></div>
+                <span>통계</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="sidebar-toolbar">
+          <div class="font-selector inline">
+            <button type="button" class="font-selector-btn" title="폰트 / 크기" aria-label="폰트 변경">
+              <i class="bi bi-type"></i>
+            </button>
+          </div>
+          <button type="button" class="theme-toggle-btn inline" title="테마 전환" aria-label="테마 전환">
+            <i class="bi bi-sun-fill"></i>
+          </button>
+        </div>
+      </aside>
+
+      <div class="app-main">
+        <div id="stage">
 
     <!-- 통계 메뉴 전용 상단 기간 설정 & 보고서 출력 컨트롤 바 -->
     <section class="stats-filter-bar" id="stats-filter-bar" aria-label="통계 기간 설정 및 보고서 출력" hidden>
@@ -935,7 +931,8 @@
       </section>
     </main>
 
-  </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="widget-modal" id="widget-modal" hidden aria-hidden="true">

@@ -473,7 +473,7 @@
   });
 
   // 좌측 상단 로고 클릭 시에도 대시보드 기본 뷰로 복귀
-  const logoLink = sidebar.querySelector(".sidebar-logo a");
+  const logoLink = document.querySelector(".header .brand, .sidebar-logo a");
   logoLink?.addEventListener("click", (e) => {
     if (document.body.classList.contains("is-stats-view")) {
       e.preventDefault();
