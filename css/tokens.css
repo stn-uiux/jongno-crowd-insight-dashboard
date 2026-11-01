@@ -1,11 +1,11 @@
 /* ==========================================================================
    DESIGN SYSTEM TOKENS (css/tokens.css)
-   - 01. Primitive Tokens (--p-*) : 빨·주·노·초·파·남·보·핑크·시안·무채색 (각 100~900 9단계 통일),
-                                    투명도(White/Black Opacity), 기본 그라데이션
-   - 02. Semantic Tokens          : 브랜드(Primary/Secondary), 혼잡단계(위험·경계·주의·관심),
-                                    KPI, 차트 시리즈, 텍스트, 배경(Surface), 보더, 사이드바
+   - 01. Primitive Tokens (--p-*) : 색상군 100~900(9단계) 및 알파 투명도, 기본 그라데이션
+   - 02. Semantic Tokens          : 브랜드, 혼잡단계, KPI, 차트, 텍스트, Surface, 사이드바, 통계
    - 03. Foundation Scales        : 타이포그래피, 간격, 라운드, 블러, 그림자, Z-Index
-   - 04. Typography Role Classes  : .typo-display, .typo-title-*, .typo-kpi, .typo-body*, .typo-caption, .typo-badge
+   - 04. Theme Mode (Light Mode)  : 라이트 모드 전용 시멘틱 토큰 및 위젯/모달 컴포넌트 스타일
+   - 05. Responsive Adjustments   : 단축 화면 높이(max-height) 반응형 스케일 보정
+   - 06. Typography Role Classes  : .typo-display, .typo-title-*, .typo-kpi, .typo-body*, .typo-badge
    ========================================================================== */
 :root {
   /* ------------------------------------------------------------------------
@@ -495,12 +495,14 @@
   /* Sidebar Semantic Tokens */
   --sidebar-w: 200px;
   --sidebar-w-collapsed: 76px;
-  --sidebar-bg: rgba(12, 13, 16, 0.40);
+  --sidebar-bg: var(--surface-widget);
   --sidebar-surface: rgba(22, 23, 28, 0.55);
   --sidebar-surface-2: rgba(28, 29, 36, 0.62);
   --sidebar-line: var(--p-white-a08);
   --sidebar-text: var(--p-neutral-150);
   --sidebar-muted: var(--p-neutral-500);
+  --sidebar-submenu-hover: var(--p-neutral-180);
+  --sidebar-submenu-hover-text: var(--p-neutral-180);
   --sidebar-accent: var(--color-primary);
   --sidebar-accent-soft: var(--color-primary-soft);
 
@@ -575,7 +577,7 @@
   --blur-sm: blur(16px);
   --blur-md: blur(20px);
   --blur-lg: blur(40px);
-  --blur-xl: blur(50px);
+  --blur-xl: blur(100px);
 
   /* Shadows */
   --shadow-legend: 0 4px 10px rgba(78, 88, 104, 0.6);
@@ -686,7 +688,7 @@
   --mp-scale-md: 0.8;
   --mp-scale-sm: 0.65;
   --map-stage-scale: 0.55;
-  --mp-boundary-size-default: 160px;
+  --mp-boundary-size-default: 150px;
   --mp-boundary-size-region-a: 100px;
   --mp-boundary-size: var(--mp-boundary-size-default);
   --mp-tip-gap: clamp(28px, 3vw, 42px);
@@ -696,7 +698,7 @@
 }
 
 /* ==========================================================================
-   05. THEME MODE: ALL LIGHT MODE RULES ([data-mode="light"])
+   04. THEME MODE: ALL LIGHT MODE RULES ([data-mode="light"])
    - 라이트 모드 관련 모든 토큰 변수 및 컴포넌트 스타일을 이 파일에서 일원화 관리
    ========================================================================== */
 :root[data-mode="light"],
@@ -753,12 +755,14 @@
   --divider-color: var(--p-black-a12);
 
   /* 4) Sidebar Semantic Tokens (라이트 모드 사이드바) */
-  --sidebar-bg: var(--p-white-a75);
+  --sidebar-bg: var(--surface-widget);
   --sidebar-surface: rgba(240, 243, 249, 0.80);
   --sidebar-surface-2: rgba(228, 235, 245, 0.92);
   --sidebar-line: var(--p-black-a08);
   --sidebar-text: var(--p-neutral-800);
   --sidebar-muted: var(--p-neutral-600);
+  --sidebar-submenu-hover: var(--p-neutral-750);
+  --sidebar-submenu-hover-text: var(--p-neutral-750);
 
   /* 4-1) Statistics View Semantic Tokens (라이트 모드 통계 화면 시멘틱 토큰 — 전부 --p-* 및 기초 토큰 참조) */
   --stats-board-bg: var(--p-white);
@@ -1007,7 +1011,7 @@
 }
 
 [data-mode="light"] #stage .board > .map-widget.is-fullscreen {
-  box-shadow: var(--shadow-fullscreen-modal) !important;
+  box-shadow: none;
 }
 
 [data-mode="light"] .disaster-modal-panel,
@@ -1018,7 +1022,6 @@
 /* ==========================================================================
    다크 모드 로고 아이콘 외곽선 보정 (종 아이콘 검은 테두리 및 상단 고리 시인성 확보)
    ========================================================================== */
-:root:not([data-mode="light"]) .sidebar-logo .logo-single,
 :root:not([data-mode="light"]) .brand img {
   filter: drop-shadow(0 0 1px #ffffff)
           drop-shadow(0 0 2px rgba(255, 255, 255, 0.6))
@@ -1517,7 +1520,9 @@
   color-scheme: light;
 }
 
-/* 짧은 화면 반응형 토큰 보정 */
+/* ==========================================================================
+   05. RESPONSIVE SCALE ADJUSTMENTS (단축 높이 화면 반응형 보정)
+   ========================================================================== */
 @media (max-height: 800px) {
   :root {
     --header-h: clamp(52px, 7.5vh, 72px);
@@ -1534,7 +1539,7 @@
 }
 
 /* ==========================================================================
-   04. TYPOGRAPHY ROLE PRESET CLASSES (.typo-*)
+   06. TYPOGRAPHY ROLE PRESET CLASSES (.typo-*)
    - Size + Weight + Line-height 세트 클래스
    ========================================================================== */
 /* Display / 페이지 메인 타이틀 (H1) */
