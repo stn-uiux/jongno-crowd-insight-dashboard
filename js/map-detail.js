@@ -1,3 +1,13 @@
+/* ==========================================================================
+   INTERACTIVE MAP ENGINE & DETAIL REGION CONTROLLER (js/map-detail.js)
+   - 01. Map Stage Scaling & Responsive Contain Logic (fitStage / fitAllStages)
+   - 02. Region Point Datasets (A / B / C / D Zones) & State Metas
+   - 03. Point Markers, Hover Lingers & CCTV Marker Delegation
+   - 04. Region Switching (Overview ⇄ Detail) & Theme Mode Asset Sync
+   - 05. Point Size Selector (sm / md / lg) & Boundary Ring Toggle
+   - 06. Map Fullscreen (Expand full / 3/4 / 1/2) & Persistence
+   ========================================================================== */
+
 (function () {
   const mapWidget = document.querySelector(".map-widget");
   const overview = document.getElementById("map-overview");
@@ -56,6 +66,7 @@
     stage.style.width = `${Math.round(base.w * scale)}px`;
     stage.style.height = `${Math.round(base.h * scale)}px`;
     stage.style.setProperty("--map-stage-scale", scale.toFixed(4));
+    canvas.style.setProperty("--map-stage-scale", scale.toFixed(4));
   }
 
   function fitAllStages() {
@@ -79,26 +90,26 @@
    * Figma 39:4868 — 헌법 재판소 일대 (Region A / Detail Map 2) Hitmap 원 중심 (프레임 860×950 기준 %)
    */
   const POINTS_A = [
-    { id: "A-1", left: 30.0, top: 12.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 5100, density: 0.12 },
-    { id: "A-2", left: 36.0, top: 19.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 6400, density: 0.16 },
+    { id: "A-1", left: 29.5, top: 12.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 5100, density: 0.12 },
+    { id: "A-2", left: 34.0, top: 18.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 6400, density: 0.16 },
     { id: "A-3", left: 48.0, top: 26.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right", people: 30500, density: 0.69 },
-    { id: "A-4", left: 56.0, top: 26.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 12600, density: 0.32 },
+    { id: "A-4", left: 55.0, top: 25.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 12600, density: 0.32 },
     { id: "A-5", left: 54.0, top: 31.0, state: "normal", size: "lg", tipPos: "left", cctvPos: "left", people: 7200, density: 0.18 },
-    { id: "A-6", left: 62.0, top: 34.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 14500, density: 0.36 },
-    { id: "A-7", left: 54.4, top: 36.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 19500, density: 0.49 },
-    { id: "A-8", left: 61.2, top: 40.0, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 20300, density: 0.51 },
-    { id: "A-9", left: 54.0, top: 42.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 32800, density: 0.73 },
-    { id: "A-10", left: 54.0, top: 48.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 31400, density: 0.71 },
-    { id: "A-11", left: 54.0, top: 53.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 22800, density: 0.54 },
-    { id: "A-12", left: 82.0, top: 54.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 13800, density: 0.34 },
-    { id: "A-13", left: 66.0, top: 56.0, state: "danger", size: "lg", tipPos: "top", cctvPos: "right", people: 43800, density: 0.94 },
-    { id: "A-14", left: 58.0, top: 61.0, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 45600, density: 0.98 },
-    { id: "A-15", left: 60.0, top: 67.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 33600, density: 0.75 },
-    { id: "A-16", left: 62.0, top: 72.2, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 21400, density: 0.61 },
+    { id: "A-6", left: 60.0, top: 33.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 14500, density: 0.36 },
+    { id: "A-7", left: 54.0, top: 36.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 19500, density: 0.49 },
+    { id: "A-8", left: 59.0, top: 40.0, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 20300, density: 0.51 },
+    { id: "A-9", left: 54.0, top: 41.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 32800, density: 0.73 },
+    { id: "A-10", left: 54.0, top: 46.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 31400, density: 0.71 },
+    { id: "A-11", left: 54.0, top: 52.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 22800, density: 0.54 },
+    { id: "A-12", left: 79.0, top: 52.0, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 13800, density: 0.34 },
+    { id: "A-13", left: 62.0, top: 55.0, state: "danger", size: "lg", tipPos: "top", cctvPos: "right", people: 43800, density: 0.94 },
+    { id: "A-14", left: 56.0, top: 58.0, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 45600, density: 0.98 },
+    { id: "A-15", left: 58.0, top: 65.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 33600, density: 0.75 },
+    { id: "A-16", left: 61.0, top: 71.0, state: "caution", size: "lg", tipPos: "left", cctvPos: "left", people: 21400, density: 0.61 },
     { id: "A-17", left: 68.0, top: 71.4, state: "attention", size: "lg", tipPos: "right", cctvPos: "right", people: 15200, density: 0.38 },
     { id: "A-18", left: 71.1, top: 77.1, state: "caution", size: "lg", tipPos: "right", cctvPos: "right", people: 24100, density: 0.58 },
-    { id: "A-19", left: 68.0, top: 84.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 35200, density: 0.78 },
-    { id: "A-20", left: 49.5, top: 91.3, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 48200, density: 1.04 },
+    { id: "A-19", left: 65.5, top: 81.0, state: "warning", size: "lg", tipPos: "left", cctvPos: "left", people: 35200, density: 0.78 },
+    { id: "A-20", left: 49.5, top: 88.0, state: "danger", size: "lg", tipPos: "left", cctvPos: "left", people: 48200, density: 1.04 },
     { id: "A-21", left: 25.3, top: 52.5, state: "attention", size: "lg", tipPos: "top", cctvPos: "right", people: 11200, density: 0.28 },
   ];
 
@@ -107,12 +118,12 @@
    * - 6개 지점, 전체 관심(attention) 상태, 상단 툴팁(tipPos: "top")
    */
   const POINTS_B = [
-    { id: "B-1", left: 71.8, top: 25.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "B-2", left: 40.2, top: 39.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "B-3", left: 2, top: 56.3, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "B-4", left: 72.0, top: 56.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "B-5", left: 72.2, top: 66.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "B-6", left: 38.5, top: 86.4, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-1", left: 80.0, top: 25.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-2", left: 48.0, top: 36.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-3", left: 11.0, top: 54.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-4", left: 79.0, top: 54.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-5", left: 80.0, top: 64.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "B-6", left: 47.0, top: 83.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
 
   /**
@@ -123,13 +134,13 @@
     { id: "C-1", left: 64.0, top: 19.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "C-2", left: 74.0, top: 37.1, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
     { id: "C-3", left: 30.0, top: 45.2, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-4", left: 68.3, top: 48.9, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-5", left: 40.9, top: 64.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-6", left: 73.1, top: 66.9, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-7", left: 57.1, top: 72.6, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-8", left: 10.0, top: 80.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-9", left: 30.0, top: 82.1, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "C-10", left: 63.5, top: 84.8, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-4", left: 68.3, top: 48.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-5", left: 41.0, top: 62.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-6", left: 72.0, top: 64.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-7", left: 57.1, top: 70.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-8", left: 13.0, top: 76.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-9", left: 32.0, top: 78.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "C-10", left: 63.5, top: 81.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
 
   /**
@@ -140,19 +151,19 @@
    * - cctvPos: "right" (기본, 우측 상단) | "left" (좌측 상단)
    */
   const POINTS_D = [
-    { id: "D-1", left: 48.5, top: 17.4, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-2", left: 24.4, top: 25.3, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-3", left: 49.7, top: 34.3, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-4", left: 14.5, top: 39.7, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-5", left: 40.0, top: 50.4, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-6", left: 66.7, top: 47.7, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-7", left: 14.1, top: 63.1, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-8", left: 30.7, top: 63.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-9", left: 76.1, top: 59.3, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-10", left: 84.3, top: 71.3, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-11", left: 20.4, top: 85.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-12", left: 46.9, top: 92.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
-    { id: "D-13", left: 76.2, top: 83.3, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-1", left: 51.0, top: 23.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-2", left: 32.0, top: 30.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-3", left: 50.0, top: 36.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-4", left: 25.0, top: 41.0, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-5", left: 44.0, top: 49.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-6", left: 64.0, top: 47.0, state: "attention", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-7", left: 16.0, top: 60.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-8", left: 36.0, top: 59.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-9", left: 70.0, top: 56.0, state: "normal", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-10", left: 76.0, top: 65.0, state: "caution", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-11", left: 29.0, top: 76.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-12", left: 50.0, top: 82.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
+    { id: "D-13", left: 70.0, top: 75.0, state: "warning", size: "lg", tipPos: "top", cctvPos: "right" },
   ];
 
   const REGION_POINTS = {
@@ -301,6 +312,18 @@
     }
     detail.dataset.activeRegion = key;
     pointsHost.setAttribute("aria-label", `${info.name} 지점`);
+
+    const scaleBar = document.getElementById("map-scale-bar");
+    const scaleLabel = scaleBar?.querySelector(".scale-label");
+    if (scaleBar && scaleLabel) {
+      if (key === "A") {
+        scaleLabel.textContent = "50m";
+        scaleBar.setAttribute("aria-label", "지도 축척: 50m");
+      } else {
+        scaleLabel.textContent = "20m";
+        scaleBar.setAttribute("aria-label", "지도 축척: 20m");
+      }
+    }
 
     mapWidget.classList.add("is-detail");
     detail.hidden = false;
