@@ -1,3 +1,15 @@
+/* ==========================================================================
+   DASHBOARD EDIT MODE & GRID ARRANGE CONTROLLER (js/edit-mode.js)
+   - 01. Grid Metrics & Snap Engine (24×20 Grid System)
+   - 02. Widget Catalog & Local Storage Persistence (Sizes, Visibility, Order)
+   - 03. Board Collision & Obstacle Clamping Engine
+   - 04. 8-Direction Widget Resizing & Drag Controller
+   - 05. Edit Mode Shell (Enter, Exit, Cancel, Save, Reset)
+   - 06. Widget Settings Modal (Rename & Meta)
+   - 07. Widget Catalog Modal & Free Grid Slot Detector
+   - 08. User Feedback Toast Notifications
+   ========================================================================== */
+
 (function () {
   const STORAGE_KEY = "jongno-dashboard-removed-widgets";
   /** v19: 리사이즈 축 분리 및 인접 위젯 충돌 간섭 버그 완전 해결 */
@@ -461,12 +473,6 @@
       width: rect.width,
       height: rect.height,
     };
-  }
-
-  /** @deprecated 칸 스냅은 snapBoxToGrid 사용 */
-  function snapValue(value) {
-    const { pitchX } = getGridMetrics();
-    return Math.round(value / pitchX) * pitchX;
   }
 
   /**

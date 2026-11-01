@@ -1,3 +1,13 @@
+/* ==========================================================================
+   SIDEBAR & VIEW CONTROLLER (js/sidebar.js)
+   - 01. Sidebar Fold / Unfold Toggle & Transition Sync
+   - 02. Submenu Accordion & Anchor Reset
+   - 03. Theme Switcher (Dark / Light Mode & Event Dispatch)
+   - 04. View Mode Switching (Dashboard vs. Statistics Report)
+   - 05. Statistics Period Filter Bar & Report Export (PDF / Print)
+   - 06. Navigation & Brand Logo Event Bindings
+   ========================================================================== */
+
 (function () {
   const sidebar = document.getElementById("app-sidebar");
   if (!sidebar) return;
@@ -52,7 +62,7 @@
       pageBg.src = isLight ? "assets/light-jongno-dashboard-bg.png" : "assets/dark-jongno-dashboard-bg.png";
     }
 
-    const logoImgs = document.querySelectorAll(".sidebar-logo img, .brand img");
+    const logoImgs = document.querySelectorAll(".brand img");
     const logoSrc = isLight ? "assets/light-logo-only.png" : "assets/dark-logo-only.png";
     logoImgs.forEach((img) => {
       img.src = logoSrc;
@@ -473,7 +483,7 @@
   });
 
   // 좌측 상단 로고 클릭 시에도 대시보드 기본 뷰로 복귀
-  const logoLink = document.querySelector(".header .brand, .sidebar-logo a");
+  const logoLink = document.querySelector(".header .brand");
   logoLink?.addEventListener("click", (e) => {
     if (document.body.classList.contains("is-stats-view")) {
       e.preventDefault();

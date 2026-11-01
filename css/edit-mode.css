@@ -1,8 +1,16 @@
 /* ==========================================================================
    EDIT MODE & WIDGET MODALS (css/edit-mode.css)
    - 전역 디자인 토큰(--p-*, --color-*, --text-*, --weight-*, --radius-*) 연동
+   - 01. Header Edit Actions (.header-actions, .edit-toolbar, .edit-action)
+   - 02. Widget Edit Chrome & Interaction (.widget-chrome, .resize-handle, drag/swap)
+   - 03. Add Widget Catalog Modal (#widget-modal, .wfilter, .wcat-*)
+   - 04. Widget Settings Modal (#widget-settings-modal, .settings-*)
+   - 05. Edit Mode Toast Notification (.board-toast-container, .board-toast)
    ========================================================================== */
-/* —— Header edit actions —— */
+
+/* ==========================================================================
+   01. HEADER EDIT ACTIONS (.header-actions, .edit-toolbar, .edit-action)
+   ========================================================================== */
 .header-actions {
   display: flex;
   align-items: center;
@@ -16,9 +24,7 @@
   gap: 8px;
 }
 .edit-toolbar[hidden] { display: none; }
-#stage.is-editing .edit-btn,
 body.is-editing .edit-btn { display: none; }
-#stage:not(.is-editing) .edit-toolbar,
 body:not(.is-editing) .edit-toolbar { display: none; }
 
 .edit-action {
@@ -61,7 +67,9 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   border-color: var(--p-white-a45);
 }
 
-/* —— Widget edit chrome —— */
+/* ==========================================================================
+   02. WIDGET EDIT CHROME & INTERACTION (.widget-chrome, .resize-handle, drag/swap)
+   ========================================================================== */
 #stage.is-editing .board {
   overflow: visible;
 }
@@ -371,7 +379,9 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   z-index: 250;
 }
 
-/* —— Add widget modal —— */
+/* ==========================================================================
+   03. ADD WIDGET CATALOG MODAL (#widget-modal, .wfilter, .wcat-*)
+   ========================================================================== */
 .widget-modal {
   position: fixed;
   inset: 0;
@@ -655,7 +665,9 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   font-size: var(--text-base);
 }
 
-/* —— Widget settings modal —— */
+/* ==========================================================================
+   04. WIDGET SETTINGS MODAL (#widget-settings-modal, .settings-*)
+   ========================================================================== */
 .settings-modal .settings-panel {
   width: min(400px, 100%);
   max-height: none;
@@ -743,7 +755,9 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   background: var(--p-blue-800);
 }
 
-/* —— 보드 공통 토스트 알림 —— */
+/* ==========================================================================
+   05. EDIT MODE TOAST NOTIFICATION (.board-toast-container, .board-toast)
+   ========================================================================== */
 .board-toast-container {
   position: fixed;
   top: 28px;

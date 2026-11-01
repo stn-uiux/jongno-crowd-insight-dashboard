@@ -1,3 +1,12 @@
+/* ==========================================================================
+   ZONE STATUS LIST TABLE (js/zone-list.js)
+   - 01. Level Badges & Mock Zone Data
+   - 02. Inline SVG Sparkline Trend Generator
+   - 03. Multi-column Sorting (Name / Density / People)
+   - 04. Row Selection & Zone Detail Modal Bridge
+   - 05. Global API Exposure
+   ========================================================================== */
+
 (function () {
   const body = document.getElementById("zone-list-body");
   const sortRoot = document.querySelector(".zone-sort");

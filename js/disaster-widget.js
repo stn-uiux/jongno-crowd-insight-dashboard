@@ -1,3 +1,11 @@
+/* ==========================================================================
+   DISASTER & SAFETY ALERT WIDGET & MODAL (js/disaster-widget.js)
+   - 01. Disaster Alert Mock Data & Type Categorization
+   - 02. Modal Open / Close Controller & DOM Population
+   - 03. Widget Item Click & Keyboard Accessibility
+   - 04. Global API Exposure
+   ========================================================================== */
+
 (function () {
   "use strict";
 

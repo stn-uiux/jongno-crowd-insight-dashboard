@@ -1,3 +1,12 @@
+/* ==========================================================================
+   CCTV STREAMING & PTZ MODAL CONTROLLER (js/cctv-modal.js)
+   - 01. CCTV Meta Registry (A/B/C/D Zones)
+   - 02. Camera Pan & Zoom (PTZ) Engine
+   - 03. Modal Open / Close & Timestamp Ticker
+   - 04. Header Drag & Panel Edge Resizing
+   - 05. Map Marker Click Delegation & Global API Exposure
+   ========================================================================== */
+
 (function () {
   const modal = document.getElementById("cctv-modal");
   const panel = document.getElementById("cctv-panel");

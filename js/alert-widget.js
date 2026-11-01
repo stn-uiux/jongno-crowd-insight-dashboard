@@ -1,3 +1,12 @@
+/* ==========================================================================
+   REALTIME DANGER ZONE ALERT WIDGET (js/alert-widget.js)
+   - 01. Alert State Management (Empty / Safe vs. Danger List)
+   - 02. Header Click Toggle (Simulation / State Switch)
+   - 03. CCTV Modal Trigger (.alert-btn-cctv -> window.openCctvModal)
+   - 04. Map Detail Navigation (.alert-btn-arrow -> window.openMapDetail)
+   - 05. Global API Exposure
+   ========================================================================== */
+
 (function () {
   "use strict";
 
@@ -5,7 +14,6 @@
   if (!widget) return;
 
   const head = widget.querySelector(".alert-widget-head");
-  const timeStamp = widget.querySelector("#alert-foot-timestamp");
 
   let isSafeState = widget.classList.contains("is-empty");
 

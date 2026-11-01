@@ -1,3 +1,12 @@
+/* ==========================================================================
+   ZONE DETAIL MODAL & AMCHARTS CONTROLLER (js/zone-detail.js)
+   - 01. Theme Color Token Resolvers for amCharts 5
+   - 02. Data Generators for Main & Brush Series
+   - 03. Interactive Brush Window & Mask Sync
+   - 04. amCharts XY Main & Brush Charts Rendering & Disposal
+   - 05. Draggable Modal Shell & Theme Change Reactive Redraw
+   ========================================================================== */
+
 (function () {
   const modal = document.getElementById("zone-detail-modal");
   const panel = document.getElementById("zone-detail-panel");
