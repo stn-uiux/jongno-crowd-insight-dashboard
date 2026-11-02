@@ -458,7 +458,7 @@
   --text-color-primary-inverse: var(--p-neutral-900);
   --text-color-secondary: var(--p-neutral-200);
   --text-color-muted: var(--p-neutral-400);
-  --text-color-subtle: var(--p-neutral-550);
+  --text-color-subtle: var(--p-neutral-300);
   --text-color-inactive: var(--p-neutral-300);
   --text-color-dark: var(--p-neutral-750);
   --text-color-dark-strong: var(--p-neutral-700);
@@ -507,7 +507,7 @@
   --sidebar-surface-2: rgba(28, 29, 36, 0.62);
   --sidebar-line: var(--p-white-a08);
   --sidebar-text: var(--p-neutral-150);
-  --sidebar-muted: var(--p-neutral-500);
+  --sidebar-muted: var(--p-neutral-350);
   --sidebar-submenu-hover: var(--p-neutral-180);
   --sidebar-submenu-hover-text: var(--p-neutral-180);
   --sidebar-accent: var(--color-primary);
