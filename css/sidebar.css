@@ -84,8 +84,6 @@
   display: flex;
   flex-direction: column;
   background: var(--surface-widget);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
   border-top: 1px solid var(--sidebar-line);
   border-right: 1px solid var(--sidebar-line);
   border-bottom: 1px solid var(--sidebar-line);
@@ -122,10 +120,6 @@
   background: none;
   color: var(--p-black);
   -webkit-text-fill-color: var(--p-black);
-}
-.sidebar-toggle:hover {
-  background: var(--p-white-a65);
-  box-shadow: 0 4px 16px var(--p-red-a35);
 }
 
 /* ==========================================================================
