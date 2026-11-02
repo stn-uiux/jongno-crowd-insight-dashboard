@@ -118,7 +118,7 @@
     "chart-compare":      { colStart: 7, colEnd: 13, rowStart: 4, rowEnd: 13, colSpan: 6, rowSpan: 9 },
     "chart-compare-week": { colStart: 7, colEnd: 13, rowStart: 4, rowEnd: 13, colSpan: 6, rowSpan: 9 },
     "chart-pie":        { colStart: 1, colEnd: 7, rowStart: 7, rowEnd: 13, colSpan: 6, rowSpan: 6 },
-    "chart-stay":       { colStart: 1, colEnd: 7, rowStart: 14, rowEnd: 21, colSpan: 6, rowSpan: 7 },
+    "chart-stay":       { colStart: 1, colEnd: 7, rowStart: 13, rowEnd: 21, colSpan: 6, rowSpan: 8 },
     "chart-trend":      { colStart: 7, colEnd: 13, rowStart: 13, rowEnd: 21, colSpan: 6, rowSpan: 8 },
     "map-jongno":       { colStart: 13, colEnd: 25, rowStart: 1, rowEnd: 16, colSpan: 12, rowSpan: 15 },
     "zone-list":        { colStart: 13, colEnd: 25, rowStart: 16, rowEnd: 21, colSpan: 12, rowSpan: 5 },

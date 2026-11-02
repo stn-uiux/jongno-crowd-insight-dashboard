@@ -1038,7 +1038,7 @@
 /* 지도 구역 플로팅 라벨 (라이트 모드 밝은 알약 배경 및 호버 대응) */
 [data-mode="light"] .rlabel-inline {
   background: var(--p-white);
-  box-shadow: 0 4px 14px var(--p-black-a40);
+  box-shadow: 0 4px 8px var(--p-black-a40);
 }
 
 [data-mode="light"] .region:hover .rlabel-inline {
