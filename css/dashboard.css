@@ -451,7 +451,6 @@ img {
   min-width: 0;
   min-height: 0;
   background: linear-gradient(135deg, var(--p-white-a08) 0%, var(--p-white-a03) 100%), var(--surface-widget);
-  border: 1px solid var(--p-white-a10);
   border-radius: var(--radius-lg);
   padding: var(--widget-pad);
   box-sizing: border-box;
