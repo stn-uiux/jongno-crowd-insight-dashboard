@@ -423,6 +423,8 @@
         height: 3px;
         border-radius: 2px;
       }
+      .lg-bar.is-stay { background: #4992ff; }
+      .lg-bar.is-density { background: #25c789; }
 
       .flex_row {
         display: flex;
@@ -462,7 +464,7 @@
       .report-zone-stay-head {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         margin-bottom: 3mm;
         flex: 0 0 auto;
       }
@@ -498,7 +500,7 @@
         align-items: center;
         justify-content: center;
         height: 5.2mm;
-        padding: 0 2.2mm;
+        padding: 0.5mm 2.2mm 0; /* 한글 폰트(Pretendard) 디센더 공간 고려 광학 중앙 보정 */
         border-radius: 999px;
         border: 0.3mm solid #a0aaff;
         background: #e6e9ff;
@@ -871,10 +873,9 @@
         <h5>가. 구역별 체류인원 &amp; 혼잡도</h5>
         <div class="report-zone-stay-box">
           <div class="report-zone-stay-head">
-            <span class="report-chart-title">구역별 체류인원 &amp; 혼잡도</span>
             <div class="report-chart-legend">
-              <span><i class="lg-bar" style="background:#4992ff"></i>체류인원 <em>(단위: 명)</em></span>
-              <span><i class="lg-bar" style="background:#25c789"></i>혼잡도 <em>(단위: 명/㎡)</em></span>
+              <span><i class="lg-bar is-stay"></i>체류인원 <em>(단위: 명)</em></span>
+              <span><i class="lg-bar is-density"></i>혼잡도 <em>(단위: 명/㎡)</em></span>
             </div>
           </div>
           <div class="report-zone-stay-grid">

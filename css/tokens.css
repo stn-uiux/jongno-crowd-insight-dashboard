@@ -354,6 +354,10 @@
   --region-glow-warning: var(--p-orange-a45);
   --region-color-danger: var(--level-danger);
   --region-glow-danger: var(--p-red-a55);
+  --region-poly-stroke: 2px;
+  --region-poly-stroke-hover: 2.8px;
+  --region-poly-fill-opacity: 0.2;
+  --region-poly-fill-opacity-hover: 0.35;
 
   /* Disaster & Realtime Alert Semantics (재난 안전 & 실시간 위험 알림) */
   --disaster-icon-critical-bg: var(--p-red-a20);
@@ -391,6 +395,9 @@
   --edit-swap-pill-bg: var(--p-cyan-swap-pill);
   --edit-swap-glow: 0 0 24px var(--p-cyan-a40), inset 0 0 20px var(--p-cyan-swap-glow-inner);
   --edit-resizing-shadow: var(--shadow-edit-resizing), 0 0 20px var(--p-cyan-a40);
+  --bg-wcat-full: var(--level-warning-soft);
+  --border-wcat-full: var(--p-orange-a35);
+  --text-wcat-full: var(--level-warning);
 
   /* KPI Trend Status (상승 · 하락 · 변동없음) */
   --kpi-up: var(--p-red-300);
@@ -859,8 +866,8 @@
   --shadow-status-pill: 0 2px 10px var(--p-black-a04);
 
   --bg-app-overlay: rgba(240, 244, 250, 0.65);
-  --bg-wcat-full: rgba(254, 243, 199, 0.60);
-  --border-wcat-full: var(--p-orange-400);
+  --bg-wcat-full: var(--p-orange-a16);
+  --border-wcat-full: var(--p-orange-a45);
   --text-wcat-full: var(--p-orange-700);
 }
 
@@ -1441,8 +1448,8 @@
 
 /* 공간 부족 배지 */
 [data-mode="light"] .wcat-badge-full {
-  background: var(--p-orange-a16);
-  border-color: var(--p-orange-a45);
+  background: var(--bg-wcat-full);
+  border-color: var(--border-wcat-full);
   color: var(--text-wcat-full);
 }
 

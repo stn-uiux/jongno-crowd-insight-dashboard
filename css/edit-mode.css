@@ -585,12 +585,12 @@ body:not(.is-editing) .edit-toolbar { display: none; }
 .wcat-badge-full {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 7px;
+  gap: 6px;
+  padding: 2px 8px;
   border-radius: var(--radius-pill);
-  background: var(--level-warning-soft);
-  border: 1px solid var(--p-orange-a35);
-  color: var(--level-warning);
+  background: var(--bg-wcat-full);
+  border: 1px solid var(--border-wcat-full);
+  color: var(--text-wcat-full);
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
   letter-spacing: -0.01em;

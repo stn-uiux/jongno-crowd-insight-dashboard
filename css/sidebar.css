@@ -352,7 +352,6 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--sidebar-line);
   background: var(--sidebar-surface);
-  color: var(--sidebar-muted);
   display: grid;
   place-items: center;
   cursor: pointer;
