@@ -128,7 +128,6 @@ img {
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-light);
   background: var(--surface-glass-sm);
-  backdrop-filter: var(--blur-md);
 }
 .tab {
   width: clamp(130px, 10vw, 165px);
@@ -182,8 +181,7 @@ img {
   padding: 4px 14px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-light);
-  background: var(--surface-glass-sm);
-  backdrop-filter: var(--blur-md);
+  background: var(--surface-glass-lg);
 }
 .map-top-right-group {
   position: absolute;
@@ -216,9 +214,7 @@ img {
   padding: 0 14px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-light);
-  background: var(--surface-glass-sm);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
+  background: var(--surface-glass-lg);
   box-shadow: 0 2px 8px var(--p-black-a20);
   user-select: none;
   animation: mapRatioFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -324,9 +320,7 @@ img {
   padding: 0 16px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-light);
-  background: var(--surface-glass-sm);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
+  background: var(--surface-glass-lg);
   color: var(--text-color-primary);
   font-family: var(--font-sans);
   font-size: var(--text-base);
@@ -369,8 +363,6 @@ img {
 .map-widget.is-fullscreen .map-view-toggle-btn {
   border-color: var(--p-blue-400);
   color: var(--p-white);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
   box-shadow: none;
 }
 
@@ -458,9 +450,8 @@ img {
   max-width: 100%;
   min-width: 0;
   min-height: 0;
-  background: var(--surface-widget);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
+  background: linear-gradient(135deg, var(--p-white-a08) 0%, var(--p-white-a03) 100%), var(--surface-widget);
+  border: 1px solid var(--p-white-a10);
   border-radius: var(--radius-lg);
   padding: var(--widget-pad);
   box-sizing: border-box;
@@ -472,8 +463,6 @@ img {
   position: relative;
   background: var(--gradient-brand-fill);
   border: 1px solid transparent;
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
 }
 .widget.accent::before,
 .widget.widget--accent::before {
@@ -681,7 +670,6 @@ img {
   border-radius: var(--radius-md);
   border: 1px solid var(--p-white-a25);
   background: var(--surface-dropdown);
-  backdrop-filter: var(--blur-sm);
 }
 .select-menu li {
   padding: 8px 10px;
@@ -975,7 +963,6 @@ img {
   padding: 8px;
   border-radius: var(--radius-lg);
   background: var(--surface-glass-lg);
-  backdrop-filter: var(--blur-lg);
   color: var(--text-color-primary);
   font-size: var(--font-label);
   font-weight: var(--weight-regular);
@@ -1120,8 +1107,6 @@ img {
   padding: 4px 10px 4px 5px;
   border-radius: var(--radius-sm, 6px);
   background: var(--p-neutral-900-a68);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   white-space: nowrap;
   pointer-events: none;
   transform: translate(-50%, -50%);
@@ -1241,8 +1226,7 @@ img {
   flex-direction: column;
   gap: 14px;
   border-radius: var(--radius-xs);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
+  background: var(--surface-modal);
 }
 .lv {
   display: flex;
@@ -1314,8 +1298,6 @@ img {
   margin: 0;
   border-radius: var(--radius-md);
   background: var(--surface-widget);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
   box-shadow: 0 16px 48px var(--p-black-a60);
   animation: mapGridFullscreenExpand 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1366,9 +1348,7 @@ img {
   gap: 8px;
   padding: 10px 22px;
   border-radius: var(--radius-pill);
-  background: var(--surface-dropdown);
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
+  background: var(--surface-glass-lg);
   border: 1px solid var(--border-light);
   box-shadow: 0 12px 32px var(--p-black-a60);
   color: var(--text-color-primary);
@@ -1646,9 +1626,8 @@ img {
   padding: 5px 10px 5px 6px;
   border-radius: var(--radius-2xl);
   border: 1px solid var(--border-strong);
-  background: var(--p-gradient-tooltip-light);
+  background: var(--p-white);
   box-shadow: var(--shadow-tooltip);
-  backdrop-filter: blur(15px);
   pointer-events: auto;
 }
 /* 1) mp-core 기준 위쪽 (Top - 기본) : 카드 아래에 ▼ 화살표 */
@@ -1908,7 +1887,7 @@ img {
   flex: none;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 8px solid var(--p-neutral-100);
+  border-top: 8px solid var(--p-white);
   border-bottom: 0;
   filter: drop-shadow(0 2px 2px var(--p-black-a12));
 }
@@ -1917,7 +1896,7 @@ img {
 .mp-tip.is-top .mp-tip-arrow {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 8px solid var(--p-neutral-100);
+  border-top: 8px solid var(--p-white);
   border-bottom: 0;
   filter: drop-shadow(0 2px 2px var(--p-black-a12));
 }
@@ -1935,7 +1914,7 @@ img {
 .mp-tip.is-left .mp-tip-arrow {
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
-  border-left: 8px solid var(--p-neutral-100);
+  border-left: 8px solid var(--p-white);
   border-right: 0;
   filter: drop-shadow(2px 0 2px var(--p-black-a12));
 }
@@ -1963,7 +1942,6 @@ img {
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-map-back);
   background: var(--surface-glass-lg);
-  backdrop-filter: var(--blur-lg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2004,9 +1982,7 @@ img {
   padding: 0 14px 0 16px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-light);
-  background: var(--surface-glass-sm);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
+  background: var(--surface-glass-lg);
   color: var(--text-color-primary);
   font-family: var(--font-sans);
   font-size: var(--text-base);
@@ -2032,8 +2008,6 @@ img {
 .map-boundary-toggle-btn.is-active {
   border-color: var(--p-blue-400);
   color: var(--p-white);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
   box-shadow: none;
 }
 
@@ -2083,10 +2057,8 @@ img {
   height: 44px;
   padding: 0 16px;
   border-radius: var(--radius-pill);
-  background: var(--p-black-a40);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
-  border: 1px solid var(--p-white-a15);
+  background: var(--surface-glass-lg);
+  border: 1px solid var(--border-light);
   box-shadow: var(--shadow-legend);
 }
 .map-point-size-bar .point-size-track {
@@ -3973,8 +3945,6 @@ img {
   padding: 12px 20px;
   border-radius: var(--radius-lg);
   background: var(--surface-widget);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
   border: 1px solid var(--border-subtle);
 }
 

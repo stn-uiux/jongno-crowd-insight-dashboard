@@ -83,10 +83,10 @@
   margin-bottom: var(--page-pad-y);
   display: flex;
   flex-direction: column;
-  background: var(--surface-widget);
-  border-top: 1px solid var(--sidebar-line);
-  border-right: 1px solid var(--sidebar-line);
-  border-bottom: 1px solid var(--sidebar-line);
+  background: linear-gradient(135deg, var(--p-white-a08) 0%, var(--p-white-a03) 100%), var(--surface-widget);
+  border-top: 1px solid var(--p-white-a10);
+  border-right: 1px solid var(--p-white-a10);
+  border-bottom: 1px solid var(--p-white-a10);
   border-radius: 0 10px 10px 0;
   color: var(--sidebar-text);
   transition: width 0.22s ease, flex-basis 0.22s ease;

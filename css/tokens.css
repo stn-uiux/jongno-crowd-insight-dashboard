@@ -467,10 +467,10 @@
   --bg-app: var(--p-neutral-950);
   --bg-shell: var(--p-neutral-980);
   --surface-widget: var(--p-white-a05);
-  --surface-glass-xs: var(--p-white-a03);
-  --surface-glass-sm: var(--p-white-a05);
-  --surface-glass-md: var(--p-white-a08);
-  --surface-glass-lg: var(--p-white-a10);
+  --surface-glass-xs: var(--p-white-a05);
+  --surface-glass-sm: var(--p-white-a08);
+  --surface-glass-md: var(--p-white-a10);
+  --surface-glass-lg: var(--p-white-a15);
   --surface-glass-hover: var(--p-white-a18);
   --surface-control: #484a525c;
   --surface-control-hover: #484a5280;
@@ -581,10 +581,10 @@
 
   /* Backdrop Blur Scale */
   --blur-xs: blur(4px);
-  --blur-sm: blur(16px);
+  --blur-sm: blur(8px);
   --blur-md: blur(20px);
   --blur-lg: blur(40px);
-  --blur-xl: blur(100px);
+  --blur-xl: blur(60px);
 
   /* Shadows */
   --shadow-legend: 0 4px 10px rgba(78, 88, 104, 0.6);

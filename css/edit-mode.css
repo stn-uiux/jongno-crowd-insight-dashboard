@@ -779,8 +779,6 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   padding: 12px 24px;
   border-radius: var(--radius-pill);
   background: var(--surface-dropdown);
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
   border: 1px solid var(--border-light);
   box-shadow: 0 16px 36px var(--p-black-a55), 0 0 16px var(--p-black-a40);
   color: var(--text-color-primary);
