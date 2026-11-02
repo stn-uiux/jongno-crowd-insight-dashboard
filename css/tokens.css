@@ -872,659 +872,674 @@
 }
 
 /* --------------------------------------------------------------------------
-   라이트 모드 컴포넌트별 보정 스타일 (단일 파일 몰아서 관리)
+   04-1. 다크 모드 특화 스타일 (지도 이미지 및 로고 외곽선)
+   - CSS Nesting 중첩 블록으로 관리
    -------------------------------------------------------------------------- */
-/* 배경 오버레이 및 사이드바 */
-[data-mode="dark"] .page-bg {
-  content: url("../assets/dark-jongno-dashboard-bg.png");
-}
-[data-mode="light"] .page-bg {
-  content: url("../assets/light-jongno-dashboard-bg.png");
-}
-
-/* 지도 이미지 다크/라이트 모드 자동 교체 */
-[data-mode="dark"] #map-overview .map-photo {
-  content: url("../assets/maps/dark-map-overview.png");
-}
-[data-mode="light"] #map-overview .map-photo {
-  content: url("../assets/maps/light-map-overview.png");
-}
-
-[data-mode="dark"] #map-detail[data-active-region="A"] .map-photo-detail {
-  content: url("../assets/maps/dark-map-detail-2.png");
-}
-[data-mode="light"] #map-detail[data-active-region="A"] .map-photo-detail {
-  content: url("../assets/maps/light-map-detail-2.png");
-}
-[data-mode="dark"] #map-detail[data-active-region="B"] .map-photo-detail {
-  content: url("../assets/maps/dark-map-detail-4.png");
-}
-[data-mode="light"] #map-detail[data-active-region="B"] .map-photo-detail {
-  content: url("../assets/maps/light-map-detail-4.png");
-}
-[data-mode="dark"] #map-detail[data-active-region="C"] .map-photo-detail {
-  content: url("../assets/maps/dark-map-detail-3.png");
-}
-[data-mode="light"] #map-detail[data-active-region="C"] .map-photo-detail {
-  content: url("../assets/maps/light-map-detail-3.png");
-}
-[data-mode="dark"] #map-detail[data-active-region="D"] .map-photo-detail {
-  content: url("../assets/maps/dark-map-detail-1.png");
-}
-[data-mode="light"] #map-detail[data-active-region="D"] .map-photo-detail {
-  content: url("../assets/maps/light-map-detail-1.png");
-}
-[data-mode="light"] .app-shell::after {
-  background: var(--bg-app-overlay);
-}
-[data-mode="light"] .sidebar-toggle {
-  background: var(--surface-modal);
-  box-shadow: var(--shadow-btn-pill);
-}
-[data-mode="light"] .sidebar-toggle i {
-  color: var(--p-neutral-800);
-  -webkit-text-fill-color: var(--p-neutral-800);
-}
-[data-mode="light"] .theme-toggle-btn {
-  color: var(--p-indigo-600);
-}
-[data-mode="light"] .theme-toggle-btn:hover {
-  color: var(--color-primary);
-}
-[data-mode="light"] .menu-item .icon-box {
-  background: var(--surface-canvas-dark);
-}
-[data-mode="light"] .menu-item .menu-link:hover,
-[data-mode="light"] .submenu-link:hover {
-  background: var(--surface-canvas-dark);
+[data-mode="dark"] {
+  & .page-bg {
+    content: url("../assets/dark-jongno-dashboard-bg.png");
+  }
+  & #map-overview .map-photo {
+    content: url("../assets/maps/dark-map-overview.png");
+  }
+  & #map-detail[data-active-region="A"] .map-photo-detail {
+    content: url("../assets/maps/dark-map-detail-2.png");
+  }
+  & #map-detail[data-active-region="B"] .map-photo-detail {
+    content: url("../assets/maps/dark-map-detail-4.png");
+  }
+  & #map-detail[data-active-region="C"] .map-photo-detail {
+    content: url("../assets/maps/dark-map-detail-3.png");
+  }
+  & #map-detail[data-active-region="D"] .map-photo-detail {
+    content: url("../assets/maps/dark-map-detail-1.png");
+  }
 }
 
-/* 대시보드 위젯 및 모달 */
-[data-mode="light"] .widget {
-  box-shadow: var(--shadow-widget);
-}
-
-[data-mode="light"] .edit-btn img,
-[data-mode="light"] .update img,
-[data-mode="light"] .kpi-head > img,
-[data-mode="light"] .chart-head img,
-[data-mode="light"] .select-btn img,
-[data-mode="light"] .map-back img,
-[data-mode="light"] .cctv-close img,
-[data-mode="light"] .cctv-foot img,
-[data-mode="light"] .modal-close img,
-[data-mode="light"] .weather img {
-  filter: brightness(0);
-}
-
-[data-mode="light"] .map-ratio-dot {
-  border-color: var(--p-black-a25);
-  background: var(--surface-modal);
-}
-
-[data-mode="light"] .map-ratio-option {
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .map-ratio-option:hover,
-[data-mode="light"] .map-ratio-option.is-active .ratio-text,
-[data-mode="light"] .map-ratio-option input[type="radio"]:checked ~ .ratio-text {
-  color: var(--text-color-primary);
-}
-
-[data-mode="light"] .map-view-toggle-btn,
-[data-mode="light"] .map-boundary-toggle-btn {
-  color: var(--text-color-primary);
-}
-[data-mode="light"] .map-view-toggle-btn:hover,
-[data-mode="light"] .map-boundary-toggle-btn:hover {
-  background: var(--surface-modal);
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-/* 크게보기 활성화 상태(축소하기) 및 경계선 활성화 상태 라이트 모드 스타일 */
-[data-mode="light"] .map-widget.is-fullscreen .map-view-toggle-btn,
-[data-mode="light"] .map-boundary-toggle-btn.is-active {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: var(--surface-glass-lg);
-  box-shadow: none;
-}
-[data-mode="light"] .map-widget.is-fullscreen .map-view-toggle-btn:hover,
-[data-mode="light"] .map-boundary-toggle-btn.is-active:hover {
-  background: var(--surface-dropdown);
-  color: var(--p-indigo-600);
-  border-color: var(--p-indigo-600);
-}
-
-[data-mode="light"] .status-pill {
-  box-shadow: var(--shadow-status-pill);
-}
-
-[data-mode="light"] .map-point-size-bar {
-  background: var(--surface-glass-sm);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-status-pill);
-}
-
-[data-mode="light"] .map-point-size-bar .point-size-track {
-  background: var(--divider-color);
-}
-
-/* 구역 리스트 정렬 활성 버튼 (그라데이션 배경 위 흰색 텍스트 유지) */
-[data-mode="light"] .zone-sort-btn.is-active,
-[data-mode="light"] .tab.is-active {
-  color: var(--p-white);
-}
-
-[data-mode="light"] #stage .board > .map-widget.is-fullscreen {
-  box-shadow: none;
-}
-
-[data-mode="light"] .disaster-modal-panel,
-[data-mode="light"] .cctv-panel {
-  box-shadow: var(--shadow-dialog-modal);
-}
-
-/* ==========================================================================
-   다크 모드 로고 아이콘 외곽선 보정 (종 아이콘 검은 테두리 및 상단 고리 시인성 확보)
-   ========================================================================== */
 :root:not([data-mode="light"]) .brand img {
   filter: drop-shadow(0 0 1px #ffffff)
           drop-shadow(0 0 2px rgba(255, 255, 255, 0.6))
           drop-shadow(0 0 4px rgba(255, 255, 255, 0));
 }
 
-/* 지도 구역 플로팅 라벨 (라이트 모드 밝은 알약 배경 및 호버 대응) */
-[data-mode="light"] .rlabel-inline {
-  background: var(--p-white);
-  box-shadow: 0 4px 8px var(--p-black-a40);
-}
-
-[data-mode="light"] .region:hover .rlabel-inline {
-  background: var(--p-white);
-  box-shadow: 0 6px 18px var(--p-black-a40);
-}
-
-/* 라이트 모드 편집 버튼 (이동, 설정, 삭제) */
-[data-mode="light"] .widget-drag,
-[data-mode="light"] .widget-gear,
-[data-mode="light"] .widget-remove {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-color-primary-inverse); /* 라이트 모드에서 선명한 흰색 */
-  background: var(--p-black-a65);
-  font-size: var(--text-lg);
-  border: 1px solid var(--p-white-a25);
-  padding: 0;
-  flex: 0 0 auto;
-}
-
-/* 삭제 버튼은 위험 인지를 위해 빨간색 배경 유지 */
-[data-mode="light"] .widget-remove {
-  background: var(--p-red-700);
-  border-color: var(--p-white-a35);
-}
-
-/* ==========================================================================
-   라이트 모드 실시간 위험구역 알림 위젯 (.alert-widget) 보정
-   ========================================================================== */
-[data-mode="light"] .alert-count-badge {
-  color: var(--p-red-650);
-  background: var(--p-red-tint-light);
-  border-color: var(--p-red-a40);
-}
-
-[data-mode="light"] .alert-item {
-  box-shadow: var(--shadow-card-sm);
-}
-
-/* 라이트 모드 순번 인덱스 (박스 제거 및 선명한 다크 텍스트 적용) */
-[data-mode="light"] .alert-num-badge,
-[data-mode="light"] .alert-item.is-critical .alert-num-badge,
-[data-mode="light"] .alert-item.is-danger .alert-num-badge,
-[data-mode="light"] .alert-item.is-caution .alert-num-badge {
-  background: transparent;
-  color: var(--p-neutral-800);
-  box-shadow: none;
-}
-
-[data-mode="light"] .alert-item.is-critical,
-[data-mode="light"] .alert-item.is-danger {
-  background: var(--disaster-card-critical-bg);
-}
-
-[data-mode="light"] .alert-item.is-caution {
-  background: var(--p-orange-a08);
-}
-
-[data-mode="light"] .alert-item.is-critical:hover,
-[data-mode="light"] .alert-item.is-danger:hover {
-  background: var(--p-red-a18);
-  box-shadow: var(--shadow-card-hover-danger);
-}
-
-[data-mode="light"] .alert-item.is-caution:hover {
-  background: var(--p-orange-a16);
-  box-shadow: var(--shadow-card-hover-caution);
-}
-
-[data-mode="light"] .alert-stat img {
-  filter: brightness(0);
-  opacity: 0.65;
-}
-
-[data-mode="light"] .alert-btn-cctv {
-  background: var(--surface-glass-lg);
-  border-color: var(--border-default);
-  color: var(--p-neutral-700);
-  box-shadow: var(--shadow-btn-cctv);
-}
-
-[data-mode="light"] .alert-btn-cctv:hover {
-  background: var(--p-white);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  box-shadow: var(--shadow-btn-cctv-hover);
-}
-
-[data-mode="light"] .alert-action-divider {
-  background: var(--divider-color);
-}
-
-[data-mode="light"] .alert-btn-arrow {
-  color: var(--text-color-muted);
-}
-
-[data-mode="light"] .alert-btn-arrow:hover {
-  color: var(--text-color-primary);
-}
-
-[data-mode="light"] .alert-foot {
-  border-top-color: var(--border-light);
-}
-
-[data-mode="light"] .alert-foot-time img {
-  filter: brightness(0);
-  opacity: 0.55;
-}
-
-/* ==========================================================================
-   라이트 모드 재난 안전 알림 위젯 (.disaster-widget) 및 상세 모달 (.disaster-modal) 보정
-   ========================================================================== */
-[data-mode="light"] .disaster-count-badge.is-critical,
-[data-mode="light"] .disaster-count-badge.is-danger {
-  color: var(--p-red-650);
-  background: var(--p-red-tint-light);
-  border-color: var(--p-red-a40);
-}
-
-[data-mode="light"] .disaster-list::-webkit-scrollbar-thumb {
-  background: var(--p-black-a15);
-}
-
-[data-mode="light"] .disaster-item {
-  background: var(--surface-glass-sm);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-card-sm);
-}
-
-[data-mode="light"] .disaster-item:hover {
-  background: var(--surface-modal);
-  border-color: var(--p-indigo-a35);
-  box-shadow: var(--shadow-card-hover);
-}
-
-[data-mode="light"] .disaster-item.is-critical,
-[data-mode="light"] .disaster-item.is-danger {
-  background: var(--disaster-card-critical-bg);
-  border: 1px solid var(--disaster-card-critical-border);
-  box-shadow: none;
-}
-
-[data-mode="light"] .disaster-item.is-critical:hover,
-[data-mode="light"] .disaster-item.is-danger:hover {
-  background: var(--p-red-a18);
-  border-color: var(--disaster-card-critical-hover-border);
-  box-shadow: var(--shadow-card-hover-danger);
-}
-
-[data-mode="light"] .disaster-icon-box {
-  background: var(--surface-modal);
-  border: 1px solid var(--border-light);
-  color: var(--p-neutral-800);
-  box-shadow: var(--shadow-card-subtle);
-}
-
-[data-mode="light"] .disaster-item.is-critical .disaster-icon-box,
-[data-mode="light"] .disaster-item.is-danger .disaster-icon-box {
-  background: var(--disaster-icon-critical-bg);
-  border: 1px solid var(--disaster-icon-critical-border);
-  color: var(--disaster-icon-critical-text);
-}
-
-/* 알림 카테고리 배지 (라이트 모드 선명도 보강) */
-[data-mode="light"] .disaster-badge.is-critical,
-[data-mode="light"] .disaster-badge.is-danger {
-  background: var(--p-red-650);
-  color: var(--p-white);
-  box-shadow: var(--shadow-badge-danger);
-}
-
-[data-mode="light"] .disaster-badge.is-weather {
-  background: var(--badge-weather-bg);
-  border-color: var(--badge-weather-border);
-  color: var(--badge-weather-text);
-}
-
-[data-mode="light"] .disaster-badge.is-traffic {
-  background: var(--badge-traffic-bg);
-  border-color: var(--badge-traffic-border);
-  color: var(--badge-traffic-text);
-}
-
-[data-mode="light"] .disaster-badge.is-living {
-  background: var(--badge-living-bg);
-  border-color: var(--badge-living-border);
-  color: var(--badge-living-text);
-}
-
-[data-mode="light"] .disaster-badge.is-event {
-  background: var(--badge-event-bg);
-  border-color: var(--badge-event-border);
-  color: var(--badge-event-text);
-}
-
-/* 카드 본문 텍스트, 시간, 화살표 아이콘 */
-[data-mode="light"] .disaster-item-sub {
-  color: var(--p-neutral-600);
-}
-
-[data-mode="light"] .disaster-item.is-critical .disaster-item-sub {
-  color: var(--p-neutral-700);
-}
-
-[data-mode="light"] .disaster-item-time {
-  color: var(--p-neutral-500);
-}
-
-[data-mode="light"] .disaster-item-arrow {
-  color: var(--p-neutral-500);
-}
-
-[data-mode="light"] .disaster-item:hover .disaster-item-arrow,
-[data-mode="light"] .disaster-item-arrow:hover {
-  color: var(--p-neutral-900);
-  background: var(--p-black-a06);
-}
-
-/* 재난 안전 알림 상세 모달 (.disaster-modal) */
-[data-mode="light"] .disaster-modal-panel {
-  background: var(--surface-modal);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-dialog-modal);
-}
-
-[data-mode="light"] .disaster-modal-head {
-  border-bottom-color: var(--border-light);
-}
-
-[data-mode="light"] .disaster-modal-close {
-  color: var(--text-color-muted);
-}
-
-[data-mode="light"] .disaster-modal-close:hover {
-  color: var(--text-color-primary);
-  background: var(--p-black-a06);
-}
-
-[data-mode="light"] .disaster-modal-body::-webkit-scrollbar-thumb {
-  background: var(--p-black-a15);
-}
-
-[data-mode="light"] .disaster-modal-headline {
-  background: var(--surface-panel-dark);
-  border-color: var(--border-light);
-  color: var(--text-color-primary);
-}
-
-[data-mode="light"] .disaster-modal-panel.is-critical .disaster-modal-headline,
-[data-mode="light"] .disaster-modal-panel.is-danger .disaster-modal-headline {
-  background: var(--disaster-card-critical-bg);
-  border-color: var(--disaster-modal-headline-border);
-  color: var(--p-red-650);
-}
-
-[data-mode="light"] .disaster-modal-meta {
-  background: var(--surface-panel-dark);
-  border-color: var(--border-subtle);
-}
-
-[data-mode="light"] .disaster-meta-row .meta-label {
-  color: var(--p-neutral-550);
-}
-
-[data-mode="light"] .disaster-meta-row .meta-val {
-  color: var(--p-neutral-800);
-}
-
-[data-mode="light"] .disaster-modal-content {
-  background: var(--sidebar-surface);
-  border-color: var(--border-subtle);
-  color: var(--p-neutral-750);
-}
-
-[data-mode="light"] .disaster-modal-foot {
-  border-top-color: var(--border-light);
-}
-
-/* ==========================================================================
-   라이트 모드 구역 상세 팝업 모달 (.zone-detail-panel) 보정
-   ========================================================================== */
-[data-mode="light"] .zone-detail-legend li {
-  color: var(--p-neutral-800);
-}
-
-[data-mode="light"] .zone-detail-brush-wrap {
-  background: var(--sidebar-surface);
-  border: 1px solid var(--border-light);
-}
-
-[data-mode="light"] .zone-brush-select {
-  border: 1.5px dashed var(--color-primary);
-  background: var(--p-indigo-a18);
-}
-
-[data-mode="light"] .zone-brush-handle {
-  background: var(--p-white);
-  border: 2px solid var(--color-primary);
-  box-shadow: var(--shadow-badge-primary);
-}
-
-[data-mode="light"] .zone-manager {
-  background: var(--surface-panel-dark);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-card-sm);
-  color: var(--p-neutral-800);
-}
-
-[data-mode="light"] .zone-manager .bi-person-fill {
-  color: var(--color-primary);
-  opacity: 1;
-}
-
-[data-mode="light"] .zone-manager .vdiv {
-  background: var(--divider-color);
-}
-
-/* ==========================================================================
-   라이트 모드 위젯 추가 팝업 및 위젯 설정 팝업 보정
-   ========================================================================== */
-[data-mode="light"] .widget-modal-panel,
-[data-mode="light"] .settings-panel {
-  background: var(--surface-modal);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-dialog-modal);
-}
-
-[data-mode="light"] .widget-modal-close {
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .widget-modal-close:hover {
-  color: var(--text-color-primary);
-  background: var(--p-black-a06);
-}
-
-[data-mode="light"] .widget-modal-search i {
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .widget-modal-search input {
-  background: var(--surface-input-dark);
-  border-color: var(--border-default);
-  color: var(--text-color-primary);
-}
-[data-mode="light"] .widget-modal-search input::placeholder {
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .widget-modal-search input:focus {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus-ring);
-}
-
-/* 필터 탭 (전체, 모니터링, 차트) */
-[data-mode="light"] .wfilter {
-  background: var(--surface-modal);
-  border: 1px solid var(--border-default);
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .wfilter:hover {
-  background: var(--p-white);
-  color: var(--text-color-primary);
-  border-color: var(--border-strong);
-}
-[data-mode="light"] .wfilter.is-active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--p-white);
-}
-
-/* 위젯 카탈로그 아이템 */
-[data-mode="light"] .wcat-item {
-  background: var(--surface-modal);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-card-sm);
-}
-[data-mode="light"] .wcat-item:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-card-hover);
-}
-[data-mode="light"] .wcat-item.is-space-full {
-  opacity: 0.65;
-  background: var(--sidebar-surface);
-  border-color: var(--border-subtle);
-}
-[data-mode="light"] .wcat-item.is-space-full:hover {
-  background: var(--bg-wcat-full);
-  border-color: var(--border-wcat-full);
-}
-[data-mode="light"] .wcat-item.is-space-full .wcat-icon {
-  background: var(--surface-canvas-dark);
-  color: var(--text-color-inactive);
-}
-[data-mode="light"] .wcat-icon {
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-}
-[data-mode="light"] .wcat-meta strong {
-  color: var(--text-color-primary);
-}
-[data-mode="light"] .wcat-meta span {
-  color: var(--text-color-muted);
-}
-
-/* 공간 부족 배지 */
-[data-mode="light"] .wcat-badge-full {
-  background: var(--bg-wcat-full);
-  border-color: var(--border-wcat-full);
-  color: var(--text-wcat-full);
-}
-
-/* 추가(+) 버튼 */
-[data-mode="light"] .wcat-add {
-  background: var(--color-primary);
-  color: var(--p-white);
-}
-[data-mode="light"] .wcat-add:hover {
-  background: var(--p-indigo-600);
-}
-[data-mode="light"] .wcat-add:disabled,
-[data-mode="light"] .wcat-add.is-disabled {
-  background: var(--p-black-a06);
-  color: var(--text-color-inactive);
-}
-[data-mode="light"] .wcat-empty {
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .wcat-empty p {
-  color: var(--text-color-primary);
-}
-
-/* 위젯 설정 모달 보정 */
-[data-mode="light"] .settings-body,
-[data-mode="light"] .settings-foot {
-  border-top-color: var(--border-light);
-}
-[data-mode="light"] .settings-label {
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .settings-input {
-  background: var(--surface-input-dark);
-  border-color: var(--border-default);
-  color: var(--text-color-primary);
-}
-[data-mode="light"] .settings-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus-ring);
-}
-[data-mode="light"] .settings-type {
-  background: var(--surface-canvas-dark);
-  border-color: var(--border-light);
-  color: var(--text-color-primary);
-}
-[data-mode="light"] .settings-type i {
-  color: var(--color-primary);
-}
-[data-mode="light"] .settings-btn.cancel {
-  background: var(--surface-modal);
-  border-color: var(--border-default);
-  color: var(--text-color-muted);
-}
-[data-mode="light"] .settings-btn.cancel:hover {
-  background: var(--p-white);
-  color: var(--text-color-primary);
-  border-color: var(--border-strong);
-}
-[data-mode="light"] .settings-btn.save {
-  background: var(--color-primary);
-  color: var(--p-white);
-}
-[data-mode="light"] .settings-btn.save:hover {
-  background: var(--p-indigo-600);
-}
-
-/* ==========================================================================
-   라이트 모드 통계 기간 설정 & 보고서 출력 바 (.stats-filter-bar) 보정
-   ========================================================================== */
-[data-mode="light"] .stats-filter-bar {
-  box-shadow: var(--shadow-widget);
-}
-[data-mode="light"] .stats-date-input {
-  color: var(--text-color-primary);
-  color-scheme: light;
+/* --------------------------------------------------------------------------
+   04-2. 라이트 모드 컴포넌트별 보정 스타일 (CSS Nesting 단일 중첩 블록)
+   - 150+ 회 반복되던 [data-mode="light"] 접두어를 [data-mode="light"] { & ... } 단일 블록으로 통합
+   -------------------------------------------------------------------------- */
+[data-mode="light"] {
+  /* --------------------------------------------------------------------------
+     라이트 모드 컴포넌트별 보정 스타일 (단일 파일 몰아서 관리)
+     -------------------------------------------------------------------------- */
+  /* 배경 오버레이 및 사이드바 */
+  & .page-bg {
+    content: url("../assets/light-jongno-dashboard-bg.png");
+  }
+
+  /* 지도 이미지 다크/라이트 모드 자동 교체 */
+  & #map-overview .map-photo {
+    content: url("../assets/maps/light-map-overview.png");
+  }
+
+  & #map-detail[data-active-region="A"] .map-photo-detail {
+    content: url("../assets/maps/light-map-detail-2.png");
+  }
+  & #map-detail[data-active-region="B"] .map-photo-detail {
+    content: url("../assets/maps/light-map-detail-4.png");
+  }
+  & #map-detail[data-active-region="C"] .map-photo-detail {
+    content: url("../assets/maps/light-map-detail-3.png");
+  }
+  & #map-detail[data-active-region="D"] .map-photo-detail {
+    content: url("../assets/maps/light-map-detail-1.png");
+  }
+  & .app-shell::after {
+    background: var(--bg-app-overlay);
+  }
+  & .sidebar-toggle {
+    background: var(--surface-modal);
+    box-shadow: var(--shadow-btn-pill);
+  }
+  & .sidebar-toggle i {
+    color: var(--p-neutral-800);
+    -webkit-text-fill-color: var(--p-neutral-800);
+  }
+  & .theme-toggle-btn {
+    color: var(--p-indigo-600);
+  }
+  & .theme-toggle-btn:hover {
+    color: var(--color-primary);
+  }
+  & .menu-item .icon-box {
+    background: var(--surface-canvas-dark);
+  }
+  & .menu-item .menu-link:hover,
+  & .submenu-link:hover {
+    background: var(--surface-canvas-dark);
+  }
+
+  /* 대시보드 위젯 및 모달 */
+  & .widget {
+    box-shadow: var(--shadow-widget);
+  }
+
+  & .edit-btn img,
+  & .update img,
+  & .kpi-head > img,
+  & .chart-head img,
+  & .select-btn img,
+  & .map-back img,
+  & .cctv-close img,
+  & .cctv-foot img,
+  & .modal-close img,
+  & .weather img {
+    filter: brightness(0);
+  }
+
+  & .map-ratio-dot {
+    border-color: var(--p-black-a25);
+    background: var(--surface-modal);
+  }
+
+  & .map-ratio-option {
+    color: var(--text-color-muted);
+  }
+  & .map-ratio-option:hover,
+  & .map-ratio-option.is-active .ratio-text,
+  & .map-ratio-option input[type="radio"]:checked ~ .ratio-text {
+    color: var(--text-color-primary);
+  }
+
+  & .map-view-toggle-btn,
+  & .map-boundary-toggle-btn {
+    color: var(--text-color-primary);
+  }
+  & .map-view-toggle-btn:hover,
+  & .map-boundary-toggle-btn:hover {
+    background: var(--surface-modal);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  /* 크게보기 활성화 상태(축소하기) 및 경계선 활성화 상태 라이트 모드 스타일 */
+  & .map-widget.is-fullscreen .map-view-toggle-btn,
+  & .map-boundary-toggle-btn.is-active {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--surface-glass-lg);
+    box-shadow: none;
+  }
+  & .map-widget.is-fullscreen .map-view-toggle-btn:hover,
+  & .map-boundary-toggle-btn.is-active:hover {
+    background: var(--surface-dropdown);
+    color: var(--p-indigo-600);
+    border-color: var(--p-indigo-600);
+  }
+
+  & .status-pill {
+    box-shadow: var(--shadow-status-pill);
+  }
+
+  & .map-point-size-bar {
+    background: var(--surface-glass-sm);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-status-pill);
+  }
+
+  & .map-point-size-bar .point-size-track {
+    background: var(--divider-color);
+  }
+
+  /* 구역 리스트 정렬 활성 버튼 (그라데이션 배경 위 흰색 텍스트 유지) */
+  & .zone-sort-btn.is-active,
+  & .tab.is-active {
+    color: var(--p-white);
+  }
+
+  & #stage .board > .map-widget.is-fullscreen {
+    box-shadow: none;
+  }
+
+  & .disaster-modal-panel,
+  & .cctv-panel {
+    box-shadow: var(--shadow-dialog-modal);
+  }
+
+  /* ==========================================================================
+     다크 모드 로고 아이콘 외곽선 보정 (종 아이콘 검은 테두리 및 상단 고리 시인성 확보)
+     ========================================================================== */
+
+  /* 지도 구역 플로팅 라벨 (라이트 모드 밝은 알약 배경 및 호버 대응) */
+  & .rlabel-inline {
+    background: var(--p-white);
+    box-shadow: 0 4px 8px var(--p-black-a40);
+  }
+
+  & .region:hover .rlabel-inline {
+    background: var(--p-white);
+    box-shadow: 0 6px 18px var(--p-black-a40);
+  }
+
+  /* 라이트 모드 편집 버튼 (이동, 설정, 삭제) */
+  & .widget-drag,
+  & .widget-gear,
+  & .widget-remove {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-primary-inverse); /* 라이트 모드에서 선명한 흰색 */
+    background: var(--p-black-a65);
+    font-size: var(--text-lg);
+    border: 1px solid var(--p-white-a25);
+    padding: 0;
+    flex: 0 0 auto;
+  }
+
+  /* 삭제 버튼은 위험 인지를 위해 빨간색 배경 유지 */
+  & .widget-remove {
+    background: var(--p-red-700);
+    border-color: var(--p-white-a35);
+  }
+
+  /* ==========================================================================
+     라이트 모드 실시간 위험구역 알림 위젯 (.alert-widget) 보정
+     ========================================================================== */
+  & .alert-count-badge {
+    color: var(--p-red-650);
+    background: var(--p-red-tint-light);
+    border-color: var(--p-red-a40);
+  }
+
+  & .alert-item {
+    box-shadow: var(--shadow-card-sm);
+  }
+
+  /* 라이트 모드 순번 인덱스 (박스 제거 및 선명한 다크 텍스트 적용) */
+  & .alert-num-badge,
+  & .alert-item.is-critical .alert-num-badge,
+  & .alert-item.is-danger .alert-num-badge,
+  & .alert-item.is-caution .alert-num-badge {
+    background: transparent;
+    color: var(--p-neutral-800);
+    box-shadow: none;
+  }
+
+  & .alert-item.is-critical,
+  & .alert-item.is-danger {
+    background: var(--disaster-card-critical-bg);
+  }
+
+  & .alert-item.is-caution {
+    background: var(--p-orange-a08);
+  }
+
+  & .alert-item.is-critical:hover,
+  & .alert-item.is-danger:hover {
+    background: var(--p-red-a18);
+    box-shadow: var(--shadow-card-hover-danger);
+  }
+
+  & .alert-item.is-caution:hover {
+    background: var(--p-orange-a16);
+    box-shadow: var(--shadow-card-hover-caution);
+  }
+
+  & .alert-stat img {
+    filter: brightness(0);
+    opacity: 0.65;
+  }
+
+  & .alert-btn-cctv {
+    background: var(--surface-glass-lg);
+    border-color: var(--border-default);
+    color: var(--p-neutral-700);
+    box-shadow: var(--shadow-btn-cctv);
+  }
+
+  & .alert-btn-cctv:hover {
+    background: var(--p-white);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-btn-cctv-hover);
+  }
+
+  & .alert-action-divider {
+    background: var(--divider-color);
+  }
+
+  & .alert-btn-arrow {
+    color: var(--text-color-muted);
+  }
+
+  & .alert-btn-arrow:hover {
+    color: var(--text-color-primary);
+  }
+
+  & .alert-foot {
+    border-top-color: var(--border-light);
+  }
+
+  & .alert-foot-time img {
+    filter: brightness(0);
+    opacity: 0.55;
+  }
+
+  /* ==========================================================================
+     라이트 모드 재난 안전 알림 위젯 (.disaster-widget) 및 상세 모달 (.disaster-modal) 보정
+     ========================================================================== */
+  & .disaster-count-badge.is-critical,
+  & .disaster-count-badge.is-danger {
+    color: var(--p-red-650);
+    background: var(--p-red-tint-light);
+    border-color: var(--p-red-a40);
+  }
+
+  & .disaster-list::-webkit-scrollbar-thumb {
+    background: var(--p-black-a15);
+  }
+
+  & .disaster-item {
+    background: var(--surface-glass-sm);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-card-sm);
+  }
+
+  & .disaster-item:hover {
+    background: var(--surface-modal);
+    border-color: var(--p-indigo-a35);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  & .disaster-item.is-critical,
+  & .disaster-item.is-danger {
+    background: var(--disaster-card-critical-bg);
+    border: 1px solid var(--disaster-card-critical-border);
+    box-shadow: none;
+  }
+
+  & .disaster-item.is-critical:hover,
+  & .disaster-item.is-danger:hover {
+    background: var(--p-red-a18);
+    border-color: var(--disaster-card-critical-hover-border);
+    box-shadow: var(--shadow-card-hover-danger);
+  }
+
+  & .disaster-icon-box {
+    background: var(--surface-modal);
+    border: 1px solid var(--border-light);
+    color: var(--p-neutral-800);
+    box-shadow: var(--shadow-card-subtle);
+  }
+
+  & .disaster-item.is-critical .disaster-icon-box,
+  & .disaster-item.is-danger .disaster-icon-box {
+    background: var(--disaster-icon-critical-bg);
+    border: 1px solid var(--disaster-icon-critical-border);
+    color: var(--disaster-icon-critical-text);
+  }
+
+  /* 알림 카테고리 배지 (라이트 모드 선명도 보강) */
+  & .disaster-badge.is-critical,
+  & .disaster-badge.is-danger {
+    background: var(--p-red-650);
+    color: var(--p-white);
+    box-shadow: var(--shadow-badge-danger);
+  }
+
+  & .disaster-badge.is-weather {
+    background: var(--badge-weather-bg);
+    border-color: var(--badge-weather-border);
+    color: var(--badge-weather-text);
+  }
+
+  & .disaster-badge.is-traffic {
+    background: var(--badge-traffic-bg);
+    border-color: var(--badge-traffic-border);
+    color: var(--badge-traffic-text);
+  }
+
+  & .disaster-badge.is-living {
+    background: var(--badge-living-bg);
+    border-color: var(--badge-living-border);
+    color: var(--badge-living-text);
+  }
+
+  & .disaster-badge.is-event {
+    background: var(--badge-event-bg);
+    border-color: var(--badge-event-border);
+    color: var(--badge-event-text);
+  }
+
+  /* 카드 본문 텍스트, 시간, 화살표 아이콘 */
+  & .disaster-item-sub {
+    color: var(--p-neutral-600);
+  }
+
+  & .disaster-item.is-critical .disaster-item-sub {
+    color: var(--p-neutral-700);
+  }
+
+  & .disaster-item-time {
+    color: var(--p-neutral-500);
+  }
+
+  & .disaster-item-arrow {
+    color: var(--p-neutral-500);
+  }
+
+  & .disaster-item:hover .disaster-item-arrow,
+  & .disaster-item-arrow:hover {
+    color: var(--p-neutral-900);
+    background: var(--p-black-a06);
+  }
+
+  /* 재난 안전 알림 상세 모달 (.disaster-modal) */
+  & .disaster-modal-panel {
+    background: var(--surface-modal);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-dialog-modal);
+  }
+
+  & .disaster-modal-head {
+    border-bottom-color: var(--border-light);
+  }
+
+  & .disaster-modal-close {
+    color: var(--text-color-muted);
+  }
+
+  & .disaster-modal-close:hover {
+    color: var(--text-color-primary);
+    background: var(--p-black-a06);
+  }
+
+  & .disaster-modal-body::-webkit-scrollbar-thumb {
+    background: var(--p-black-a15);
+  }
+
+  & .disaster-modal-headline {
+    background: var(--surface-panel-dark);
+    border-color: var(--border-light);
+    color: var(--text-color-primary);
+  }
+
+  & .disaster-modal-panel.is-critical .disaster-modal-headline,
+  & .disaster-modal-panel.is-danger .disaster-modal-headline {
+    background: var(--disaster-card-critical-bg);
+    border-color: var(--disaster-modal-headline-border);
+    color: var(--p-red-650);
+  }
+
+  & .disaster-modal-meta {
+    background: var(--surface-panel-dark);
+    border-color: var(--border-subtle);
+  }
+
+  & .disaster-meta-row .meta-label {
+    color: var(--p-neutral-550);
+  }
+
+  & .disaster-meta-row .meta-val {
+    color: var(--p-neutral-800);
+  }
+
+  & .disaster-modal-content {
+    background: var(--sidebar-surface);
+    border-color: var(--border-subtle);
+    color: var(--p-neutral-750);
+  }
+
+  & .disaster-modal-foot {
+    border-top-color: var(--border-light);
+  }
+
+  /* ==========================================================================
+     라이트 모드 구역 상세 팝업 모달 (.zone-detail-panel) 보정
+     ========================================================================== */
+  & .zone-detail-legend li {
+    color: var(--p-neutral-800);
+  }
+
+  & .zone-detail-brush-wrap {
+    background: var(--sidebar-surface);
+    border: 1px solid var(--border-light);
+  }
+
+  & .zone-brush-select {
+    border: 1.5px dashed var(--color-primary);
+    background: var(--p-indigo-a18);
+  }
+
+  & .zone-brush-handle {
+    background: var(--p-white);
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-badge-primary);
+  }
+
+  & .zone-manager {
+    background: var(--surface-panel-dark);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-card-sm);
+    color: var(--p-neutral-800);
+  }
+
+  & .zone-manager .bi-person-fill {
+    color: var(--color-primary);
+    opacity: 1;
+  }
+
+  & .zone-manager .vdiv {
+    background: var(--divider-color);
+  }
+
+  /* ==========================================================================
+     라이트 모드 위젯 추가 팝업 및 위젯 설정 팝업 보정
+     ========================================================================== */
+  & .widget-modal-panel,
+  & .settings-panel {
+    background: var(--surface-modal);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-dialog-modal);
+  }
+
+  & .widget-modal-close {
+    color: var(--text-color-muted);
+  }
+  & .widget-modal-close:hover {
+    color: var(--text-color-primary);
+    background: var(--p-black-a06);
+  }
+
+  & .widget-modal-search i {
+    color: var(--text-color-muted);
+  }
+  & .widget-modal-search input {
+    background: var(--surface-input-dark);
+    border-color: var(--border-default);
+    color: var(--text-color-primary);
+  }
+  & .widget-modal-search input::placeholder {
+    color: var(--text-color-muted);
+  }
+  & .widget-modal-search input:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus-ring);
+  }
+
+  /* 필터 탭 (전체, 모니터링, 차트) */
+  & .wfilter {
+    background: var(--surface-modal);
+    border: 1px solid var(--border-default);
+    color: var(--text-color-muted);
+  }
+  & .wfilter:hover {
+    background: var(--p-white);
+    color: var(--text-color-primary);
+    border-color: var(--border-strong);
+  }
+  & .wfilter.is-active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--p-white);
+  }
+
+  /* 위젯 카탈로그 아이템 */
+  & .wcat-item {
+    background: var(--surface-modal);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-card-sm);
+  }
+  & .wcat-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-card-hover);
+  }
+  & .wcat-item.is-space-full {
+    opacity: 0.65;
+    background: var(--sidebar-surface);
+    border-color: var(--border-subtle);
+  }
+  & .wcat-item.is-space-full:hover {
+    background: var(--bg-wcat-full);
+    border-color: var(--border-wcat-full);
+  }
+  & .wcat-item.is-space-full .wcat-icon {
+    background: var(--surface-canvas-dark);
+    color: var(--text-color-inactive);
+  }
+  & .wcat-icon {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+  & .wcat-meta strong {
+    color: var(--text-color-primary);
+  }
+  & .wcat-meta span {
+    color: var(--text-color-muted);
+  }
+
+  /* 공간 부족 배지 */
+  & .wcat-badge-full {
+    background: var(--bg-wcat-full);
+    border-color: var(--border-wcat-full);
+    color: var(--text-wcat-full);
+  }
+
+  /* 추가(+) 버튼 */
+  & .wcat-add {
+    background: var(--color-primary);
+    color: var(--p-white);
+  }
+  & .wcat-add:hover {
+    background: var(--p-indigo-600);
+  }
+  & .wcat-add:disabled,
+  & .wcat-add.is-disabled {
+    background: var(--p-black-a06);
+    color: var(--text-color-inactive);
+  }
+  & .wcat-empty {
+    color: var(--text-color-muted);
+  }
+  & .wcat-empty p {
+    color: var(--text-color-primary);
+  }
+
+  /* 위젯 설정 모달 보정 */
+  & .settings-body,
+  & .settings-foot {
+    border-top-color: var(--border-light);
+  }
+  & .settings-label {
+    color: var(--text-color-muted);
+  }
+  & .settings-input {
+    background: var(--surface-input-dark);
+    border-color: var(--border-default);
+    color: var(--text-color-primary);
+  }
+  & .settings-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus-ring);
+  }
+  & .settings-type {
+    background: var(--surface-canvas-dark);
+    border-color: var(--border-light);
+    color: var(--text-color-primary);
+  }
+  & .settings-type i {
+    color: var(--color-primary);
+  }
+  & .settings-btn.cancel {
+    background: var(--surface-modal);
+    border-color: var(--border-default);
+    color: var(--text-color-muted);
+  }
+  & .settings-btn.cancel:hover {
+    background: var(--p-white);
+    color: var(--text-color-primary);
+    border-color: var(--border-strong);
+  }
+  & .settings-btn.save {
+    background: var(--color-primary);
+    color: var(--p-white);
+  }
+  & .settings-btn.save:hover {
+    background: var(--p-indigo-600);
+  }
+
+  /* ==========================================================================
+     라이트 모드 통계 기간 설정 & 보고서 출력 바 (.stats-filter-bar) 보정
+     ========================================================================== */
+  & .stats-filter-bar {
+    box-shadow: var(--shadow-widget);
+  }
+  & .stats-date-input {
+    color: var(--text-color-primary);
+    color-scheme: light;
+  }
+
 }
 
 /* ==========================================================================
