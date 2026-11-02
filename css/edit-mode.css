@@ -572,6 +572,7 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
 }
 .wcat-meta strong {
   display: block;
@@ -581,26 +582,30 @@ body:not(.is-editing) .edit-toolbar { display: none; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex: 0 1 auto;
 }
 .wcat-badge-full {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
   border-radius: var(--radius-pill);
   background: var(--bg-wcat-full);
   border: 1px solid var(--border-wcat-full);
   color: var(--text-wcat-full);
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
-  letter-spacing: -0.01em;
+  line-height: var(--leading-none);
   white-space: nowrap;
   flex: 0 0 auto;
 }
 .wcat-badge-full i {
-  font-size: var(--font-size-2xs);
+  font-size: 10px;
+  line-height: 1;
 }
-.wcat-meta span {
+.wcat-meta > span {
   display: block;
   margin-top: 2px;
   font-size: var(--text-md);

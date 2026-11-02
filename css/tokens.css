@@ -1455,7 +1455,7 @@
   & .wcat-meta strong {
     color: var(--text-color-primary);
   }
-  & .wcat-meta span {
+  & .wcat-meta > span {
     color: var(--text-color-muted);
   }
 
